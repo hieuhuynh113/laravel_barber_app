@@ -1,66 +1,132 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 💈 Barber Shop - Hệ Thống Quản Lý Tiệm Cắt Tóc
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Barber Shop Banner](https://i.imgur.com/2uYCBxl.jpg)
 
-## About Laravel
+## 📝 Giới Thiệu
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Barber Shop** là một ứng dụng web được phát triển bằng Laravel, giúp quản lý hoạt động của tiệm cắt tóc một cách hiệu quả và chuyên nghiệp. Hệ thống cho phép khách hàng đặt lịch hẹn trực tuyến, quản lý thông tin thợ cắt tóc, dịch vụ, sản phẩm và theo dõi doanh thu.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Tính Năng Chính
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🙋‍♂️ Dành Cho Khách Hàng
+- **Đặt lịch hẹn trực tuyến** - Chọn dịch vụ, thợ cắt tóc, ngày giờ và thanh toán
+- **Xem lịch sử lịch hẹn** - Theo dõi các lịch hẹn đã đặt, đang chờ hoặc đã hoàn thành
+- **Quản lý thông tin cá nhân** - Cập nhật hồ sơ, đổi mật khẩu
+- **Đánh giá dịch vụ** - Đánh giá sau khi sử dụng dịch vụ
 
-## Learning Laravel
+### 👨‍💼 Dành Cho Admin
+- **Tổng quan** - Thống kê doanh thu, lịch hẹn, khách hàng mới
+- **Quản lý lịch hẹn** - Xem, chỉnh sửa, xác nhận, hủy lịch hẹn
+- **Lịch hẹn theo lịch** - Hiển thị lịch hẹn dạng lịch tháng, tuần, ngày
+- **Quản lý thợ cắt tóc** - Thêm, sửa, xóa thông tin thợ
+- **Quản lý dịch vụ & sản phẩm** - Thêm, sửa, xóa dịch vụ và sản phẩm
+- **Quản lý khách hàng** - Xem thông tin và lịch sử sử dụng dịch vụ của khách hàng
+- **Quản lý hóa đơn** - Tạo, in hóa đơn và thống kê doanh thu
+- **Quản lý tin tức** - Đăng tin, bài viết, khuyến mãi
+- **Cài đặt hệ thống** - Tùy chỉnh thông tin cửa hàng, giờ làm việc
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 💇‍♂️ Dành Cho Thợ Cắt Tóc
+- **Lịch làm việc** - Xem lịch hẹn được phân công
+- **Thống kê** - Theo dõi số lượng khách hàng, doanh thu
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 🚀 Công Nghệ Sử Dụng
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Backend**: PHP Laravel, MySQL
+- **Frontend**: HTML, CSS, JavaScript, Bootstrap 5
+- **Công cụ bổ sung**: FullCalendar.js (lịch), Chart.js (biểu đồ)
 
-## Laravel Sponsors
+## 📸 Hình Ảnh Demo
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+<div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+    <img src="https://i.imgur.com/jQTGu1S.jpg" alt="Trang chủ" width="400"/>
+    <img src="https://i.imgur.com/mVcvEiB.jpg" alt="Đặt lịch" width="400"/>
+    <img src="https://i.imgur.com/9D75h7G.jpg" alt="Admin Dashboard" width="400"/>
+    <img src="https://i.imgur.com/KtLGgQW.jpg" alt="Lịch hẹn" width="400"/>
+</div>
 
-### Premium Partners
+## 🔧 Hướng Dẫn Cài Đặt
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Yêu Cầu Hệ Thống
+- PHP >= 8.1
+- MySQL >= 5.7
+- Composer
+- Node.js & NPM
 
-## Contributing
+### Các Bước Cài Đặt
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. **Clone dự án**
+   ```bash
+   git clone https://github.com/hieuhuynh113/laravel_barber_app.git
+   cd laravel_barber_app
+   ```
 
-## Code of Conduct
+2. **Cài đặt các gói phụ thuộc**
+   ```bash
+   composer install
+   npm install
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3. **Thiết lập môi trường**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-## Security Vulnerabilities
+4. **Cấu hình cơ sở dữ liệu**
+   - Chỉnh sửa file `.env` với thông tin cơ sở dữ liệu của bạn
+   ```
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=barber_shop
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. **Chạy migration và seeder**
+   ```bash
+   php artisan migrate --seed
+   ```
 
-## License
+6. **Liên kết storage**
+   ```bash
+   php artisan storage:link
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+7. **Khởi động ứng dụng**
+   ```bash
+   php artisan serve
+   npm run dev
+   ```
+
+8. **Truy cập ứng dụng**
+   - Trang khách hàng: http://localhost:8000
+   - Trang quản trị: http://localhost:8000/admin
+     - Tài khoản admin: admin@example.com
+     - Mật khẩu: password
+
+## 🔒 Tài Khoản Mặc Định
+
+- **Admin**
+  - Email: admin@example.com
+  - Mật khẩu: password
+
+- **Thợ cắt tóc**
+  - Email: barber@example.com
+  - Mật khẩu: password
+
+- **Khách hàng**
+  - Email: customer@example.com
+  - Mật khẩu: password
+
+## 📝 Giấy Phép
+
+Dự án này được phát hành dưới giấy phép MIT.
+
+## 📞 Liên Hệ
+
+Nếu bạn có câu hỏi hoặc góp ý, vui lòng liên hệ qua email: [hieuhuynh113@gmail.com](mailto:hieuhuynh113@gmail.com)
+
+---
+
+<p align="center">Được phát triển với ❤️ bởi Hiếu Huỳnh</p>
