@@ -11,7 +11,7 @@
             @foreach($services as $service)
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 service-card">
-                    <img src="{{ asset($service->image) }}" class="card-img-top" alt="{{ $service->name }}">
+                    <img src="{{ asset('storage/' . $service->image) }}" class="card-img-top" alt="{{ $service->name }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ $service->name }}</h5>
                         <p class="card-text">{{ Str::limit($service->description, 150) }}</p>
@@ -152,7 +152,7 @@
         
         <div class="text-center mt-5">
             <p class="mb-3">Còn câu hỏi khác? Liên hệ với chúng tôi</p>
-            <a href="{{ route('contact') }}" class="btn btn-primary">Liên hệ ngay</a>
+            <a href="{{ route('contact.index') }}" class="btn btn-primary">Liên hệ ngay</a>
         </div>
     </div>
 </section>

@@ -12,7 +12,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $role = $request->input('role', 'customer');
+        $role = $request->input('role');
         $search = $request->input('search');
         
         $query = User::query();
@@ -29,7 +29,7 @@ class UserController extends Controller
             });
         }
         
-        $users = $query->latest()->paginate(10);
+        $users = $query->latest()->paginate(10)->withQueryString();
         
         return view('admin.users.index', compact('users', 'role', 'search'));
     }

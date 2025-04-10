@@ -137,18 +137,23 @@ class AppointmentController extends Controller
             $slot['booked'] = $booked;
         }
         
-        // Kiểm tra số lượng lịch hẹn trong ngày
+        // Kiểm tra số lượng lịch hẹn trong ngày theo thiết lập của thợ cắt tóc
         $appointmentCount = $appointments->count();
-        $maxAppointmentsPerDay = 20; // Giới hạn 20 khách một ngày
+        $maxAppointments = $schedule->max_appointments ?? 3; // Mặc định là 3 nếu không được thiết lập
         
-        // Nếu đã đủ 20 khách, đánh dấu tất cả slot là đã đặt
-        if ($appointmentCount >= $maxAppointmentsPerDay) {
+        // Nếu đã đạt tới số lượng lịch hẹn tối đa, đánh dấu tất cả slot là đã đặt
+        if ($appointmentCount >= $maxAppointments) {
             foreach ($slots as &$slot) {
                 $slot['booked'] = true;
             }
         }
         
-        return $slots;
+        // Lọc ra các khung giờ còn trống
+        $availableSlots = array_filter($slots, function($slot) {
+            return !$slot['booked'];
+        });
+        
+        return array_values($availableSlots);
     }
     
     public function checkAvailability(Request $request)
@@ -246,38 +251,28 @@ class AppointmentController extends Controller
             return redirect()->route('appointment.step1');
         }
         
-        $services = session('appointment_services');
-        $barber = session('appointment_barber');
-        $date = session('appointment_date');
-        $startTime = session('appointment_start_time');
-        $endTime = session('appointment_end_time');
-        $customerName = session('appointment_customer_name');
-        $customerEmail = session('appointment_customer_email');
-        $customerPhone = session('appointment_customer_phone');
-        $notes = session('appointment_notes');
-        $paymentMethod = session('appointment_payment_method');
+        // Nếu lịch hẹn đã được tạo, lấy từ database
+        if (session('appointment_created') && session('appointment_id')) {
+            $appointment = \App\Models\Appointment::with(['services', 'barber.user'])->find(session('appointment_id'));
+            
+            if ($appointment) {
+                return view('frontend.appointment.step6', compact('appointment'));
+            }
+        }
         
-        $totalPrice = $services->sum('price');
-        
-        return view('frontend.appointment.step6', compact(
-            'services',
-            'barber',
-            'date',
-            'startTime',
-            'endTime',
-            'customerName',
-            'customerEmail',
-            'customerPhone',
-            'notes',
-            'paymentMethod',
-            'totalPrice'
-        ));
+        // Nếu chưa tạo lịch hẹn, chuyển hướng đến trang lưu lịch hẹn
+        return redirect()->route('appointment.complete');
     }
     
     public function complete(Request $request)
     {
         if (!session('appointment_services') || !session('appointment_barber') || !session('appointment_date') || !session('appointment_customer_name') || !session('appointment_payment_method')) {
             return redirect()->route('appointment.step1');
+        }
+        
+        // Nếu đã tạo lịch hẹn rồi, chuyển hướng đến trang xác nhận
+        if (session('appointment_created')) {
+            return redirect()->route('appointment.step6');
         }
         
         // Lấy dữ liệu từ session
@@ -293,11 +288,11 @@ class AppointmentController extends Controller
         $paymentMethod = session('appointment_payment_method');
         
         // Tạo mã đặt chỗ
-        $bookingCode = 'BK-' . strtoupper(Str::random(8));
+        $bookingCode = 'BK-' . strtoupper(\Illuminate\Support\Str::random(8));
         
         // Tạo lịch hẹn
-        $appointment = new Appointment();
-        $appointment->user_id = Auth::id(); // Nếu đã đăng nhập
+        $appointment = new \App\Models\Appointment();
+        $appointment->user_id = \Illuminate\Support\Facades\Auth::id(); // Nếu đã đăng nhập
         $appointment->barber_id = $barber->id;
         $appointment->appointment_date = $date;
         $appointment->start_time = $startTime;
@@ -305,8 +300,8 @@ class AppointmentController extends Controller
         $appointment->status = 'pending';
         $appointment->booking_code = $bookingCode;
         $appointment->customer_name = $customerName;
-        $appointment->customer_email = $customerEmail;
-        $appointment->customer_phone = $customerPhone;
+        $appointment->email = $customerEmail;
+        $appointment->phone = $customerPhone;
         $appointment->payment_method = $paymentMethod;
         $appointment->payment_status = 'pending';
         $appointment->notes = $notes;
@@ -320,21 +315,11 @@ class AppointmentController extends Controller
         // Gửi email xác nhận
         // TODO: Tạo email template và gửi email
         
-        // Xóa dữ liệu session
-        $request->session()->forget([
-            'appointment_services',
-            'appointment_barber',
-            'appointment_date',
-            'appointment_start_time',
-            'appointment_end_time',
-            'appointment_customer_name',
-            'appointment_customer_email',
-            'appointment_customer_phone',
-            'appointment_notes',
-            'appointment_payment_method',
-        ]);
+        // Đánh dấu lịch hẹn đã được tạo
+        session(['appointment_created' => true]);
+        session(['appointment_id' => $appointment->id]);
         
-        // Trả về trang hoàn thành
-        return view('frontend.appointment.complete', compact('appointment', 'services', 'barber'));
+        // Trả về trang xác nhận
+        return redirect()->route('appointment.step6');
     }
 }

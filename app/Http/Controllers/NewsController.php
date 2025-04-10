@@ -19,7 +19,7 @@ class NewsController extends Controller
         }
         
         $news = $query->latest()->paginate(6);
-        $categories = Category::news()->active()->get();
+        $categories = Category::where('type', 'news')->where('status', 1)->get();
         
         return view('frontend.news.index', compact('news', 'categories', 'categoryId'));
     }

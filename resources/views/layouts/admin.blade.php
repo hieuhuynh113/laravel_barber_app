@@ -61,6 +61,12 @@
                     </a>
                 </li>
                 
+                <li class="{{ request()->routeIs('admin.schedules.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.schedules.index') }}">
+                        <i class="fas fa-calendar-alt me-2"></i> Quản lý lịch làm việc
+                    </a>
+                </li>
+                
                 <li class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.users.index') }}">
                         <i class="fas fa-users me-2"></i> Người dùng

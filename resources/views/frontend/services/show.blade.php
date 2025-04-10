@@ -16,7 +16,7 @@
         <div class="row mt-4">
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <div class="position-relative">
-                    <img src="{{ asset($service->image) }}" alt="{{ $service->name }}" class="img-fluid rounded shadow">
+                    <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" class="img-fluid rounded shadow">
                     <div class="position-absolute top-0 end-0 bg-primary text-white p-3 rounded-start" style="transform: translateY(30px);">
                         <h4 class="mb-0">{{ number_format($service->price) }} VNĐ</h4>
                     </div>
@@ -26,7 +26,7 @@
                     @if($service->gallery_images)
                         @foreach(json_decode($service->gallery_images) as $galleryImage)
                             <div class="col-3 mt-2">
-                                <img src="{{ asset($galleryImage) }}" alt="{{ $service->name }}" class="img-fluid rounded cursor-pointer gallery-image" data-src="{{ asset($galleryImage) }}">
+                                <img src="{{ asset('storage/' . $galleryImage) }}" alt="{{ $service->name }}" class="img-fluid rounded cursor-pointer gallery-image" data-src="{{ asset('storage/' . $galleryImage) }}">
                             </div>
                         @endforeach
                     @endif
@@ -106,7 +106,7 @@
                             <div class="card mb-3">
                                 <div class="card-body">
                                     <div class="d-flex mb-3">
-                                        <img src="{{ asset($review->user->avatar ?? 'images/default-avatar.jpg') }}" class="rounded-circle me-3" width="50" height="50" alt="{{ $review->user->name }}">
+                                        <img src="{{ $review->user->avatar ? asset('storage/' . $review->user->avatar) : asset('images/default-avatar.jpg') }}" class="rounded-circle me-3" width="50" height="50" alt="{{ $review->user->name }}">
                                         <div>
                                             <h6 class="mb-0">{{ $review->user->name }}</h6>
                                             <div class="small text-muted">{{ $review->created_at->format('d/m/Y') }}</div>
@@ -257,7 +257,7 @@
             @foreach($relatedServices as $relatedService)
             <div class="col-md-6 col-lg-3 mb-4">
                 <div class="card h-100 service-card">
-                    <img src="{{ asset($relatedService->image) }}" class="card-img-top" alt="{{ $relatedService->name }}">
+                    <img src="{{ asset('storage/' . $relatedService->image) }}" class="card-img-top" alt="{{ $relatedService->name }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ $relatedService->name }}</h5>
                         <p class="card-text">{{ Str::limit($relatedService->description, 80) }}</p>

@@ -15,12 +15,14 @@ class BarberSchedule extends Model
         'start_time',
         'end_time',
         'is_day_off',
+        'max_appointments',
     ];
 
     protected $casts = [
         'start_time' => 'datetime',
         'end_time' => 'datetime',
         'is_day_off' => 'boolean',
+        'max_appointments' => 'integer',
     ];
 
     public function barber()

@@ -65,7 +65,8 @@ Route::prefix('appointment')->name('appointment.')->group(function () {
     Route::post('/step-5', [AppointmentController::class, 'postStep5'])->name('post.step5');
     
     Route::get('/step-6', [AppointmentController::class, 'step6'])->name('step6');
-    Route::post('/complete', [AppointmentController::class, 'complete'])->name('complete');
+    Route::get('/complete', [AppointmentController::class, 'complete'])->name('complete');
+    Route::post('/complete', [AppointmentController::class, 'complete'])->name('post.complete');
 });
 
 // Auth Routes
@@ -98,6 +99,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     // Barber Routes
     Route::resource('barbers', \App\Http\Controllers\Admin\BarberController::class);
     
+    // Barber Schedule Routes
+    Route::resource('schedules', \App\Http\Controllers\Admin\BarberScheduleController::class);
+    Route::post('schedules/batch-update', [\App\Http\Controllers\Admin\BarberScheduleController::class, 'updateBatch'])->name('schedules.batch-update');
+    
     // Appointment Routes
     Route::get('appointments/calendar', [\App\Http\Controllers\Admin\AppointmentController::class, 'calendar'])->name('appointments.calendar');
     Route::get('appointments/get-appointments', [\App\Http\Controllers\Admin\AppointmentController::class, 'getAppointments'])->name('appointments.getAppointments');
@@ -115,6 +120,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     // News Routes
     Route::resource('news', \App\Http\Controllers\Admin\NewsController::class);
     Route::post('news/{news}/toggle-featured', [\App\Http\Controllers\Admin\NewsController::class, 'toggleFeatured'])->name('news.toggleFeatured');
+    
+    // Image Upload for CKEditor
+    Route::post('upload/image', [\App\Http\Controllers\Admin\UploadController::class, 'uploadImage'])->name('upload.image');
     
     // Contact Routes
     Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class)->except(['create', 'store', 'edit', 'update']);

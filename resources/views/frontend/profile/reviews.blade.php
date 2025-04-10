@@ -7,9 +7,9 @@
     <div class="col-md-3">
         <div class="card mb-4">
             <div class="card-body text-center">
-                <img src="{{ $user->avatar ? asset($user->avatar) : asset('images/avatar-placeholder.jpg') }}" alt="{{ Auth::user()->name }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
-                <h5 class="card-title">{{ Auth::user()->name }}</h5>
-                <p class="text-muted">Thành viên từ {{ Auth::user()->created_at->format('d/m/Y') }}</p>
+                <img src="{{ $user->avatar ? asset($user->avatar) : asset('images/avatar-placeholder.jpg') }}" alt="{{ $user->name }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                <h5 class="card-title">{{ $user->name }}</h5>
+                <p class="text-muted">Thành viên từ {{ $user->created_at->format('d/m/Y') }}</p>
                 <a href="{{ route('profile.edit') }}" class="btn btn-primary mt-2">Chỉnh sửa hồ sơ</a>
             </div>
         </div>

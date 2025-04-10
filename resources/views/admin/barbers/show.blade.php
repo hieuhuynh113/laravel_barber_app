@@ -128,5 +128,24 @@
             </div>
         </div>
     </div>
+
+    <div class="mt-3">
+        <a href="{{ route('admin.barbers.edit', $barber->id) }}" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Chỉnh sửa
+        </a>
+        <a href="{{ route('admin.schedules.index', ['barber_id' => $barber->id]) }}" class="btn btn-info">
+            <i class="fas fa-calendar-alt"></i> Quản lý lịch làm việc
+        </a>
+        <form action="{{ route('admin.barbers.destroy', $barber->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa thợ cắt tóc này?');">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Xóa
+            </button>
+        </form>
+        <a href="{{ route('admin.barbers.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
 </div>
 @endsection 

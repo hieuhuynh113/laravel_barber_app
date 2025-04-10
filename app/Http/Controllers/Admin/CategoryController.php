@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -17,9 +18,10 @@ class CategoryController extends Controller
         return view('admin.categories.index', compact('categories', 'type'));
     }
     
-    public function create()
+    public function create(Request $request)
     {
-        return view('admin.categories.create');
+        $type = $request->input('type', 'service');
+        return view('admin.categories.create', compact('type'));
     }
     
     public function store(Request $request)

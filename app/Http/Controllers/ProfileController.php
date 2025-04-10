@@ -24,7 +24,7 @@ class ProfileController extends Controller
             ->orderBy('appointment_date', 'desc')
             ->paginate(10);
             
-        return view('frontend.profile.appointments', compact('appointments'));
+        return view('frontend.profile.appointments', compact('appointments', 'user'));
     }
     
     public function edit()
@@ -68,7 +68,7 @@ class ProfileController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
             
-        return view('frontend.profile.reviews', compact('reviews'));
+        return view('frontend.profile.reviews', compact('reviews', 'user'));
     }
     
     public function deleteReview($id)

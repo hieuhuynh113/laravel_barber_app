@@ -18,10 +18,12 @@ class News extends Model
         'image',
         'status',
         'view_count',
+        'is_featured',
     ];
 
     protected $casts = [
         'status' => 'boolean',
+        'is_featured' => 'boolean',
     ];
 
     public function category()

@@ -85,7 +85,7 @@
             @foreach($featuredServices as $service)
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card h-100">
-                    <img src="{{ asset($service->image) }}" class="card-img-top" alt="{{ $service->name }}">
+                    <img src="{{ asset('storage/' . $service->image) }}" class="card-img-top" alt="{{ $service->name }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ $service->name }}</h5>
                         <p class="card-text">{{ Str::limit($service->description, 100) }}</p>
@@ -115,7 +115,7 @@
             @foreach($barbers as $barber)
             <div class="col-md-6 col-lg-3 mb-4">
                 <div class="barber-item">
-                    <img src="{{ asset($barber->user->avatar) }}" alt="{{ $barber->user->name }}" class="barber-image">
+                    <img src="{{ asset('storage/' . $barber->user->avatar) }}" alt="{{ $barber->user->name }}" class="barber-image">
                     <h4 class="barber-name">{{ $barber->user->name }}</h4>
                     <p class="barber-position">Thợ cắt tóc {{ $barber->experience > 0 ? '- ' . $barber->experience . ' năm kinh nghiệm' : '' }}</p>
                     <p class="barber-description mb-3">{{ Str::limit($barber->description, 100) }}</p>
@@ -145,7 +145,7 @@
                         <p>Dịch vụ cắt tóc tại đây thực sự tuyệt vời. Tôi rất hài lòng với kiểu tóc mới và sẽ quay lại lần sau.</p>
                     </div>
                     <div class="testimonial-author">
-                        <img src="{{ asset('images/client1.jpg') }}" alt="Nguyễn Văn A">
+                        <img src="{{ asset('images/client1.jpg') }}" alt="Nguyễn Văn A" width="50" height="50" class="rounded-circle">
                         <div class="testimonial-author-info">
                             <h5>Nguyễn Văn A</h5>
                             <p>Khách hàng thường xuyên</p>
@@ -160,7 +160,7 @@
                         <p>Thợ cắt tóc ở đây rất chuyên nghiệp và thân thiện. Không gian cũng rất thoải mái và sang trọng.</p>
                     </div>
                     <div class="testimonial-author">
-                        <img src="{{ asset('images/client2.jpg') }}" alt="Trần Văn B">
+                        <img src="{{ asset('images/client2.jpg') }}" alt="Trần Văn B" width="50" height="50" class="rounded-circle">
                         <div class="testimonial-author-info">
                             <h5>Trần Văn B</h5>
                             <p>Khách hàng mới</p>
@@ -175,7 +175,7 @@
                         <p>Tôi đã thử nhiều nơi nhưng Barber Shop là nơi tôi cảm thấy hài lòng nhất. Sẽ giới thiệu cho bạn bè.</p>
                     </div>
                     <div class="testimonial-author">
-                        <img src="{{ asset('images/client3.jpg') }}" alt="Lê Văn C">
+                        <img src="{{ asset('images/client3.jpg') }}" alt="Lê Văn C" width="50" height="50" class="rounded-circle">
                         <div class="testimonial-author-info">
                             <h5>Lê Văn C</h5>
                             <p>Khách hàng VIP</p>
@@ -197,7 +197,7 @@
             @foreach($latestNews as $item)
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card h-100">
-                    <img src="{{ asset($item->image) }}" class="card-img-top" alt="{{ $item->title }}">
+                    <img src="{{ asset('storage/' . $item->image) }}" class="card-img-top" alt="{{ $item->title }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ $item->title }}</h5>
                         <p class="card-text">{{ Str::limit($item->content, 120) }}</p>
