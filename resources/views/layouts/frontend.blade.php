@@ -5,32 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title') - Barber Shop</title>
-    
+
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+
     <!-- SEO Meta Tags -->
     <meta name="description" content="@yield('meta_description', 'Barber Shop - Nơi cung cấp dịch vụ cắt tóc và chăm sóc tóc chuyên nghiệp')">
     <meta name="keywords" content="@yield('meta_keywords', 'cắt tóc, barber, tóc nam, barber shop')">
-    
+
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}" type="image/x-icon">
-    
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/frontend.css') }}">
-    
+
+    <!-- Page Specific CSS -->
     @yield('styles')
 </head>
-<body>
+<body class="{{ Auth::check() ? 'user-logged-in' : 'user-guest' }}">
     <!-- Header -->
     <header class="site-header">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -66,8 +67,8 @@
                         </li>
                     </ul>
                     <div class="d-flex align-items-center">
-                        <a href="{{ route('appointment.step1') }}" class="btn btn-primary me-3">Đặt lịch hẹn</a>
-                        
+                        <a href="{{ route('appointment.step1') }}" class="btn btn-primary me-3 appointment-btn">Đặt lịch hẹn</a>
+
                         @guest
                             <a href="{{ route('login') }}" class="btn btn-outline-light me-2">Đăng nhập</a>
                             <a href="{{ route('register') }}" class="btn btn-light">Đăng ký</a>
@@ -106,7 +107,7 @@
     <!-- Main Content -->
     <main>
         @yield('hero')
-        
+
         <div class="container py-5">
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
@@ -121,7 +122,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
-            
+
             @yield('content')
         </div>
     </main>
@@ -149,7 +150,7 @@
                     </ul>
                     <div class="mt-4">
                         <h6>Đặt lịch ngay</h6>
-                        <a href="{{ route('appointment.step1') }}" class="btn btn-primary mt-2">Đặt lịch hẹn</a>
+                        <a href="{{ route('appointment.step1') }}" class="btn btn-primary mt-2 appointment-btn">Đặt lịch hẹn</a>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -169,13 +170,14 @@
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    
+
     <!-- Custom JS -->
     <script src="{{ asset('js/frontend.js') }}"></script>
-    
+    <script src="{{ asset('js/appointment-auth-check.js') }}"></script>
+
     @yield('scripts')
 </body>
-</html> 
+</html>

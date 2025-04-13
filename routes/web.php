@@ -47,23 +47,23 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact.index
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Appointment Routes
-Route::prefix('appointment')->name('appointment.')->group(function () {
+Route::prefix('appointment')->name('appointment.')->middleware(\App\Http\Middleware\CheckAppointmentAuth::class)->group(function () {
     Route::get('/step-1', [AppointmentController::class, 'step1'])->name('step1');
     Route::post('/step-1', [AppointmentController::class, 'postStep1'])->name('post.step1');
-    
+
     Route::get('/step-2', [AppointmentController::class, 'step2'])->name('step2');
     Route::post('/step-2', [AppointmentController::class, 'postStep2'])->name('post.step2');
-    
+
     Route::get('/step-3', [AppointmentController::class, 'step3'])->name('step3');
     Route::post('/step-3', [AppointmentController::class, 'postStep3'])->name('post.step3');
     Route::post('/check-availability', [AppointmentController::class, 'checkAvailability'])->name('check-availability');
-    
+
     Route::get('/step-4', [AppointmentController::class, 'step4'])->name('step4');
     Route::post('/step-4', [AppointmentController::class, 'postStep4'])->name('post.step4');
-    
+
     Route::get('/step-5', [AppointmentController::class, 'step5'])->name('step5');
     Route::post('/step-5', [AppointmentController::class, 'postStep5'])->name('post.step5');
-    
+
     Route::get('/step-6', [AppointmentController::class, 'step6'])->name('step6');
     Route::get('/complete', [AppointmentController::class, 'complete'])->name('complete');
     Route::post('/complete', [AppointmentController::class, 'complete'])->name('post.complete');
@@ -71,6 +71,12 @@ Route::prefix('appointment')->name('appointment.')->group(function () {
 
 // Auth Routes
 Auth::routes();
+
+// Email Verification Routes
+Route::post('/register/verify', [\App\Http\Controllers\EmailVerificationController::class, 'sendOTP'])->name('verification.send');
+Route::get('/register/verify', [\App\Http\Controllers\EmailVerificationController::class, 'showVerificationForm'])->name('verification.form');
+Route::post('/register/verify/confirm', [\App\Http\Controllers\EmailVerificationController::class, 'verifyOTP'])->name('verification.verify');
+Route::post('/register/verify/resend', [\App\Http\Controllers\EmailVerificationController::class, 'resendOTP'])->name('verification.resend');
 
 // Profile Routes
 Route::middleware('auth')->prefix('profile')->name('profile.')->group(function () {
@@ -86,51 +92,51 @@ Route::middleware('auth')->prefix('profile')->name('profile.')->group(function (
 // Admin Routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware\AdminAccess::class])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     // Category Routes
     Route::resource('categories', CategoryController::class);
-    
+
     // Service Routes
     Route::resource('services', AdminServiceController::class);
-    
+
     // Product Routes
     Route::resource('products', AdminProductController::class);
-    
+
     // Barber Routes
     Route::resource('barbers', \App\Http\Controllers\Admin\BarberController::class);
-    
+
     // Barber Schedule Routes
     Route::resource('schedules', \App\Http\Controllers\Admin\BarberScheduleController::class);
     Route::post('schedules/batch-update', [\App\Http\Controllers\Admin\BarberScheduleController::class, 'updateBatch'])->name('schedules.batch-update');
-    
+
     // Appointment Routes
     Route::get('appointments/calendar', [\App\Http\Controllers\Admin\AppointmentController::class, 'calendar'])->name('appointments.calendar');
     Route::get('appointments/get-appointments', [\App\Http\Controllers\Admin\AppointmentController::class, 'getAppointments'])->name('appointments.getAppointments');
     Route::resource('appointments', \App\Http\Controllers\Admin\AppointmentController::class);
     Route::post('appointments/{appointment}/update-status', [\App\Http\Controllers\Admin\AppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
-    
+
     // Invoice Routes
     Route::resource('invoices', \App\Http\Controllers\Admin\InvoiceController::class);
     Route::get('invoices/{invoice}/print', [\App\Http\Controllers\Admin\InvoiceController::class, 'print'])->name('invoices.print');
     Route::get('invoices-statistics', [\App\Http\Controllers\Admin\InvoiceController::class, 'statistics'])->name('invoices.statistics');
-    
+
     // User Routes
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
-    
+
     // News Routes
     Route::resource('news', \App\Http\Controllers\Admin\NewsController::class);
     Route::post('news/{news}/toggle-featured', [\App\Http\Controllers\Admin\NewsController::class, 'toggleFeatured'])->name('news.toggleFeatured');
-    
+
     // Image Upload for CKEditor
     Route::post('upload/image', [\App\Http\Controllers\Admin\UploadController::class, 'uploadImage'])->name('upload.image');
-    
+
     // Contact Routes
     Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class)->except(['create', 'store', 'edit', 'update']);
     Route::post('contacts/{contact}/reply', [\App\Http\Controllers\Admin\ContactController::class, 'reply'])->name('contacts.reply');
     Route::post('contacts/{contact}/mark-as-read', [\App\Http\Controllers\Admin\ContactController::class, 'markAsRead'])->name('contacts.markAsRead');
     Route::post('contacts/{contact}/mark-as-unread', [\App\Http\Controllers\Admin\ContactController::class, 'markAsUnread'])->name('contacts.markAsUnread');
     Route::post('contacts/bulk-action', [\App\Http\Controllers\Admin\ContactController::class, 'bulkAction'])->name('contacts.bulkAction');
-    
+
     // Setting Routes
     Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
     Route::post('settings/general', [\App\Http\Controllers\Admin\SettingController::class, 'updateGeneral'])->name('settings.updateGeneral');

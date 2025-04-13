@@ -64,11 +64,12 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        
+
         // Custom middlewares
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
         'admin.access' => \App\Http\Middleware\AdminAccess::class,
         'barber' => \App\Http\Middleware\BarberMiddleware::class,
         'check.admin' => \App\Http\Middleware\CheckAdminRole::class,
+        'check.appointment.auth' => \App\Http\Middleware\CheckAppointmentAuth::class,
     ];
 }

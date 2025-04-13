@@ -33,6 +33,9 @@ class DashboardController extends Controller
             ->where('status', 'completed')
             ->count();
 
-        return view('barber.dashboard', compact('todayAppointments', 'upcomingAppointments', 'totalAppointments', 'completedAppointments'));
+        // Lấy tên của thợ cắt tóc
+        $barberName = Auth::user()->name;
+
+        return view('barber.dashboard', compact('todayAppointments', 'upcomingAppointments', 'totalAppointments', 'completedAppointments', 'barberName'));
     }
 }

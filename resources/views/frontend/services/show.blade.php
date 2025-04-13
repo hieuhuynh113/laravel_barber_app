@@ -12,7 +12,7 @@
                 <li class="breadcrumb-item active" aria-current="page">{{ $service->name }}</li>
             </ol>
         </nav>
-        
+
         <div class="row mt-4">
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <div class="position-relative">
@@ -21,7 +21,7 @@
                         <h4 class="mb-0">{{ number_format($service->price) }} VNĐ</h4>
                     </div>
                 </div>
-                
+
                 <div class="row mt-3">
                     @if($service->gallery_images)
                         @foreach(json_decode($service->gallery_images) as $galleryImage)
@@ -32,10 +32,10 @@
                     @endif
                 </div>
             </div>
-            
+
             <div class="col-lg-6">
                 <h1 class="mb-3">{{ $service->name }}</h1>
-                
+
                 <div class="mb-4">
                     <div class="stars">
                         @for($i = 1; $i <= 5; $i++)
@@ -48,14 +48,14 @@
                         <span class="ms-2">({{ $service->reviews_count }} đánh giá)</span>
                     </div>
                 </div>
-                
+
                 <div class="mb-4">
                     <h5 class="mb-3">Mô tả dịch vụ</h5>
                     <div class="service-description">
                         {!! $service->description !!}
                     </div>
                 </div>
-                
+
                 <div class="mb-4">
                     <h5 class="mb-3">Thời gian thực hiện</h5>
                     <div class="d-flex align-items-center mb-2">
@@ -63,7 +63,7 @@
                         <span>{{ $service->duration }} phút</span>
                     </div>
                 </div>
-                
+
                 @if($service->includes)
                 <div class="mb-4">
                     <h5 class="mb-3">Bao gồm</h5>
@@ -76,9 +76,9 @@
                     </ul>
                 </div>
                 @endif
-                
+
                 <div class="d-grid gap-2">
-                    <a href="{{ route('appointment.step1', ['service_id' => $service->id]) }}" class="btn btn-primary btn-lg">Đặt lịch ngay</a>
+                    <a href="{{ route('appointment.step1', ['service_id' => $service->id]) }}" class="btn btn-primary btn-lg appointment-btn">Đặt lịch ngay</a>
                     <a href="{{ route('services.index') }}" class="btn btn-outline-secondary">Xem các dịch vụ khác</a>
                 </div>
             </div>
@@ -96,7 +96,7 @@
                 <button class="nav-link" id="faq-tab" data-bs-toggle="tab" data-bs-target="#faq" type="button" role="tab" aria-controls="faq" aria-selected="false">Câu hỏi thường gặp</button>
             </li>
         </ul>
-        
+
         <div class="tab-content" id="serviceTabContent">
             <div class="tab-pane fade show active" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
                 <div class="row">
@@ -112,7 +112,7 @@
                                             <div class="small text-muted">{{ $review->created_at->format('d/m/Y') }}</div>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="stars mb-2">
                                         @for($i = 1; $i <= 5; $i++)
                                             @if($i <= $review->rating)
@@ -122,9 +122,9 @@
                                             @endif
                                         @endfor
                                     </div>
-                                    
+
                                     <p class="card-text">{{ $review->comment }}</p>
-                                    
+
                                     @if($review->images)
                                     <div class="review-images mt-3">
                                         <div class="row">
@@ -139,7 +139,7 @@
                                 </div>
                             </div>
                             @endforeach
-                            
+
                             <div class="mt-4">
                                 {{ $reviews->links() }}
                             </div>
@@ -149,13 +149,13 @@
                             </div>
                         @endif
                     </div>
-                    
+
                     <div class="col-lg-4">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Đánh giá dịch vụ</h5>
                                 <p class="card-text">Hãy chia sẻ trải nghiệm của bạn về dịch vụ này.</p>
-                                
+
                                 @auth
                                 <form action="{{ route('services.review', $service->id) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
@@ -179,17 +179,17 @@
                                             <i class="fas fa-star text-warning rating-star" data-value="5"></i>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <label for="comment" class="form-label">Nhận xét</label>
                                         <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <label for="review_images" class="form-label">Ảnh (tùy chọn)</label>
                                         <input class="form-control" type="file" id="review_images" name="review_images[]" multiple accept="image/*">
                                     </div>
-                                    
+
                                     <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
                                 </form>
                                 @else
@@ -202,7 +202,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="tab-pane fade" id="faq" role="tabpanel" aria-labelledby="faq-tab">
                 <div class="accordion" id="faqAccordion">
                     <div class="accordion-item">
@@ -217,7 +217,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="faqTwo">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseTwo" aria-expanded="false" aria-controls="faqCollapseTwo">
@@ -230,7 +230,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="faqThree">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseThree" aria-expanded="false" aria-controls="faqCollapseThree">
@@ -252,7 +252,7 @@
 <section class="py-5 bg-light">
     <div class="container">
         <h2 class="text-center mb-4">Dịch vụ tương tự</h2>
-        
+
         <div class="row">
             @foreach($relatedServices as $relatedService)
             <div class="col-md-6 col-lg-3 mb-4">
@@ -281,12 +281,12 @@
         // Xử lý đánh giá sao
         const ratingStars = document.querySelectorAll('.rating-star');
         const ratingInput = document.getElementById('rating');
-        
+
         ratingStars.forEach(star => {
             star.addEventListener('click', function() {
                 const value = this.getAttribute('data-value');
                 ratingInput.value = value;
-                
+
                 // Cập nhật hiển thị sao
                 ratingStars.forEach(s => {
                     if (s.getAttribute('data-value') <= value) {
@@ -299,11 +299,11 @@
                 });
             });
         });
-        
+
         // Xử lý gallery ảnh
         const galleryImages = document.querySelectorAll('.gallery-image');
         const mainImage = document.querySelector('.position-relative img');
-        
+
         galleryImages.forEach(img => {
             img.addEventListener('click', function() {
                 const src = this.getAttribute('data-src');
@@ -312,4 +312,4 @@
         });
     });
 </script>
-@endsection 
+@endsection

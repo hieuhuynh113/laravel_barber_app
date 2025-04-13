@@ -15,19 +15,25 @@ body {
     color: #333;
     line-height: 1.6;
     background-color: #f8f9fa;
+    overflow-x: hidden;
+    padding-top: 0;
 }
 
 /* Header Styles */
 .site-header {
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 1000;
+    left: 0;
+    right: 0;
     width: 100%;
+    z-index: 1050;
+    background-color: var(--dark-color);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .navbar {
     padding: 15px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand img {
@@ -49,7 +55,61 @@ body {
     border-bottom: 2px solid var(--primary-color);
 }
 
-/* Hero Section */
+/* Main content padding */
+main {
+    padding-top: 80px; /* Default padding for all pages */
+}
+
+/* Hero carousel exception */
+#heroCarousel {
+    margin-top: -80px; /* Offset hero carousel by header height */
+}
+
+/* Ensure hero is displayed correctly */
+#heroCarousel .carousel-item {
+    height: 100vh;
+    min-height: 600px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: flex;
+    align-items: center;
+    filter: brightness(1.1);
+}
+
+#heroCarousel .carousel-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+#heroCarousel .hero-content {
+    position: relative;
+    z-index: 2;
+    color: white;
+    width: 100%;
+}
+
+#heroCarousel .hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+#heroCarousel .hero-description {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+}
+
+/* Hero Section (Original) */
 .hero-section {
     background-color: var(--dark-color);
     color: white;
@@ -182,6 +242,38 @@ body {
     margin-bottom: 1.5rem;
 }
 
+/* Category Filter Styles */
+.category-filter {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.category-filter .btn {
+    margin: 0.25rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: 50px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.category-filter .btn-outline-primary {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.category-filter .btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.category-filter .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
 /* Service Styles */
 .service-item {
     text-align: center;
@@ -254,43 +346,6 @@ body {
     background-color: var(--primary-color);
     color: white;
     transform: translateY(-3px);
-}
-
-/* Testimonial Styles */
-.testimonial-item {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    margin-bottom: 2rem;
-}
-
-.testimonial-text {
-    font-style: italic;
-    margin-bottom: 1.5rem;
-}
-
-.testimonial-author {
-    display: flex;
-    align-items: center;
-}
-
-.testimonial-author img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 1rem;
-}
-
-.testimonial-author-info h5 {
-    margin-bottom: 0.25rem;
-    font-weight: 600;
-}
-
-.testimonial-author-info p {
-    color: var(--secondary-color);
-    margin-bottom: 0;
 }
 
 /* Footer Styles */
@@ -413,11 +468,11 @@ label {
     .hero-title {
         font-size: 2.5rem;
     }
-    
+
     .section-title {
         font-size: 2rem;
     }
-    
+
     .navbar-collapse {
         background-color: var(--dark-color);
         padding: 1rem;
@@ -430,32 +485,230 @@ label {
     .hero-title {
         font-size: 2rem;
     }
-    
+
     .section-title {
         font-size: 1.75rem;
     }
-    
+
     .appointment-steps {
         flex-direction: column;
         align-items: flex-start;
     }
-    
+
     .appointment-steps:before {
         display: none;
     }
-    
+
     .step {
         display: flex;
         align-items: center;
         margin-bottom: 1rem;
     }
-    
+
     .step-number {
         margin: 0 1rem 0 0;
     }
-    
+
     .barber-image {
         width: 150px;
         height: 150px;
     }
-} 
+}
+
+/* Collage Image Styles */
+.barber-collage-container {
+    width: 100%;
+    height: 500px;
+    position: relative;
+}
+
+.collage-image {
+    position: absolute;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.collage-image img {
+    border-radius: 8px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.collage-image-1 {
+    width: 70%;
+    height: 65%;
+    top: 0;
+    left: 0;
+    z-index: 3;
+}
+
+.collage-image-2 {
+    width: 45%;
+    height: 40%;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+}
+
+.collage-image-3 {
+    width: 55%;
+    height: 50%;
+    top: 25%;
+    right: 0;
+    z-index: 1;
+}
+
+.collage-image:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Full-width Sections */
+.full-width-section {
+    position: relative;
+    box-sizing: border-box;
+}
+
+.full-width-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    right: 50%;
+    bottom: 0;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    z-index: -1;
+}
+
+/* Appointment Banner */
+.appointment-banner {
+    background-color: transparent;
+    color: white;
+    position: relative;
+    width: 100%;
+    padding: 80px 0;
+    box-sizing: border-box;
+}
+
+.appointment-banner::before {
+    background-color: var(--primary-color);
+}
+
+.appointment-banner .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Section Services */
+.section-services::before {
+    background-color: #fcf9f5;
+    background-image: none;
+}
+
+/* Section News */
+.section-news::before {
+    background-image: linear-gradient(to bottom, #ffffff, #f8f9fa);
+}
+
+/* Override any potential overflow issues */
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* Điều chỉnh padding-top cho main content khi không có hero carousel */
+main > .container.py-5 {
+    padding-top: 3rem !important; /* Reset to normal Bootstrap py-5 value */
+}
+
+/* Page Header Styles */
+.page-header {
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+}
+
+.full-width-banner {
+    margin-top: -80px; /* Cùng giá trị với padding-top của main */
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    min-height: 420px; /* Tăng chiều cao để banner lớn hơn */
+}
+
+.page-header .display-3 {
+    font-weight: 700;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.page-header .lead {
+    max-width: 680px;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.text-white-75 {
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.z-index-1 {
+    z-index: 1;
+}
+
+.animated {
+    animation-duration: 1s;
+    animation-fill-mode: both;
+}
+
+.fadeInUp {
+    animation-name: fadeInUp;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.breadcrumb-item a:hover {
+    color: #fff !important;
+    text-decoration: underline !important;
+}
+
+/* Full width CTA section */
+.cta-appointment {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    padding: 5rem 0;
+}
+
+.cta-appointment .btn-light {
+    padding: 0.8rem 2.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.cta-appointment .btn-light:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+}

@@ -3,10 +3,16 @@
 @section('title', 'Tin tức')
 
 @section('content')
+@include('partials.page-header', [
+    'title' => 'Tin tức & Sự kiện',
+    'description' => 'Cập nhật những xu hướng tóc mới nhất và tin tức từ Barber Shop',
+    'backgroundImage' => 'images/about-2.jpg'
+])
+
 <section class="py-5 bg-light">
     <div class="container">
         <h1 class="text-center mb-5">Tin tức & Sự kiện</h1>
-        
+
         @if($categories->count() > 0)
         <div class="mb-4">
             <div class="d-flex justify-content-center flex-wrap">
@@ -21,7 +27,7 @@
             </div>
         </div>
         @endif
-        
+
         <div class="row">
             @forelse($news as $item)
             <div class="col-md-6 col-lg-4 mb-4">
@@ -54,7 +60,7 @@
             </div>
             @endforelse
         </div>
-        
+
         <div class="mt-4">
             {{ $news->links() }}
         </div>
@@ -67,7 +73,7 @@
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <h2>Đăng ký nhận thông tin</h2>
                 <p class="lead mb-4">Nhận thông tin mới nhất về xu hướng tóc, khuyến mãi và sự kiện đặc biệt.</p>
-                
+
                 <form action="#" method="POST" class="subscription-form">
                     @csrf
                     <div class="input-group mb-3">
@@ -82,16 +88,21 @@
                     </div>
                 </form>
             </div>
-            
+
             <div class="col-lg-6">
                 <div class="position-relative">
                     <img src="{{ asset('images/newsletter.jpg') }}" alt="Đăng ký nhận thông tin" class="img-fluid rounded shadow">
-                    <div class="position-absolute top-0 start-0 bg-primary text-white p-3 rounded-end" style="transform: translateY(30px);">
-                        <h4 class="mb-0">Cập nhật thường xuyên</h4>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-@endsection 
+
+<section class="py-5 bg-primary text-white text-center cta-appointment">
+    <div class="container">
+        <h2 class="h1 mb-4">Cập nhật tin tức mới nhất</h2>
+        <p class="lead mb-4">Đặt lịch ngay hôm nay để trải nghiệm dịch vụ tuyệt vời tại Barber Shop.</p>
+        <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg appointment-btn">Đặt lịch ngay</a>
+    </div>
+</section>
+@endsection

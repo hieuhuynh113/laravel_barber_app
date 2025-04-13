@@ -3,20 +3,68 @@
 @section('title', 'Trang chủ')
 
 @section('hero')
-<section class="hero-section" style="background-image: url('{{ asset('images/hero-bg.jpg') }}');">
-    <div class="container hero-content">
-        <div class="row">
-            <div class="col-lg-7">
-                <h1 class="hero-title">Phong cách tóc đẳng cấp dành cho quý ông</h1>
-                <p class="hero-description">Trải nghiệm dịch vụ cắt tóc chuyên nghiệp và chăm sóc tóc tuyệt vời tại Barber Shop của chúng tôi.</p>
-                <div class="d-flex gap-3">
-                    <a href="{{ route('appointment.step1') }}" class="btn btn-primary btn-lg">Đặt lịch ngay</a>
-                    <a href="{{ route('services.index') }}" class="btn btn-outline-light btn-lg">Xem dịch vụ</a>
+<div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active" style="background-image: url('{{ asset('images/hero-bg-1.jpg') }}')">
+            <div class="carousel-overlay"></div>
+            <div class="container hero-content">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center">
+                        <h1 class="hero-title">Không Chỉ Là Cắt Tóc, Đó Là Một Trải Nghiệm</h1>
+                        <p class="hero-description mx-auto">Tiệm cắt tóc của chúng tôi là không gian được tạo ra dành riêng cho những người đàn ông đề cao chất lượng, thời gian và vẻ ngoài hoàn hảo.</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{{ route('appointment.step1') }}" class="btn btn-primary btn-lg appointment-btn">Đặt lịch ngay</a>
+                            <a href="{{ route('services.index') }}" class="btn btn-outline-light btn-lg">Xem dịch vụ</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item" style="background-image: url('{{ asset('images/hero-bg-2.jpg') }}')">
+            <div class="carousel-overlay"></div>
+            <div class="container hero-content">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center">
+                        <h1 class="hero-title">Phong Cách Tóc Đẳng Cấp Dành Cho Quý Ông</h1>
+                        <p class="hero-description mx-auto">Trải nghiệm dịch vụ cắt tóc chuyên nghiệp và chăm sóc tóc tuyệt vời tại Barber Shop của chúng tôi.</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{{ route('appointment.step1') }}" class="btn btn-primary btn-lg">Đặt lịch ngay</a>
+                            <a href="{{ route('services.index') }}" class="btn btn-outline-light btn-lg">Xem dịch vụ</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item" style="background-image: url('{{ asset('images/hero-bg-3.jpg') }}')">
+            <div class="carousel-overlay"></div>
+            <div class="container hero-content">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center">
+                        <h1 class="hero-title">Nâng Tầm Phong Cách, Tôn Vinh Cá Tính</h1>
+                        <p class="hero-description mx-auto">Hãy để chúng tôi giúp bạn tỏa sáng với kiểu tóc phù hợp nhất, được thực hiện bởi đội ngũ thợ cắt tóc hàng đầu.</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{{ route('appointment.step1') }}" class="btn btn-primary btn-lg">Đặt lịch ngay</a>
+                            <a href="{{ route('services.index') }}" class="btn btn-outline-light btn-lg">Xem dịch vụ</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</section>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
 @endsection
 
 @section('content')
@@ -25,7 +73,17 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <img src="{{ asset('images/about.jpg') }}" alt="Về chúng tôi" class="img-fluid rounded shadow">
+                <div class="barber-collage-container position-relative">
+                    <div class="collage-image collage-image-1">
+                        <img src="{{ asset('images/about-1.jpg') }}" alt="Barber Shop" class="img-fluid rounded shadow">
+                    </div>
+                    <div class="collage-image collage-image-2">
+                        <img src="{{ asset('images/about-2.jpg') }}" alt="Barber Shop" class="img-fluid rounded shadow">
+                    </div>
+                    <div class="collage-image collage-image-3">
+                        <img src="{{ asset('images/about-3.jpg') }}" alt="Barber Shop" class="img-fluid rounded shadow">
+                    </div>
+                </div>
             </div>
             <div class="col-lg-6">
                 <h2 class="section-title">Về Barber Shop</h2>
@@ -76,11 +134,11 @@
 </section>
 
 <!-- Dịch vụ -->
-<section class="py-5 bg-light">
+<section class="py-5 section-services full-width-section">
     <div class="container">
         <h2 class="section-title text-center">Dịch vụ của chúng tôi</h2>
         <p class="section-description text-center">Chúng tôi cung cấp đa dạng các dịch vụ chăm sóc tóc và cắt tóc chuyên nghiệp.</p>
-        
+
         <div class="row">
             @foreach($featuredServices as $service)
             <div class="col-md-6 col-lg-4 mb-4">
@@ -98,7 +156,7 @@
             </div>
             @endforeach
         </div>
-        
+
         <div class="text-center mt-4">
             <a href="{{ route('services.index') }}" class="btn btn-primary">Xem tất cả dịch vụ</a>
         </div>
@@ -110,7 +168,7 @@
     <div class="container">
         <h2 class="section-title text-center">Đội ngũ thợ cắt tóc</h2>
         <p class="section-description text-center">Gặp gỡ đội ngũ thợ cắt tóc chuyên nghiệp của chúng tôi.</p>
-        
+
         <div class="row">
             @foreach($barbers as $barber)
             <div class="col-md-6 col-lg-3 mb-4">
@@ -131,68 +189,12 @@
     </div>
 </section>
 
-<!-- Đánh giá -->
-<section class="py-5 bg-light">
-    <div class="container">
-        <h2 class="section-title text-center">Khách hàng nói gì</h2>
-        <p class="section-description text-center">Những đánh giá từ khách hàng đã trải nghiệm dịch vụ của chúng tôi.</p>
-        
-        <div class="row">
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="testimonial-item">
-                    <div class="testimonial-text">
-                        <i class="fas fa-quote-left text-primary mb-3" style="font-size: 24px;"></i>
-                        <p>Dịch vụ cắt tóc tại đây thực sự tuyệt vời. Tôi rất hài lòng với kiểu tóc mới và sẽ quay lại lần sau.</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <img src="{{ asset('images/client1.jpg') }}" alt="Nguyễn Văn A" width="50" height="50" class="rounded-circle">
-                        <div class="testimonial-author-info">
-                            <h5>Nguyễn Văn A</h5>
-                            <p>Khách hàng thường xuyên</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="testimonial-item">
-                    <div class="testimonial-text">
-                        <i class="fas fa-quote-left text-primary mb-3" style="font-size: 24px;"></i>
-                        <p>Thợ cắt tóc ở đây rất chuyên nghiệp và thân thiện. Không gian cũng rất thoải mái và sang trọng.</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <img src="{{ asset('images/client2.jpg') }}" alt="Trần Văn B" width="50" height="50" class="rounded-circle">
-                        <div class="testimonial-author-info">
-                            <h5>Trần Văn B</h5>
-                            <p>Khách hàng mới</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="testimonial-item">
-                    <div class="testimonial-text">
-                        <i class="fas fa-quote-left text-primary mb-3" style="font-size: 24px;"></i>
-                        <p>Tôi đã thử nhiều nơi nhưng Barber Shop là nơi tôi cảm thấy hài lòng nhất. Sẽ giới thiệu cho bạn bè.</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <img src="{{ asset('images/client3.jpg') }}" alt="Lê Văn C" width="50" height="50" class="rounded-circle">
-                        <div class="testimonial-author-info">
-                            <h5>Lê Văn C</h5>
-                            <p>Khách hàng VIP</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Tin tức -->
-<section class="py-5">
+<section class="py-5 section-news full-width-section">
     <div class="container">
         <h2 class="section-title text-center">Tin tức & Mẹo</h2>
         <p class="section-description text-center">Cập nhật thông tin mới nhất về xu hướng tóc và mẹo chăm sóc tóc.</p>
-        
+
         <div class="row">
             @foreach($latestNews as $item)
             <div class="col-md-6 col-lg-4 mb-4">
@@ -210,7 +212,7 @@
             </div>
             @endforeach
         </div>
-        
+
         <div class="text-center mt-4">
             <a href="{{ route('news.index') }}" class="btn btn-primary">Xem tất cả tin tức</a>
         </div>
@@ -218,7 +220,7 @@
 </section>
 
 <!-- Đặt lịch -->
-<section class="py-5 bg-primary text-white">
+<section class="appointment-banner full-width-section py-5">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 mb-4 mb-lg-0">
@@ -231,9 +233,9 @@
                 </ul>
             </div>
             <div class="col-lg-4 text-center">
-                <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg px-5 py-3">Đặt lịch ngay</a>
+                <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg px-5 py-3 appointment-btn">Đặt lịch ngay</a>
             </div>
         </div>
     </div>
 </section>
-@endsection 
+@endsection

@@ -3,10 +3,14 @@
 @section('title', 'Sản phẩm')
 
 @section('content')
+@include('partials.page-header', [
+    'title' => 'Sản phẩm của chúng tôi',
+    'description' => 'Khám phá các sản phẩm chăm sóc tóc chất lượng cao từ những thương hiệu nổi tiếng',
+    'backgroundImage' => 'images/hero-bg-3.jpg'
+])
+
 <section class="py-5 bg-light">
     <div class="container">
-        <h1 class="text-center mb-5">Sản phẩm của chúng tôi</h1>
-        
         @if($categories->count() > 0)
         <div class="mb-4">
             <div class="d-flex justify-content-center flex-wrap">
@@ -21,7 +25,7 @@
             </div>
         </div>
         @endif
-        
+
         <div class="row">
             @forelse($products as $product)
             <div class="col-md-6 col-lg-4 mb-4">
@@ -45,7 +49,7 @@
             </div>
             @endforelse
         </div>
-        
+
         <div class="mt-4">
             {{ $products->links() }}
         </div>
@@ -58,7 +62,7 @@
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <h2>Tại sao chọn sản phẩm của chúng tôi?</h2>
                 <p>Barber Shop tự hào cung cấp các sản phẩm chăm sóc tóc và da đầu chất lượng cao. Chúng tôi cam kết chỉ bán những sản phẩm tốt nhất để quý khách có mái tóc khỏe mạnh và đẹp.</p>
-                
+
                 <div class="mt-4">
                     <div class="d-flex mb-3">
                         <div class="feature-icon me-3">
@@ -69,7 +73,7 @@
                             <p class="text-muted">Sản phẩm được nhập khẩu chính hãng, có giấy chứng nhận rõ ràng.</p>
                         </div>
                     </div>
-                    
+
                     <div class="d-flex mb-3">
                         <div class="feature-icon me-3">
                             <i class="fas fa-leaf text-primary" style="font-size: 24px;"></i>
@@ -79,7 +83,7 @@
                             <p class="text-muted">Nhiều sản phẩm có thành phần thiên nhiên, an toàn và lành tính.</p>
                         </div>
                     </div>
-                    
+
                     <div class="d-flex">
                         <div class="feature-icon me-3">
                             <i class="fas fa-star text-primary" style="font-size: 24px;"></i>
@@ -91,13 +95,10 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-6">
                 <div class="position-relative">
                     <img src="{{ asset('images/products-main.jpg') }}" alt="Sản phẩm chăm sóc tóc" class="img-fluid rounded shadow">
-                    <div class="position-absolute top-0 start-0 bg-primary text-white p-3 rounded-end" style="transform: translateY(30px);">
-                        <h4 class="mb-0">Chất lượng hàng đầu</h4>
-                    </div>
                 </div>
             </div>
         </div>
@@ -112,7 +113,7 @@
                 <p class="mb-5">Một số câu hỏi khách hàng thường hỏi về sản phẩm của chúng tôi</p>
             </div>
         </div>
-        
+
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="accordion" id="faqAccordion">
@@ -128,7 +129,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingTwo">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
@@ -141,7 +142,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingThree">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
@@ -157,7 +158,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="text-center mt-5">
             <p class="mb-3">Còn câu hỏi khác? Liên hệ với chúng tôi</p>
             <a href="{{ route('contact.index') }}" class="btn btn-primary">Liên hệ ngay</a>
@@ -165,17 +166,11 @@
     </div>
 </section>
 
-<section class="py-5 bg-primary text-white">
+<section class="py-5 bg-primary text-white text-center cta-appointment">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-8 mb-4 mb-lg-0">
-                <h2 class="h1 mb-3">Chăm sóc tóc tại nhà cùng sản phẩm chính hãng</h2>
-                <p class="lead mb-0">Đặt lịch ngay hôm nay và trải nghiệm dịch vụ cắt tóc chuyên nghiệp tại Barber Shop.</p>
-            </div>
-            <div class="col-lg-4 text-lg-end">
-                <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg">Đặt lịch ngay</a>
-            </div>
-        </div>
+        <h2 class="h1 mb-4">Chăm sóc tóc tại nhà cùng sản phẩm chính hãng</h2>
+        <p class="lead mb-4">Đặt lịch ngay hôm nay và trải nghiệm dịch vụ cắt tóc chuyên nghiệp tại Barber Shop.</p>
+        <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg appointment-btn">Đặt lịch ngay</a>
     </div>
 </section>
-@endsection 
+@endsection

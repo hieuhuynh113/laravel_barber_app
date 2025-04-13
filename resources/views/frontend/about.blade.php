@@ -3,23 +3,17 @@
 @section('title', 'Giới thiệu')
 
 @section('content')
-<div class="page-header bg-primary text-white">
-    <div class="container">
-        <h1 class="display-4">Giới thiệu</h1>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-transparent p-0 mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-white">Trang chủ</a></li>
-                <li class="breadcrumb-item active text-white" aria-current="page">Giới thiệu</li>
-            </ol>
-        </nav>
-    </div>
-</div>
+@include('partials.page-header', [
+    'title' => 'Giới thiệu',
+    'description' => 'Khám phá câu chuyện, sứ mệnh và đội ngũ chuyên nghiệp của Barber Shop chúng tôi',
+    'backgroundImage' => 'images/about-banner.jpg'
+])
 
 <section class="py-5">
     <div class="container">
         <div class="row align-items-center mb-5">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <img src="{{ asset('images/about.jpg') }}" alt="Về chúng tôi" class="img-fluid rounded shadow">
+                <img src="{{ asset('images/about-1.jpg') }}" alt="Về chúng tôi" class="img-fluid rounded shadow">
             </div>
             <div class="col-lg-6">
                 <h2 class="section-title">Câu chuyện của chúng tôi</h2>
@@ -28,7 +22,7 @@
                 <p>Tại Barber Shop, chúng tôi không chỉ cắt tóc mà còn tạo ra phong cách, xây dựng cộng đồng và lan tỏa niềm đam mê với nghề.</p>
             </div>
         </div>
-        
+
         <div class="row mb-5">
             <div class="col-md-4 mb-4 mb-md-0">
                 <div class="card h-100 border-0 shadow-sm">
@@ -64,7 +58,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="row mb-5">
             <div class="col-12">
                 <h2 class="section-title text-center mb-5">Tại sao chọn chúng tôi</h2>
@@ -148,11 +142,11 @@
     </div>
 </section>
 
-<section class="py-5 bg-primary text-white text-center">
+<section class="py-5 bg-primary text-white text-center cta-appointment">
     <div class="container">
         <h2 class="h1 mb-4">Sẵn sàng trải nghiệm dịch vụ của chúng tôi?</h2>
         <p class="lead mb-4">Đặt lịch ngay hôm nay để có trải nghiệm cắt tóc tuyệt vời!</p>
-        <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg">Đặt lịch ngay</a>
+        <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg appointment-btn">Đặt lịch ngay</a>
     </div>
 </section>
-@endsection 
+@endsection

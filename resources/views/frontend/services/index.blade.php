@@ -3,30 +3,58 @@
 @section('title', 'Dịch vụ')
 
 @section('content')
+@include('partials.page-header', [
+    'title' => 'Dịch vụ của chúng tôi',
+    'description' => 'Khám phá các dịch vụ chất lượng cao và chuyên nghiệp tại Barber Shop',
+    'backgroundImage' => 'images/hero-bg-2.jpg'
+])
+
 <section class="py-5 bg-light">
     <div class="container">
-        <h1 class="text-center mb-5">Dịch vụ của chúng tôi</h1>
-        
-        <div class="row">
-            @foreach($services as $service)
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 service-card">
-                    <img src="{{ asset('storage/' . $service->image) }}" class="card-img-top" alt="{{ $service->name }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $service->name }}</h5>
-                        <p class="card-text">{{ Str::limit($service->description, 150) }}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="price text-primary fw-bold">{{ number_format($service->price) }} VNĐ</span>
-                            <a href="{{ route('services.show', $service->slug) }}" class="btn btn-outline-primary">Chi tiết</a>
-                        </div>
+        <!-- Filter by category -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8">
+                <div class="category-filter">
+                    <div class="d-flex flex-wrap justify-content-center">
+                        <a href="{{ route('services.index') }}" class="btn {{ !$categoryId ? 'btn-primary' : 'btn-outline-primary' }} m-1">Tất cả</a>
+                        @foreach($categories as $category)
+                            <a href="{{ route('services.index', ['category_id' => $category->id]) }}" class="btn {{ $categoryId == $category->id ? 'btn-primary' : 'btn-outline-primary' }} m-1">{{ $category->name }}</a>
+                        @endforeach
                     </div>
                 </div>
             </div>
-            @endforeach
         </div>
-        
+
+        <div class="row">
+            @if($services->count() > 0)
+                @foreach($services as $service)
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 service-card">
+                        <img src="{{ asset('storage/' . $service->image) }}" class="card-img-top" alt="{{ $service->name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $service->name }}</h5>
+                            <p class="card-text">{{ Str::limit($service->description, 150) }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="price text-primary fw-bold">{{ number_format($service->price) }} VNĐ</span>
+                                <a href="{{ route('services.show', $service->slug) }}" class="btn btn-outline-primary">Chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            @else
+                <div class="col-12">
+                    <div class="alert alert-info text-center p-5">
+                        <i class="fas fa-info-circle fa-3x mb-3"></i>
+                        <h4>Không tìm thấy dịch vụ nào</h4>
+                        <p>Hiện tại không có dịch vụ nào trong danh mục này. Vui lòng chọn danh mục khác.</p>
+                    </div>
+                </div>
+            @endif
+        </div>
+
         <div class="mt-4">
-            {{ $services->links() }}
+            {{ $services->appends(request()->query())->links() }}
         </div>
     </div>
 </section>
@@ -37,7 +65,7 @@
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <h2>Tại sao chọn dịch vụ của chúng tôi?</h2>
                 <p>Barber Shop tự hào cung cấp các dịch vụ cắt tóc và chăm sóc tóc chất lượng cao. Chúng tôi cam kết mang đến trải nghiệm tuyệt vời nhất cho quý khách hàng.</p>
-                
+
                 <div class="mt-4">
                     <div class="d-flex mb-3">
                         <div class="feature-icon me-3">
@@ -48,7 +76,7 @@
                             <p class="text-muted">Đội ngũ thợ cắt tóc của chúng tôi đều được đào tạo bài bản và có nhiều năm kinh nghiệm.</p>
                         </div>
                     </div>
-                    
+
                     <div class="d-flex mb-3">
                         <div class="feature-icon me-3">
                             <i class="fas fa-cut text-primary" style="font-size: 24px;"></i>
@@ -58,7 +86,7 @@
                             <p class="text-muted">Sử dụng các dụng cụ và sản phẩm chất lượng cao để đảm bảo kết quả tốt nhất.</p>
                         </div>
                     </div>
-                    
+
                     <div class="d-flex">
                         <div class="feature-icon me-3">
                             <i class="fas fa-gem text-primary" style="font-size: 24px;"></i>
@@ -69,14 +97,12 @@
                         </div>
                     </div>
                 </div>
+                <a href="{{ route('appointment.step1') }}" class="btn btn-primary mt-3 appointment-btn">Đặt lịch ngay</a>
             </div>
-            
+
             <div class="col-lg-6">
                 <div class="position-relative">
                     <img src="{{ asset('images/services-main.jpg') }}" alt="Dịch vụ cắt tóc" class="img-fluid rounded shadow">
-                    <div class="position-absolute top-0 start-0 bg-primary text-white p-3 rounded-end" style="transform: translateY(30px);">
-                        <h4 class="mb-0">Đặt lịch ngay</h4>
-                    </div>
                 </div>
             </div>
         </div>
@@ -91,7 +117,7 @@
                 <p class="mb-5">Một số câu hỏi khách hàng thường hỏi về dịch vụ của chúng tôi</p>
             </div>
         </div>
-        
+
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="accordion" id="faqAccordion">
@@ -107,7 +133,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingTwo">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
@@ -120,7 +146,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingThree">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
@@ -133,7 +159,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingFour">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
@@ -149,7 +175,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="text-center mt-5">
             <p class="mb-3">Còn câu hỏi khác? Liên hệ với chúng tôi</p>
             <a href="{{ route('contact.index') }}" class="btn btn-primary">Liên hệ ngay</a>
@@ -157,17 +183,11 @@
     </div>
 </section>
 
-<section class="py-5 bg-primary text-white">
+<section class="py-5 bg-primary text-white text-center cta-appointment">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-8 mb-4 mb-lg-0">
-                <h2 class="h1 mb-3">Sẵn sàng trải nghiệm dịch vụ?</h2>
-                <p class="lead mb-0">Đặt lịch ngay hôm nay và trải nghiệm dịch vụ cắt tóc chuyên nghiệp tại Barber Shop.</p>
-            </div>
-            <div class="col-lg-4 text-lg-end">
-                <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg">Đặt lịch ngay</a>
-            </div>
-        </div>
+        <h2 class="h1 mb-4">Sẵn sàng trải nghiệm dịch vụ?</h2>
+        <p class="lead mb-4">Đặt lịch ngay hôm nay và trải nghiệm dịch vụ cắt tóc chuyên nghiệp tại Barber Shop.</p>
+        <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg appointment-btn">Đặt lịch ngay</a>
     </div>
 </section>
-@endsection 
+@endsection
