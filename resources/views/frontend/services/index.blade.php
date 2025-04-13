@@ -11,33 +11,75 @@
 
 <section class="py-5 bg-light">
     <div class="container">
-        <!-- Filter by category -->
-        <div class="row justify-content-center mb-5">
-            <div class="col-lg-8">
-                <div class="category-filter">
-                    <div class="d-flex flex-wrap justify-content-center">
-                        <a href="{{ route('services.index') }}" class="btn {{ !$categoryId ? 'btn-primary' : 'btn-outline-primary' }} m-1">Tất cả</a>
-                        @foreach($categories as $category)
-                            <a href="{{ route('services.index', ['category_id' => $category->id]) }}" class="btn {{ $categoryId == $category->id ? 'btn-primary' : 'btn-outline-primary' }} m-1">{{ $category->name }}</a>
-                        @endforeach
+        <!-- New Filter UI based on reference image -->
+        <div class="filter-header mb-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="filter-toggle d-flex align-items-center">
+                    <i class="fas fa-filter me-2"></i>
+                    <span>Filters:</span>
+                </div>
+                <div class="filter-count">
+                    Hiển thị {{ $services->count() }} / {{ $services->total() }} dịch vụ
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-options mb-4">
+            <div class="row">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="filter-group">
+                        <label for="categoryFilter">Danh mục:</label>
+                        <select class="form-select" id="categoryFilter">
+                            <option value="" {{ !$categoryId ? 'selected' : '' }}>Tất cả danh mục</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ $categoryId == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="filter-group">
+                        <label for="levelFilter">Mức độ:</label>
+                        <select class="form-select" id="levelFilter">
+                            <option value="">Tất cả mức độ</option>
+                            <option value="basic">Cơ bản</option>
+                            <option value="intermediate">Trung bình</option>
+                            <option value="advanced">Nâng cao</option>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+        <!-- Filter Tabs -->
+        <div class="filter-tabs mb-4">
+            <div class="filter-tab {{ !$sort ? 'active' : '' }}" data-sort="">Tất cả dịch vụ</div>
+            <div class="filter-tab {{ $sort == 'popular' ? 'active' : '' }}" data-sort="popular">Phổ biến nhất</div>
+            <div class="filter-tab {{ $sort == 'newest' ? 'active' : '' }}" data-sort="newest">Mới nhất</div>
+            <div class="filter-tab {{ $sort == 'recommended' ? 'active' : '' }}" data-sort="recommended">Đề xuất</div>
+        </div>
+
+        <div class="row" id="services-container">
             @if($services->count() > 0)
                 @foreach($services as $service)
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 service-card">
-                        <img src="{{ asset('storage/' . $service->image) }}" class="card-img-top" alt="{{ $service->name }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $service->name }}</h5>
-                            <p class="card-text">{{ Str::limit($service->description, 150) }}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="price text-primary fw-bold">{{ number_format($service->price) }} VNĐ</span>
-                                <a href="{{ route('services.show', $service->slug) }}" class="btn btn-outline-primary">Chi tiết</a>
+                        <div class="card-img-container position-relative">
+                            <img src="{{ asset('storage/' . $service->image) }}" class="card-img-top" alt="{{ $service->name }}">
+                            <div class="service-duration position-absolute">
+                                <span>{{ $service->duration }} phút</span>
                             </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="service-category mb-2">
+                                <span class="badge bg-light text-dark">{{ $service->category->name }}</span>
+                            </div>
+                            <h5 class="card-title">{{ $service->name }}</h5>
+                            <p class="card-text">{{ Str::limit($service->description, 100) }}</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
+                            <span class="price text-primary fw-bold">{{ number_format($service->price) }} VNĐ</span>
+                            <a href="{{ route('services.show', $service->slug) }}" class="btn btn-sm btn-outline-primary">Chi tiết <i class="fas fa-arrow-right ms-1"></i></a>
                         </div>
                     </div>
                 </div>
@@ -53,7 +95,7 @@
             @endif
         </div>
 
-        <div class="mt-4">
+        <div class="mt-4 pagination-container">
             {{ $services->appends(request()->query())->links() }}
         </div>
     </div>

@@ -11,33 +11,74 @@
 
 <section class="py-5 bg-light">
     <div class="container">
-        @if($categories->count() > 0)
-        <div class="mb-4">
-            <div class="d-flex justify-content-center flex-wrap">
-                <a href="{{ route('products.index') }}" class="btn {{ !$categoryId ? 'btn-primary' : 'btn-outline-primary' }} me-2 mb-2">
-                    Tất cả
-                </a>
-                @foreach($categories as $category)
-                <a href="{{ route('products.index', ['category_id' => $category->id]) }}" class="btn {{ $categoryId == $category->id ? 'btn-primary' : 'btn-outline-primary' }} me-2 mb-2">
-                    {{ $category->name }}
-                </a>
-                @endforeach
+        <!-- New Filter UI based on reference image -->
+        <div class="filter-header mb-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="filter-toggle d-flex align-items-center">
+                    <i class="fas fa-filter me-2"></i>
+                    <span>Filters:</span>
+                </div>
+                <div class="filter-count">
+                    Hiển thị {{ $products->count() }} / {{ $products->total() }} sản phẩm
+                </div>
             </div>
         </div>
-        @endif
 
-        <div class="row">
+        <div class="filter-options mb-4">
+            <div class="row">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="filter-group">
+                        <label for="categoryFilter">Danh mục:</label>
+                        <select class="form-select" id="categoryFilter">
+                            <option value="" {{ !$categoryId ? 'selected' : '' }}>Tất cả danh mục</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ $categoryId == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="filter-group">
+                        <label for="priceFilter">Giá:</label>
+                        <select class="form-select" id="priceFilter">
+                            <option value="">Tất cả mức giá</option>
+                            <option value="low">Dưới 200.000 VNĐ</option>
+                            <option value="medium">200.000 - 500.000 VNĐ</option>
+                            <option value="high">Trên 500.000 VNĐ</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs mb-4">
+            <div class="filter-tab {{ !$sort ? 'active' : '' }}" data-sort="">Tất cả sản phẩm</div>
+            <div class="filter-tab {{ $sort == 'popular' ? 'active' : '' }}" data-sort="popular">Phổ biến nhất</div>
+            <div class="filter-tab {{ $sort == 'newest' ? 'active' : '' }}" data-sort="newest">Mới nhất</div>
+            <div class="filter-tab {{ $sort == 'recommended' ? 'active' : '' }}" data-sort="recommended">Đề xuất</div>
+        </div>
+
+        <div class="row" id="products-container">
             @forelse($products as $product)
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 product-card">
-                    <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $product->name }}</h5>
-                        <p class="card-text">{{ Str::limit($product->description, 150) }}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="price text-primary fw-bold">{{ number_format($product->price) }} VNĐ</span>
-                            <a href="{{ route('products.show', $product->slug) }}" class="btn btn-outline-primary">Chi tiết</a>
+                    <div class="card-img-container position-relative">
+                        <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}">
+                        <div class="product-status position-absolute">
+                            <span>Còn hàng</span>
                         </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="product-category mb-2">
+                            <span class="badge bg-light text-dark">{{ $product->category->name }}</span>
+                        </div>
+                        <h5 class="card-title">{{ $product->name }}</h5>
+                        <p class="card-text">{{ Str::limit($product->description, 100) }}</p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
+                        <span class="price text-primary fw-bold">{{ number_format($product->price) }} VNĐ</span>
+                        <a href="{{ route('products.show', $product->slug) }}" class="btn btn-sm btn-outline-primary">Chi tiết <i class="fas fa-arrow-right ms-1"></i></a>
                     </div>
                 </div>
             </div>
@@ -50,8 +91,8 @@
             @endforelse
         </div>
 
-        <div class="mt-4">
-            {{ $products->links() }}
+        <div class="mt-4 pagination-container">
+            {{ $products->appends(request()->query())->links() }}
         </div>
     </div>
 </section>

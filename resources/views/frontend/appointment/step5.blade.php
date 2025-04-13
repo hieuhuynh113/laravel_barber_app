@@ -58,14 +58,14 @@
                                     <div class="card bg-light mb-3">
                                         <div class="card-body">
                                             <h6 class="card-title">Thông tin cá nhân</h6>
-                                            <p class="mb-1"><strong>Họ tên:</strong> {{ session('customer_name') }}</p>
-                                            <p class="mb-1"><strong>Email:</strong> {{ session('customer_email') }}</p>
-                                            <p class="mb-1"><strong>Số điện thoại:</strong> {{ session('customer_phone') }}</p>
-                                            @if(session('customer_address'))
-                                                <p class="mb-1"><strong>Địa chỉ:</strong> {{ session('customer_address') }}</p>
+                                            <p class="mb-1"><strong>Họ tên:</strong> {{ session('appointment_customer_name') }}</p>
+                                            <p class="mb-1"><strong>Email:</strong> {{ session('appointment_customer_email') }}</p>
+                                            <p class="mb-1"><strong>Số điện thoại:</strong> {{ session('appointment_customer_phone') }}</p>
+                                            @if(session('appointment_address'))
+                                                <p class="mb-1"><strong>Địa chỉ:</strong> {{ session('appointment_address') }}</p>
                                             @endif
-                                            @if(session('customer_notes'))
-                                                <p class="mb-0"><strong>Ghi chú:</strong> {{ session('customer_notes') }}</p>
+                                            @if(session('appointment_notes'))
+                                                <p class="mb-0"><strong>Ghi chú:</strong> {{ session('appointment_notes') }}</p>
                                             @endif
                                         </div>
                                     </div>
@@ -77,7 +77,7 @@
                                             <p class="mb-1">
                                                 <strong>Ngày:</strong> {{ \Carbon\Carbon::parse(session('appointment_date'))->format('d/m/Y') }}
                                             </p>
-                                            <p class="mb-1"><strong>Giờ:</strong> {{ session('appointment_time') }}</p>
+                                            <p class="mb-1"><strong>Giờ:</strong> {{ session('appointment_start_time') }} - {{ session('appointment_end_time') }}</p>
                                             <p class="mb-1">
                                                 <strong>Thợ cắt tóc:</strong> {{ session('appointment_barber')->user->name }}
                                             </p>
@@ -85,7 +85,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="card bg-light">
                                 <div class="card-body">
                                     <h6 class="card-title">Dịch vụ đã chọn</h6>
@@ -106,8 +106,8 @@
                                                         <td>{{ $service->duration }} phút</td>
                                                         <td class="text-end">{{ number_format($service->price) }} VNĐ</td>
                                                     </tr>
-                                                    @php 
-                                                        $totalPrice += $service->price; 
+                                                    @php
+                                                        $totalPrice += $service->price;
                                                         $totalDuration += $service->duration;
                                                     @endphp
                                                 @endforeach
@@ -127,7 +127,7 @@
 
                         <!-- Form phương thức thanh toán -->
                         <h5 class="card-title mb-4">Bước 5: Chọn phương thức thanh toán</h5>
-                        
+
                         @if ($errors->any())
                             <div class="alert alert-danger">
                                 <ul class="mb-0">
@@ -137,10 +137,10 @@
                                 </ul>
                             </div>
                         @endif
-                        
+
                         <form action="{{ route('appointment.post.step5') }}" method="POST">
                             @csrf
-                            
+
                             <div class="payment-methods mb-4">
                                 <div class="form-check mb-3 payment-option">
                                     <input class="form-check-input" type="radio" name="payment_method" id="payment_cash" value="cash" checked>
@@ -154,7 +154,7 @@
                                         </div>
                                     </label>
                                 </div>
-                                
+
                                 <div class="form-check mb-3 payment-option">
                                     <input class="form-check-input" type="radio" name="payment_method" id="payment_momo" value="momo">
                                     <label class="form-check-label d-flex align-items-center" for="payment_momo">
@@ -167,7 +167,7 @@
                                         </div>
                                     </label>
                                 </div>
-                                
+
                                 <div class="form-check mb-3 payment-option">
                                     <input class="form-check-input" type="radio" name="payment_method" id="payment_vnpay" value="vnpay">
                                     <label class="form-check-label d-flex align-items-center" for="payment_vnpay">
@@ -180,7 +180,7 @@
                                         </div>
                                     </label>
                                 </div>
-                                
+
                                 <div class="form-check payment-option">
                                     <input class="form-check-input" type="radio" name="payment_method" id="payment_bank" value="bank">
                                     <label class="form-check-label d-flex align-items-center" for="payment_bank">
@@ -192,7 +192,7 @@
                                             <div class="text-muted small">Chuyển khoản đến tài khoản ngân hàng của chúng tôi</div>
                                         </div>
                                     </label>
-                                    
+
                                     <div class="bank-details mt-3 ms-4 p-3 border rounded" id="bank_details" style="display: none;">
                                         <p class="mb-2">Vui lòng chuyển khoản đến tài khoản sau:</p>
                                         <ul class="list-unstyled mb-0">
@@ -204,14 +204,14 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="form-check mb-4">
                                 <input class="form-check-input" type="checkbox" name="agree_terms" id="agree_terms" value="1" required>
                                 <label class="form-check-label" for="agree_terms">
                                     Tôi đồng ý với <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Điều khoản và Điều kiện</a> của Barber Shop
                                 </label>
                             </div>
-                            
+
                             <div class="mt-4 d-flex justify-content-between">
                                 <a href="{{ route('appointment.step4') }}" class="btn btn-outline-secondary">
                                     <i class="fas fa-arrow-left"></i> Quay lại
@@ -239,17 +239,17 @@
                 <p>- Khách hàng cần đặt lịch trước ít nhất 24 giờ.</p>
                 <p>- Trong trường hợp khách hàng cần hủy lịch, vui lòng thông báo trước ít nhất 2 giờ.</p>
                 <p>- Nếu khách hàng không đến theo lịch hẹn mà không thông báo trước, chúng tôi có quyền từ chối phục vụ trong lần đặt lịch tiếp theo.</p>
-                
+
                 <h6>2. Thanh toán</h6>
                 <p>- Khách hàng có thể thanh toán bằng tiền mặt tại cửa hàng sau khi sử dụng dịch vụ.</p>
                 <p>- Đối với thanh toán trực tuyến, giao dịch sẽ được xử lý ngay lập tức.</p>
                 <p>- Trong trường hợp hủy lịch sau khi đã thanh toán trực tuyến, khách hàng sẽ được hoàn tiền trong vòng 7 ngày làm việc.</p>
-                
+
                 <h6>3. Giá cả và Dịch vụ</h6>
                 <p>- Giá dịch vụ đã bao gồm thuế VAT.</p>
                 <p>- Chúng tôi có quyền thay đổi giá dịch vụ mà không cần thông báo trước.</p>
                 <p>- Thời gian dịch vụ có thể thay đổi tùy thuộc vào yêu cầu cụ thể của khách hàng.</p>
-                
+
                 <h6>4. Quyền riêng tư</h6>
                 <p>- Thông tin cá nhân của khách hàng sẽ được bảo mật và chỉ sử dụng cho mục đích đặt lịch và liên hệ.</p>
                 <p>- Chúng tôi không chia sẻ thông tin khách hàng cho bên thứ ba nếu không có sự đồng ý.</p>
@@ -267,7 +267,7 @@
     .progress-steps {
         position: relative;
     }
-    
+
     .progress-steps:before {
         content: '';
         position: absolute;
@@ -278,14 +278,14 @@
         background-color: #e9ecef;
         z-index: 0;
     }
-    
+
     .step {
         text-align: center;
         z-index: 1;
         flex: 1;
         position: relative;
     }
-    
+
     .step-circle {
         width: 40px;
         height: 40px;
@@ -298,31 +298,31 @@
         margin: 0 auto 8px;
         font-weight: bold;
     }
-    
+
     .step.active .step-circle {
         background-color: #0d6efd;
         color: white;
     }
-    
+
     .step.completed .step-circle {
         background-color: #28a745;
         color: white;
     }
-    
+
     .step-text {
         font-size: 0.875rem;
         color: #6c757d;
     }
-    
+
     .step.active .step-text {
         color: #0d6efd;
         font-weight: bold;
     }
-    
+
     .step.completed .step-text {
         color: #28a745;
     }
-    
+
     .payment-option {
         padding: 15px;
         border: 1px solid #dee2e6;
@@ -331,15 +331,15 @@
         cursor: pointer;
         transition: all 0.2s;
     }
-    
+
     .payment-option:hover {
         background-color: #f8f9fa;
     }
-    
+
     .payment-option input:checked ~ label {
         font-weight: bold;
     }
-    
+
     .form-check-input:checked ~ .form-check-label .payment-icon {
         border: 2px solid #0d6efd;
     }
@@ -352,7 +352,7 @@
         // Hiển thị chi tiết ngân hàng khi chọn phương thức chuyển khoản
         const bankRadio = document.getElementById('payment_bank');
         const bankDetails = document.getElementById('bank_details');
-        
+
         bankRadio.addEventListener('change', function() {
             if (this.checked) {
                 bankDetails.style.display = 'block';
@@ -360,7 +360,7 @@
                 bankDetails.style.display = 'none';
             }
         });
-        
+
         // Ẩn chi tiết ngân hàng khi chọn phương thức khác
         const otherPaymentMethods = document.querySelectorAll('input[name="payment_method"]:not(#payment_bank)');
         otherPaymentMethods.forEach(function(method) {
@@ -368,17 +368,17 @@
                 bankDetails.style.display = 'none';
             });
         });
-        
+
         // Làm cho toàn bộ khối payment-option có thể click để chọn radio
         const paymentOptions = document.querySelectorAll('.payment-option');
         paymentOptions.forEach(function(option) {
             option.addEventListener('click', function(e) {
                 // Không trigger khi click vào bank details
                 if (e.target.closest('#bank_details')) return;
-                
+
                 const radio = this.querySelector('input[type="radio"]');
                 radio.checked = true;
-                
+
                 // Trigger change event
                 const event = new Event('change');
                 radio.dispatchEvent(event);
@@ -386,4 +386,4 @@
         });
     });
 </script>
-@endsection 
+@endsection

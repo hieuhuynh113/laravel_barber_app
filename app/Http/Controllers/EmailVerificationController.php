@@ -23,7 +23,19 @@ class EmailVerificationController extends Controller
             return redirect()->route('register')->with('error', 'Email không hợp lệ');
         }
 
-        return view('auth.verify-otp', compact('email'));
+        // Lấy thông tin về OTP để kiểm tra thời gian hết hạn
+        $verification = EmailVerification::where('email', $email)->first();
+        $expiryTime = null;
+
+        if ($verification && $verification->expires_at) {
+            $expiryTime = $verification->expires_at->diffInSeconds(now());
+            if ($expiryTime <= 0) {
+                // OTP đã hết hạn
+                return view('auth.verify-otp', compact('email'))->with('error', 'Mã OTP đã hết hạn. Vui lòng gửi lại mã mới.');
+            }
+        }
+
+        return view('auth.verify-otp', compact('email', 'expiryTime'));
     }
 
     /**
@@ -54,6 +66,9 @@ class EmailVerificationController extends Controller
         // Gửi email chứa mã OTP
         $emailSent = $this->sendOTPEmail($request->email, $otp);
 
+        // Lấy thời gian hết hạn để hiển thị cho người dùng
+        $expiryTime = 600; // 10 phút = 600 giây
+
         if (!$emailSent && config('app.env') !== 'local') {
             return back()->with('error', 'Không thể gửi email xác thực. Vui lòng thử lại sau.');
         }
@@ -67,7 +82,8 @@ class EmailVerificationController extends Controller
         }
 
         return redirect()->route('verification.form', ['email' => $request->email])
-            ->with('success', $message);
+            ->with('success', $message)
+            ->with('expiryTime', $expiryTime);
     }
 
     /**
@@ -135,6 +151,9 @@ class EmailVerificationController extends Controller
         // Gửi email chứa mã OTP
         $emailSent = $this->sendOTPEmail($request->email, $otp);
 
+        // Lấy thời gian hết hạn để hiển thị cho người dùng
+        $expiryTime = 600; // 10 phút = 600 giây
+
         if (!$emailSent && config('app.env') !== 'local') {
             return back()->with('error', 'Không thể gửi email xác thực. Vui lòng thử lại sau.');
         }
@@ -147,7 +166,7 @@ class EmailVerificationController extends Controller
             $message .= ' (Kiểm tra mã OTP trong log của ứng dụng)';
         }
 
-        return back()->with('success', $message);
+        return back()->with('success', $message)->with('expiryTime', $expiryTime);
     }
 
     /**

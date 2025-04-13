@@ -11,44 +11,77 @@
 
 <section class="py-5 bg-light">
     <div class="container">
-        <h1 class="text-center mb-5">Tin tức & Sự kiện</h1>
-
-        @if($categories->count() > 0)
-        <div class="mb-4">
-            <div class="d-flex justify-content-center flex-wrap">
-                <a href="{{ route('news.index') }}" class="btn {{ !$categoryId ? 'btn-primary' : 'btn-outline-primary' }} me-2 mb-2">
-                    Tất cả
-                </a>
-                @foreach($categories as $category)
-                <a href="{{ route('news.index', ['category_id' => $category->id]) }}" class="btn {{ $categoryId == $category->id ? 'btn-primary' : 'btn-outline-primary' }} me-2 mb-2">
-                    {{ $category->name }}
-                </a>
-                @endforeach
+        <!-- New Filter UI based on reference image -->
+        <div class="filter-header mb-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="filter-toggle d-flex align-items-center">
+                    <i class="fas fa-filter me-2"></i>
+                    <span>Filters:</span>
+                </div>
+                <div class="filter-count">
+                    Hiển thị {{ $news->count() }} / {{ $news->total() }} bài viết
+                </div>
             </div>
         </div>
-        @endif
 
-        <div class="row">
+        <div class="filter-options mb-4">
+            <div class="row">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="filter-group">
+                        <label for="categoryFilter">Danh mục:</label>
+                        <select class="form-select" id="categoryFilter">
+                            <option value="" {{ !$categoryId ? 'selected' : '' }}>Tất cả danh mục</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ $categoryId == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="filter-group">
+                        <label for="timeFilter">Thời gian:</label>
+                        <select class="form-select" id="timeFilter">
+                            <option value="">Tất cả thời gian</option>
+                            <option value="today" {{ $timeFilter == 'today' ? 'selected' : '' }}>Hôm nay</option>
+                            <option value="week" {{ $timeFilter == 'week' ? 'selected' : '' }}>Tuần này</option>
+                            <option value="month" {{ $timeFilter == 'month' ? 'selected' : '' }}>Tháng này</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs mb-4">
+            <div class="filter-tab {{ !$sort ? 'active' : '' }}" data-sort="">Tất cả bài viết</div>
+            <div class="filter-tab {{ $sort == 'popular' ? 'active' : '' }}" data-sort="popular">Phổ biến nhất</div>
+            <div class="filter-tab {{ $sort == 'newest' ? 'active' : '' }}" data-sort="newest">Mới nhất</div>
+            <div class="filter-tab {{ $sort == 'recommended' ? 'active' : '' }}" data-sort="recommended">Đề xuất</div>
+        </div>
+
+        <div class="row" id="news-container">
             @forelse($news as $item)
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 news-card">
-                    <img src="{{ asset('storage/' . $item->image) }}" class="card-img-top" alt="{{ $item->title }}">
+                    <div class="card-img-container position-relative">
+                        <img src="{{ asset('storage/' . $item->image) }}" class="card-img-top" alt="{{ $item->title }}">
+                        <div class="news-date position-absolute">
+                            <span><i class="far fa-calendar-alt me-1"></i>{{ $item->created_at->format('d/m/Y') }}</span>
+                        </div>
+                    </div>
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-primary">{{ $item->category->name }}</span>
-                            <small class="text-muted">{{ $item->created_at->format('d/m/Y') }}</small>
+                        <div class="news-category mb-2">
+                            <span class="badge bg-light text-dark">{{ $item->category->name }}</span>
                         </div>
                         <h5 class="card-title">{{ $item->title }}</h5>
                         <p class="card-text">{{ Str::limit($item->excerpt, 100) }}</p>
                     </div>
-                    <div class="card-footer bg-white border-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <img src="{{ asset('storage/' . $item->user->avatar) }}" alt="{{ $item->user->name }}" class="rounded-circle me-2" width="25" height="25">
-                                <small>{{ $item->user->name }}</small>
-                            </div>
-                            <a href="{{ route('news.show', $item->slug) }}" class="btn btn-sm btn-outline-primary">Đọc tiếp</a>
+                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="{{ asset('storage/' . $item->user->avatar) }}" alt="{{ $item->user->name }}" class="rounded-circle me-2" width="25" height="25">
+                            <small>{{ $item->user->name }}</small>
                         </div>
+                        <a href="{{ route('news.show', $item->slug) }}" class="btn btn-sm btn-outline-primary">Đọc tiếp <i class="fas fa-arrow-right ms-1"></i></a>
                     </div>
                 </div>
             </div>
@@ -61,8 +94,8 @@
             @endforelse
         </div>
 
-        <div class="mt-4">
-            {{ $news->links() }}
+        <div class="mt-4 pagination-container">
+            {{ $news->appends(request()->query())->links() }}
         </div>
     </div>
 </section>

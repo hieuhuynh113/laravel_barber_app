@@ -13,7 +13,7 @@
                 <a href="{{ route('profile.edit') }}" class="btn btn-primary mt-2">Chỉnh sửa hồ sơ</a>
             </div>
         </div>
-        
+
         <div class="list-group mb-4">
             <a href="{{ route('profile.index') }}" class="list-group-item list-group-item-action active">
                 <i class="fas fa-user me-2"></i> Hồ sơ của tôi
@@ -26,7 +26,7 @@
             </a>
         </div>
     </div>
-    
+
     <div class="col-md-9">
         <div class="card">
             <div class="card-header bg-primary text-white">
@@ -38,7 +38,7 @@
                     {{ session('success') }}
                 </div>
                 @endif
-                
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <h6 class="fw-bold">Họ và tên:</h6>
@@ -57,14 +57,14 @@
                         <p>{{ $user->address ?? 'Chưa cập nhật' }}</p>
                     </div>
                 </div>
-                
+
                 <hr>
-                
+
                 <h5 class="mb-3">Đổi mật khẩu</h5>
                 <form action="{{ route('profile.change-password') }}" method="POST">
                     @csrf
                     @method('PUT')
-                    
+
                     <div class="mb-3">
                         <label for="current_password" class="form-label">Mật khẩu hiện tại</label>
                         <input type="password" class="form-control @error('current_password') is-invalid @enderror" id="current_password" name="current_password">
@@ -72,7 +72,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="password" class="form-label">Mật khẩu mới</label>
                         <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password">
@@ -80,16 +80,16 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="password_confirmation" class="form-label">Xác nhận mật khẩu mới</label>
                         <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
                     </div>
-                    
+
                     <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-@endsection 
+@endsection

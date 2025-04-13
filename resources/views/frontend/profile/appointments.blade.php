@@ -13,7 +13,7 @@
                 <a href="{{ route('profile.edit') }}" class="btn btn-primary mt-2">Chỉnh sửa hồ sơ</a>
             </div>
         </div>
-        
+
         <div class="list-group mb-4">
             <a href="{{ route('profile.index') }}" class="list-group-item list-group-item-action">
                 <i class="fas fa-user me-2"></i> Hồ sơ của tôi
@@ -26,7 +26,7 @@
             </a>
         </div>
     </div>
-    
+
     <div class="col-md-9">
         <div class="card">
             <div class="card-header bg-primary text-white">
@@ -38,7 +38,7 @@
                     {{ session('success') }}
                 </div>
                 @endif
-                
+
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -89,9 +89,9 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 {{ $appointments->links() }}
-                
+
                 <div class="mt-4">
                     <a href="{{ route('appointment.step1') }}" class="btn btn-primary">Đặt lịch mới</a>
                 </div>
@@ -111,4 +111,4 @@
         }
     }
 </script>
-@endsection 
+@endsection

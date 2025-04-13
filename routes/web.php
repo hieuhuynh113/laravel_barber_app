@@ -90,7 +90,7 @@ Route::middleware('auth')->prefix('profile')->name('profile.')->group(function (
 });
 
 // Admin Routes
-Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware\AdminAccess::class])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Category Routes
@@ -110,8 +110,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::post('schedules/batch-update', [\App\Http\Controllers\Admin\BarberScheduleController::class, 'updateBatch'])->name('schedules.batch-update');
 
     // Appointment Routes
-    Route::get('appointments/calendar', [\App\Http\Controllers\Admin\AppointmentController::class, 'calendar'])->name('appointments.calendar');
-    Route::get('appointments/get-appointments', [\App\Http\Controllers\Admin\AppointmentController::class, 'getAppointments'])->name('appointments.getAppointments');
     Route::resource('appointments', \App\Http\Controllers\Admin\AppointmentController::class);
     Route::post('appointments/{appointment}/update-status', [\App\Http\Controllers\Admin\AppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
 

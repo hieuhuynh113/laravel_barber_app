@@ -16,36 +16,36 @@ class AppointmentController extends Controller
         $status = $request->input('status');
         $date = $request->input('date');
         $barberId = $request->input('barber_id');
-        
+
         $query = Appointment::with(['user', 'barber.user', 'services']);
-        
+
         if ($status) {
             $query->where('status', $status);
         }
-        
+
         if ($date) {
             $query->whereDate('appointment_date', $date);
         }
-        
+
         if ($barberId) {
             $query->where('barber_id', $barberId);
         }
-        
+
         $appointments = $query->latest()->paginate(10);
         $barbers = User::where('role', 'barber')->get();
-        
+
         return view('admin.appointments.index', compact('appointments', 'barbers', 'status', 'date', 'barberId'));
     }
-    
+
     public function create()
     {
         $customers = User::where('role', 'customer')->get();
         $barbers = User::where('role', 'barber')->with('barber')->get();
         $services = Service::active()->get();
-        
+
         return view('admin.appointments.create', compact('customers', 'barbers', 'services'));
     }
-    
+
     public function store(Request $request)
     {
         $request->validate([
@@ -58,7 +58,7 @@ class AppointmentController extends Controller
             'note' => 'nullable|string',
             'status' => 'required|in:pending,confirmed,completed,canceled',
         ]);
-        
+
         $appointment = Appointment::create([
             'user_id' => $request->user_id,
             'barber_id' => $request->barber_id,
@@ -67,30 +67,30 @@ class AppointmentController extends Controller
             'note' => $request->note,
             'status' => $request->status,
         ]);
-        
+
         $appointment->services()->attach($request->service_ids);
-        
+
         return redirect()->route('admin.appointments.index')
             ->with('success', 'Lịch hẹn đã được tạo thành công.');
     }
-    
+
     public function show(Appointment $appointment)
     {
         $appointment->load(['user', 'barber.user', 'services']);
         return view('admin.appointments.show', compact('appointment'));
     }
-    
+
     public function edit(Appointment $appointment)
     {
         $customers = User::where('role', 'customer')->get();
         $barbers = User::where('role', 'barber')->with('barber')->get();
         $services = Service::active()->get();
-        
+
         $selectedServices = $appointment->services->pluck('id')->toArray();
-        
+
         return view('admin.appointments.edit', compact('appointment', 'customers', 'barbers', 'services', 'selectedServices'));
     }
-    
+
     public function update(Request $request, Appointment $appointment)
     {
         $request->validate([
@@ -103,7 +103,7 @@ class AppointmentController extends Controller
             'note' => 'nullable|string',
             'status' => 'required|in:pending,confirmed,completed,canceled',
         ]);
-        
+
         $appointment->update([
             'user_id' => $request->user_id,
             'barber_id' => $request->barber_id,
@@ -112,84 +112,35 @@ class AppointmentController extends Controller
             'note' => $request->note,
             'status' => $request->status,
         ]);
-        
+
         $appointment->services()->sync($request->service_ids);
-        
+
         return redirect()->route('admin.appointments.index')
             ->with('success', 'Lịch hẹn đã được cập nhật thành công.');
     }
-    
+
     public function destroy(Appointment $appointment)
     {
         $appointment->services()->detach();
         $appointment->delete();
-        
+
         return redirect()->route('admin.appointments.index')
             ->with('success', 'Lịch hẹn đã được xóa thành công.');
     }
-    
+
     public function updateStatus(Request $request, Appointment $appointment)
     {
         $request->validate([
             'status' => 'required|in:pending,confirmed,completed,canceled',
         ]);
-        
+
         $appointment->update([
             'status' => $request->status,
         ]);
-        
+
         return redirect()->back()
             ->with('success', 'Trạng thái lịch hẹn đã được cập nhật thành công.');
     }
-    
-    public function calendar()
-    {
-        $barbers = User::where('role', 'barber')->with('barber')->get();
-        return view('admin.appointments.calendar', compact('barbers'));
-    }
-    
-    public function getAppointments(Request $request)
-    {
-        $start = $request->input('start');
-        $end = $request->input('end');
-        $barberId = $request->input('barber_id');
-        
-        $query = Appointment::with(['user', 'barber.user', 'services'])
-            ->whereBetween('appointment_date', [$start, $end]);
-        
-        if ($barberId) {
-            $query->where('barber_id', $barberId);
-        }
-        
-        $appointments = $query->get();
-        
-        $events = [];
-        foreach ($appointments as $appointment) {
-            $color = '';
-            switch ($appointment->status) {
-                case 'pending':
-                    $color = '#ffc107'; // warning
-                    break;
-                case 'confirmed':
-                    $color = '#0d6efd'; // primary
-                    break;
-                case 'completed':
-                    $color = '#198754'; // success
-                    break;
-                case 'canceled':
-                    $color = '#dc3545'; // danger
-                    break;
-            }
-            
-            $events[] = [
-                'id' => $appointment->id,
-                'title' => $appointment->user->name,
-                'start' => $appointment->appointment_date . 'T' . $appointment->appointment_time,
-                'color' => $color,
-                'url' => route('admin.appointments.show', $appointment->id),
-            ];
-        }
-        
-        return response()->json($events);
-    }
-} 
+
+
+}

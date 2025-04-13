@@ -373,6 +373,22 @@ footer .social-icons a:hover {
     background-color: var(--primary-color);
 }
 
+footer .social-icons a.facebook:hover {
+    background-color: #1877f2; /* Facebook blue */
+}
+
+footer .social-icons a.instagram:hover {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); /* Instagram gradient */
+}
+
+footer .social-icons a.youtube:hover {
+    background-color: #ff0000; /* YouTube red */
+}
+
+footer .social-icons a.tiktok:hover {
+    background-color: #000000; /* TikTok black */
+}
+
 .contact-info li {
     margin-bottom: 1rem;
     display: flex;

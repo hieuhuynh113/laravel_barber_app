@@ -15,6 +15,7 @@ class Appointment extends Model
         'appointment_date',
         'start_time',
         'end_time',
+        'time_slot',
         'status',
         'booking_code',
         'customer_name',
@@ -51,6 +52,13 @@ class Appointment extends Model
     public function appointmentServices()
     {
         return $this->hasMany(AppointmentService::class);
+    }
+
+    public function timeSlot()
+    {
+        return $this->belongsTo(TimeSlot::class, 'time_slot', 'time_slot')
+            ->where('barber_id', $this->barber_id)
+            ->where('date', $this->appointment_date);
     }
 
     public function invoice()

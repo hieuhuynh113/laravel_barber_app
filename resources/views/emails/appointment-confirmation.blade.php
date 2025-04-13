@@ -46,50 +46,50 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>Xác nhận đặt lịch tại Barbershop</h2>
+            <h2>Xác nhận đặt lịch tại Barber Shop</h2>
         </div>
-        
-        <p>Chào {{ $appointment->customer->name }},</p>
-        
-        <p>Cảm ơn bạn đã đặt lịch tại Barbershop. Dưới đây là thông tin chi tiết về lịch hẹn của bạn:</p>
-        
+
+        <p>Chào {{ $appointment->customer_name }},</p>
+
+        <p>Cảm ơn bạn đã đặt lịch tại Barber Shop. Dưới đây là thông tin chi tiết về lịch hẹn của bạn:</p>
+
         <div class="booking-info">
             <p><strong>Mã đặt lịch:</strong></p>
             <div class="booking-code">{{ $appointment->booking_code }}</div>
-            
+
             <p><strong>Ngày hẹn:</strong> {{ date('d/m/Y', strtotime($appointment->appointment_date)) }}</p>
-            <p><strong>Giờ hẹn:</strong> {{ date('H:i', strtotime($appointment->appointment_time)) }}</p>
-            <p><strong>Thợ cắt tóc:</strong> {{ $appointment->barber->name }}</p>
-            
+            <p><strong>Giờ hẹn:</strong> {{ $appointment->start_time }} - {{ $appointment->end_time }}</p>
+            <p><strong>Thợ cắt tóc:</strong> {{ $appointment->barber->user->name }}</p>
+
             <p><strong>Dịch vụ:</strong></p>
             <ul>
                 @foreach($appointment->services as $service)
                 <li>{{ $service->name }} - {{ number_format($service->price) }}đ</li>
                 @endforeach
             </ul>
-            
-            <p><strong>Tổng giá tiền:</strong> {{ number_format($appointment->total_price) }}đ</p>
+
+            <p><strong>Tổng giá tiền:</strong> {{ number_format($appointment->services->sum('price')) }}đ</p>
             <p><strong>Phương thức thanh toán:</strong> {{ $appointment->payment_method == 'bank' ? 'Chuyển khoản ngân hàng' : 'Thanh toán tại tiệm' }}</p>
         </div>
-        
+
         @if($appointment->payment_method == 'bank')
         <div class="payment-info">
             <p><strong>Thông tin thanh toán:</strong></p>
             <p>Ngân hàng: VCB - Vietcombank</p>
             <p>Số tài khoản: 1234567890</p>
-            <p>Chủ tài khoản: CÔNG TY TNHH BARBERSHOP</p>
+            <p>Chủ tài khoản: CÔNG TY TNHH BARBER SHOP</p>
             <p>Nội dung chuyển khoản: {{ $appointment->booking_code }}</p>
         </div>
         @endif
-        
+
         <p>Vui lòng đến đúng giờ hẹn. Nếu bạn cần thay đổi hoặc hủy lịch hẹn, vui lòng liên hệ với chúng tôi ít nhất 2 giờ trước giờ hẹn.</p>
-        
-        <p>Trân trọng,<br>Đội ngũ Barbershop</p>
-        
+
+        <p>Trân trọng,<br>Đội ngũ Barber Shop</p>
+
         <div class="footer">
             <p>Địa chỉ: 123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh</p>
-            <p>Điện thoại: 028 1234 5678 | Email: info@barbershop.com</p>
-            <p>© 2025 Barbershop. Đã đăng ký Bản quyền.</p>
+            <p>Điện thoại: 028 1234 5678 | Email: info@barbershop.vn</p>
+            <p>© 2025 Barber Shop. Đã đăng ký Bản quyền.</p>
         </div>
     </div>
 </body>

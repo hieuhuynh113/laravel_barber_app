@@ -16,10 +16,13 @@ class Contact extends Model
         'subject',
         'message',
         'status',
+        'reply',
+        'replied_at',
     ];
 
     protected $casts = [
         'status' => 'boolean',
+        'replied_at' => 'datetime',
     ];
 
     public function markAsRead()

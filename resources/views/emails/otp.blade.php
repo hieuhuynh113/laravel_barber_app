@@ -117,7 +117,7 @@
                 <p><strong>Barber Shop</strong><br>
                 123 Đường ABC, Quận XYZ, Thành phố HCM<br>
                 Điện thoại: 0123456789<br>
-                Email: info@barbershop.com</p>
+                Email: info@barbershop.vn</p>
             </div>
 
             <p>Trân trọng,<br><strong>Đội ngũ Barber Shop</strong></p>

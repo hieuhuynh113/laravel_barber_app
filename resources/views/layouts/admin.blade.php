@@ -5,22 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title') - Quản trị Barber Shop</title>
-    
+
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}" type="image/x-icon">
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Admin CSS -->
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-    
+
     @yield('styles')
 </head>
 <body>
@@ -37,7 +37,7 @@
                         <i class="fas fa-tachometer-alt me-2"></i> Tổng quan
                     </a>
                 </li>
-                
+
                 <li class="{{ request()->routeIs('admin.appointments.*') ? 'active' : '' }}">
                     <a href="#appointmentSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="fas fa-calendar-alt me-2"></i> Quản lý lịch hẹn
@@ -47,32 +47,29 @@
                             <a href="{{ route('admin.appointments.index') }}">Danh sách lịch hẹn</a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.appointments.calendar') }}">Lịch hẹn theo lịch</a>
-                        </li>
-                        <li>
                             <a href="{{ route('admin.appointments.create') }}">Thêm lịch hẹn</a>
                         </li>
                     </ul>
                 </li>
-                
+
                 <li class="{{ request()->routeIs('admin.barbers.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.barbers.index') }}">
                         <i class="fas fa-cut me-2"></i> Thợ cắt tóc
                     </a>
                 </li>
-                
+
                 <li class="{{ request()->routeIs('admin.schedules.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.schedules.index') }}">
                         <i class="fas fa-calendar-alt me-2"></i> Quản lý lịch làm việc
                     </a>
                 </li>
-                
+
                 <li class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.users.index') }}">
                         <i class="fas fa-users me-2"></i> Người dùng
                     </a>
                 </li>
-                
+
                 <li class="{{ request()->routeIs('admin.services.*') || request()->routeIs('admin.categories.*') && request()->input('type') == 'service' ? 'active' : '' }}">
                     <a href="#serviceSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="fas fa-concierge-bell me-2"></i> Dịch vụ
@@ -86,7 +83,7 @@
                         </li>
                     </ul>
                 </li>
-                
+
                 <li class="{{ request()->routeIs('admin.products.*') || request()->routeIs('admin.categories.*') && request()->input('type') == 'product' ? 'active' : '' }}">
                     <a href="#productSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="fas fa-shopping-bag me-2"></i> Sản phẩm
@@ -100,7 +97,7 @@
                         </li>
                     </ul>
                 </li>
-                
+
                 <li class="{{ request()->routeIs('admin.invoices.*') ? 'active' : '' }}">
                     <a href="#invoiceSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="fas fa-file-invoice-dollar me-2"></i> Hóa đơn
@@ -117,7 +114,7 @@
                         </li>
                     </ul>
                 </li>
-                
+
                 <li class="{{ request()->routeIs('admin.news.*') || request()->routeIs('admin.categories.*') && request()->input('type') == 'news' ? 'active' : '' }}">
                     <a href="#newsSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="fas fa-newspaper me-2"></i> Tin tức
@@ -134,13 +131,13 @@
                         </li>
                     </ul>
                 </li>
-                
+
                 <li class="{{ request()->routeIs('admin.contacts.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.contacts.index') }}">
                         <i class="fas fa-envelope me-2"></i> Liên hệ
                     </a>
                 </li>
-                
+
                 <li class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.settings.index') }}">
                         <i class="fas fa-cog me-2"></i> Cài đặt
@@ -197,7 +194,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
-                
+
                 @yield('content')
             </div>
         </div>
@@ -205,16 +202,16 @@
 
     <!-- Bootstrap JS with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    
+
     <!-- Admin Script -->
     <script>
         $(document).ready(function () {
             $('#sidebarCollapse').on('click', function () {
                 $('#sidebar').toggleClass('active');
-                
+
                 // Thay đổi text của nút
                 if ($('#sidebar').hasClass('active')) {
                     $(this).find('span').text('Mở rộng menu');
@@ -224,7 +221,7 @@
             });
         });
     </script>
-    
+
     @yield('scripts')
 </body>
-</html> 
+</html>

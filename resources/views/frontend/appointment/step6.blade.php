@@ -93,16 +93,16 @@
                                             <p class="mb-1">
                                                 <strong>Ngày:</strong> {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d/m/Y') }}
                                             </p>
-                                            <p class="mb-1"><strong>Giờ:</strong> {{ $appointment->appointment_time }}</p>
+                                            <p class="mb-1"><strong>Giờ:</strong> {{ $appointment->start_time }} - {{ $appointment->end_time }}</p>
                                             <p class="mb-1">
                                                 <strong>Thợ cắt tóc:</strong> {{ $appointment->barber->user->name }}
                                             </p>
                                             <p class="mb-1">
-                                                <strong>Trạng thái:</strong> 
+                                                <strong>Trạng thái:</strong>
                                                 <span class="badge bg-warning">Chờ xác nhận</span>
                                             </p>
                                             <p class="mb-0">
-                                                <strong>Phương thức thanh toán:</strong> 
+                                                <strong>Phương thức thanh toán:</strong>
                                                 @if($appointment->payment_method == 'cash')
                                                     <span>Tiền mặt tại cửa hàng</span>
                                                 @elseif($appointment->payment_method == 'momo')
@@ -117,7 +117,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="card bg-light">
                                 <div class="card-body">
                                     <h6 class="card-title">Dịch vụ đã chọn</h6>
@@ -138,8 +138,8 @@
                                                         <td>{{ $service->duration }} phút</td>
                                                         <td class="text-end">{{ number_format($service->price) }} VNĐ</td>
                                                     </tr>
-                                                    @php 
-                                                        $totalPrice += $service->price; 
+                                                    @php
+                                                        $totalPrice += $service->price;
                                                         $totalDuration += $service->duration;
                                                     @endphp
                                                 @endforeach
@@ -192,13 +192,13 @@
                                     <i class="fas fa-home me-1"></i> Về trang chủ
                                 </a>
                             </div>
-                            
+
                             @if($appointment->payment_method !== 'cash')
                                 <p class="mt-3 text-muted">
                                     Nếu bạn chưa thanh toán, vui lòng thanh toán trong vòng 24 giờ để giữ lịch hẹn
                                 </p>
                             @endif
-                            
+
                             <div class="mt-4">
                                 <a href="#" class="btn btn-success btn-sm mx-1">
                                     <i class="fas fa-download me-1"></i> Tải về PDF
@@ -224,7 +224,7 @@
     .progress-steps {
         position: relative;
     }
-    
+
     .progress-steps:before {
         content: '';
         position: absolute;
@@ -235,14 +235,14 @@
         background-color: #e9ecef;
         z-index: 0;
     }
-    
+
     .step {
         text-align: center;
         z-index: 1;
         flex: 1;
         position: relative;
     }
-    
+
     .step-circle {
         width: 40px;
         height: 40px;
@@ -255,40 +255,40 @@
         margin: 0 auto 8px;
         font-weight: bold;
     }
-    
+
     .step.active .step-circle {
         background-color: #0d6efd;
         color: white;
     }
-    
+
     .step.completed .step-circle {
         background-color: #28a745;
         color: white;
     }
-    
+
     .step-text {
         font-size: 0.875rem;
         color: #6c757d;
     }
-    
+
     .step.active .step-text {
         color: #0d6efd;
         font-weight: bold;
     }
-    
+
     .step.completed .step-text {
         color: #28a745;
     }
-    
+
     .success-icon {
         display: inline-block;
         animation: bounce 1s ease infinite;
     }
-    
+
     @keyframes bounce {
         0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
         40% {transform: translateY(-20px);}
         60% {transform: translateY(-10px);}
     }
 </style>
-@endsection 
+@endsection

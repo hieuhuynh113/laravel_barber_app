@@ -27,6 +27,7 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/frontend.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/filter-style.css') }}">
 
     <!-- Page Specific CSS -->
     @yield('styles')
@@ -135,10 +136,10 @@
                     <h5 class="text-uppercase mb-4">Barber Shop</h5>
                     <p>Chúng tôi cung cấp dịch vụ cắt tóc và chăm sóc tóc chất lượng cao cho quý khách hàng, với đội ngũ thợ cắt tóc giỏi và nhiều kinh nghiệm.</p>
                     <div class="social-icons mt-4">
-                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-white me-3"><i class="fab fa-youtube"></i></a>
-                        <a href="#" class="text-white"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=100078969199950" class="text-white text-decoration-none me-3 facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/hiuthubar_/" class="text-white text-decoration-none me-3 instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.youtube.com/@hieuhuynh3551" class="text-white text-decoration-none me-3 youtube"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.tiktok.com/@.dinhcuong" class="text-white text-decoration-none tiktok"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-4 mb-4 mb-lg-0">
@@ -156,9 +157,9 @@
                 <div class="col-lg-4">
                     <h5 class="text-uppercase mb-4">Liên hệ</h5>
                     <ul class="list-unstyled contact-info">
-                        <li class="mb-3"><i class="fas fa-map-marker-alt me-2"></i> 123 Đường ABC, Quận XYZ, TP. HCM</li>
-                        <li class="mb-3"><i class="fas fa-phone-alt me-2"></i> <a href="tel:0123456789" class="text-white">0123-456-789</a></li>
-                        <li class="mb-3"><i class="fas fa-envelope me-2"></i> <a href="mailto:info@barbershop.com" class="text-white">info@barbershop.com</a></li>
+                        <li class="mb-3"><i class="fas fa-map-marker-alt me-2"></i> Quốc lộ 1A, Diên Toàn, Diên Khánh, Khánh Hòa</li>
+                        <li class="mb-3"><i class="fas fa-phone-alt me-2"></i> <a href="tel:0559764554" class="text-white text-decoration-none">0559764554</a></li>
+                        <li class="mb-3"><i class="fas fa-envelope me-2"></i> <a href="mailto:hieu0559764554@gmail.com" class="text-white text-decoration-none">hieu0559764554@gmail.com</a></li>
                     </ul>
                 </div>
             </div>
@@ -177,6 +178,7 @@
     <!-- Custom JS -->
     <script src="{{ asset('js/frontend.js') }}"></script>
     <script src="{{ asset('js/appointment-auth-check.js') }}"></script>
+    <script src="{{ asset('js/filter.js') }}"></script>
 
     @yield('scripts')
 </body>

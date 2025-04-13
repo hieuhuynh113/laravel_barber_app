@@ -39,18 +39,20 @@
                             <h5 class="font-weight-bold">Thông tin khách hàng</h5>
                             <p><strong>Tên:</strong> {{ $appointment->user->name }}</p>
                             <p><strong>Email:</strong> {{ $appointment->user->email }}</p>
-                            <p><strong>Điện thoại:</strong> {{ $appointment->user->phone }}</p>
-                            <p><strong>Địa chỉ:</strong> {{ $appointment->user->address ?? 'N/A' }}</p>
+                            <p><strong>Điện thoại:</strong> {{ $appointment->user->phone ?? 'Chưa cập nhật' }}</p>
+                            <p><strong>Địa chỉ:</strong> {{ $appointment->user->address ?? 'Chưa cập nhật' }}</p>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <h5 class="font-weight-bold">Thông tin thợ cắt tóc</h5>
                             <p><strong>Tên:</strong> {{ $appointment->barber->user->name }}</p>
                             <p><strong>Email:</strong> {{ $appointment->barber->user->email }}</p>
-                            <p><strong>Chuyên môn:</strong> {{ $appointment->barber->specialties ?? 'N/A' }}</p>
+                            <p><strong>Điện thoại:</strong> {{ $appointment->barber->user->phone ?? 'Chưa cập nhật' }}</p>
+                            <p><strong>Địa chỉ:</strong> {{ $appointment->barber->user->address ?? 'Chưa cập nhật' }}</p>
+                            <p><strong>Chuyên môn:</strong> {{ $appointment->barber->specialties ?? 'Chưa cập nhật' }}</p>
                         </div>
                     </div>
-                    
+
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <h5 class="font-weight-bold">Thời gian</h5>
@@ -59,13 +61,13 @@
                             <p><strong>Thời gian tạo:</strong> {{ $appointment->created_at->format('d/m/Y H:i') }}</p>
                             <p><strong>Cập nhật lần cuối:</strong> {{ $appointment->updated_at->format('d/m/Y H:i') }}</p>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <h5 class="font-weight-bold">Ghi chú</h5>
-                            <p>{{ $appointment->note ?? 'Không có ghi chú' }}</p>
+                            <p>{{ $appointment->note ?? 'Chưa có ghi chú' }}</p>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-12">
                             <h5 class="font-weight-bold">Dịch vụ đã chọn</h5>
@@ -102,7 +104,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-xl-4 col-lg-5">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -119,7 +121,7 @@
                                     <i class="fas fa-clock me-2"></i> Chờ xác nhận
                                 </button>
                             </form>
-                            
+
                             <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="status" value="confirmed">
@@ -127,7 +129,7 @@
                                     <i class="fas fa-check me-2"></i> Xác nhận
                                 </button>
                             </form>
-                            
+
                             <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="status" value="completed">
@@ -135,7 +137,7 @@
                                     <i class="fas fa-check-double me-2"></i> Hoàn thành
                                 </button>
                             </form>
-                            
+
                             <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="status" value="canceled">
@@ -145,9 +147,9 @@
                             </form>
                         </div>
                     </div>
-                    
+
                     <div>
-                        <form action="{{ route('admin.appointments.destroy', $appointment->id) }}" method="POST" 
+                        <form action="{{ route('admin.appointments.destroy', $appointment->id) }}" method="POST"
                               onsubmit="return confirm('Bạn có chắc chắn muốn xóa lịch hẹn này không?')">
                             @csrf
                             @method('DELETE')
@@ -161,4 +163,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

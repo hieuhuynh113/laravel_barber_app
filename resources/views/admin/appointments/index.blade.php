@@ -12,9 +12,6 @@
             <a href="{{ route('admin.appointments.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Thêm lịch hẹn
             </a>
-            <a href="{{ route('admin.appointments.calendar') }}" class="btn btn-info">
-                <i class="fas fa-calendar-alt"></i> Xem lịch
-            </a>
         </div>
     </div>
 
@@ -35,12 +32,12 @@
                             <option value="canceled" {{ request('status') == 'canceled' ? 'selected' : '' }}>Đã hủy</option>
                         </select>
                     </div>
-                    
+
                     <div class="col-md-3 mb-3">
                         <label for="date">Ngày hẹn</label>
                         <input type="date" name="date" id="date" class="form-control" value="{{ request('date') }}">
                     </div>
-                    
+
                     <div class="col-md-3 mb-3">
                         <label for="barber_id">Thợ cắt tóc</label>
                         <select name="barber_id" id="barber_id" class="form-select">
@@ -52,7 +49,7 @@
                             @endforeach
                         </select>
                     </div>
-                    
+
                     <div class="col-md-3 mb-3 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary me-2">
                             <i class="fas fa-filter"></i> Lọc
@@ -128,7 +125,7 @@
                                                 </a>
                                             </li>
                                             <li><hr class="dropdown-divider"></li>
-                                            
+
                                             <!-- Dropdown for changing status -->
                                             <li>
                                                 <span class="dropdown-header">Thay đổi trạng thái</span>
@@ -144,7 +141,7 @@
                                                     </form>
                                                 </li>
                                             @endif
-                                            
+
                                             @if($appointment->status != 'confirmed')
                                                 <li>
                                                     <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST" class="d-inline">
@@ -156,7 +153,7 @@
                                                     </form>
                                                 </li>
                                             @endif
-                                            
+
                                             @if($appointment->status != 'completed')
                                                 <li>
                                                     <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST" class="d-inline">
@@ -168,7 +165,7 @@
                                                     </form>
                                                 </li>
                                             @endif
-                                            
+
                                             @if($appointment->status != 'canceled')
                                                 <li>
                                                     <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST" class="d-inline">
@@ -180,7 +177,7 @@
                                                     </form>
                                                 </li>
                                             @endif
-                                            
+
                                             <li><hr class="dropdown-divider"></li>
                                             <li>
                                                 <form action="{{ route('admin.appointments.destroy', $appointment->id) }}" method="POST" class="d-inline"
@@ -204,11 +201,11 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <div class="mt-3">
                 {{ $appointments->appends(request()->query())->links() }}
             </div>
         </div>
     </div>
 </div>
-@endsection 
+@endsection

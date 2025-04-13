@@ -62,8 +62,8 @@
                                                     <small>{{ $service->name }}</small>
                                                     <small>{{ number_format($service->price) }} VNĐ</small>
                                                 </div>
-                                                @php 
-                                                    $totalPrice += $service->price; 
+                                                @php
+                                                    $totalPrice += $service->price;
                                                     $totalDuration += $service->duration;
                                                 @endphp
                                             @endforeach
@@ -100,7 +100,7 @@
                                                 <small>Ngày: {{ \Carbon\Carbon::parse(session('appointment_date'))->format('d/m/Y') }}</small>
                                             </div>
                                             <div>
-                                                <small>Giờ: {{ session('appointment_time') }}</small>
+                                                <small>Giờ: {{ session('appointment_start_time') }} - {{ session('appointment_end_time') }}</small>
                                             </div>
                                         </div>
                                     </div>
@@ -110,7 +110,7 @@
 
                         <!-- Form thông tin cá nhân -->
                         <h5 class="card-title mb-4">Bước 4: Thông tin cá nhân</h5>
-                        
+
                         @if ($errors->any())
                             <div class="alert alert-danger">
                                 <ul class="mb-0">
@@ -120,10 +120,10 @@
                                 </ul>
                             </div>
                         @endif
-                        
+
                         <form action="{{ route('appointment.post.step4') }}" method="POST">
                             @csrf
-                            
+
                             @auth
                                 <div class="alert alert-info">
                                     <div class="d-flex align-items-center">
@@ -131,12 +131,12 @@
                                             <i class="fas fa-info-circle me-2"></i>
                                         </div>
                                         <div>
-                                            Bạn đang đặt lịch với tài khoản <strong>{{ auth()->user()->name }}</strong>. 
+                                            Bạn đang đặt lịch với tài khoản <strong>{{ auth()->user()->name }}</strong>.
                                             Chúng tôi sẽ sử dụng thông tin liên hệ từ tài khoản của bạn.
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row mb-3">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Họ và tên</label>
@@ -147,7 +147,7 @@
                                         <input type="email" class="form-control" name="email" value="{{ old('email', auth()->user()->email) }}" required>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row mb-3">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Số điện thoại</label>
@@ -165,13 +165,13 @@
                                             <i class="fas fa-info-circle me-2"></i>
                                         </div>
                                         <div>
-                                            Bạn đang đặt lịch như một khách. Đăng nhập hoặc đăng ký để quản lý lịch hẹn dễ dàng hơn. 
-                                            <a href="{{ route('login') }}?redirect=appointment.step4" class="text-decoration-underline">Đăng nhập</a> | 
+                                            Bạn đang đặt lịch như một khách. Đăng nhập hoặc đăng ký để quản lý lịch hẹn dễ dàng hơn.
+                                            <a href="{{ route('login') }}?redirect=appointment.step4" class="text-decoration-underline">Đăng nhập</a> |
                                             <a href="{{ route('register') }}?redirect=appointment.step4" class="text-decoration-underline">Đăng ký</a>
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row mb-3">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Họ và tên <span class="text-danger">*</span></label>
@@ -182,7 +182,7 @@
                                         <input type="email" class="form-control" name="email" value="{{ old('email') }}" required>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row mb-3">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
@@ -194,12 +194,12 @@
                                     </div>
                                 </div>
                             @endif
-                            
+
                             <div class="mb-3">
                                 <label class="form-label">Ghi chú (không bắt buộc)</label>
                                 <textarea class="form-control" name="notes" rows="3" placeholder="Yêu cầu đặc biệt hoặc lưu ý cho thợ cắt tóc">{{ old('notes') }}</textarea>
                             </div>
-                            
+
                             <div class="mt-4 d-flex justify-content-between">
                                 <a href="{{ route('appointment.step3') }}" class="btn btn-outline-secondary">
                                     <i class="fas fa-arrow-left"></i> Quay lại
@@ -220,7 +220,7 @@
     .progress-steps {
         position: relative;
     }
-    
+
     .progress-steps:before {
         content: '';
         position: absolute;
@@ -231,14 +231,14 @@
         background-color: #e9ecef;
         z-index: 0;
     }
-    
+
     .step {
         text-align: center;
         z-index: 1;
         flex: 1;
         position: relative;
     }
-    
+
     .step-circle {
         width: 40px;
         height: 40px;
@@ -251,29 +251,29 @@
         margin: 0 auto 8px;
         font-weight: bold;
     }
-    
+
     .step.active .step-circle {
         background-color: #0d6efd;
         color: white;
     }
-    
+
     .step.completed .step-circle {
         background-color: #28a745;
         color: white;
     }
-    
+
     .step-text {
         font-size: 0.875rem;
         color: #6c757d;
     }
-    
+
     .step.active .step-text {
         color: #0d6efd;
         font-weight: bold;
     }
-    
+
     .step.completed .step-text {
         color: #28a745;
     }
 </style>
-@endsection 
+@endsection

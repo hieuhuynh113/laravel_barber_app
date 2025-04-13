@@ -60,8 +60,8 @@
                                                     <small>{{ $service->name }}</small>
                                                     <small>{{ number_format($service->price) }} VNĐ</small>
                                                 </div>
-                                                @php 
-                                                    $totalPrice += $service->price; 
+                                                @php
+                                                    $totalPrice += $service->price;
                                                     $totalDuration += $service->duration;
                                                 @endphp
                                             @endforeach
@@ -96,7 +96,7 @@
 
                         <!-- Form chọn ngày và giờ -->
                         <h5 class="card-title mb-4">Bước 3: Chọn thời gian</h5>
-                        
+
                         @if ($errors->any())
                             <div class="alert alert-danger">
                                 <ul class="mb-0">
@@ -106,18 +106,18 @@
                                 </ul>
                             </div>
                         @endif
-                        
+
                         <form action="{{ route('appointment.post.step3') }}" method="POST" id="timeForm">
                             @csrf
                             <input type="hidden" name="date" id="selectedDate" value="{{ old('date', $currentDate) }}">
-                            
+
                             <div class="row mb-4">
                                 <div class="col-md-12">
                                     <label class="form-label">Chọn ngày</label>
                                     <div id="datepicker"></div>
                                 </div>
                             </div>
-                            
+
                             <div class="row mb-4">
                                 <div class="col-md-12">
                                     <label class="form-label">Chọn giờ</label>
@@ -126,7 +126,10 @@
                                             @foreach($timeSlots as $slot)
                                                 <div class="time-slot">
                                                     <input type="radio" name="time_slot" id="slot-{{ $slot['start'] }}" value="{{ $slot['formatted'] }}" class="time-slot-input" {{ old('time_slot') == $slot['formatted'] ? 'checked' : '' }}>
-                                                    <label for="slot-{{ $slot['start'] }}" class="time-slot-label">{{ $slot['formatted'] }}</label>
+                                                    <label for="slot-{{ $slot['start'] }}" class="time-slot-label">
+                                                        {{ $slot['formatted'] }}
+                                                        <span class="badge bg-success ms-2">{{ $slot['available_spots'] }}/{{ $slot['max_bookings'] }} chỗ trống</span>
+                                                    </label>
                                                 </div>
                                             @endforeach
                                         @else
@@ -137,7 +140,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="mt-4 d-flex justify-content-between">
                                 <a href="{{ route('appointment.step2') }}" class="btn btn-outline-secondary">
                                     <i class="fas fa-arrow-left"></i> Quay lại
@@ -159,7 +162,7 @@
     .progress-steps {
         position: relative;
     }
-    
+
     .progress-steps:before {
         content: '';
         position: absolute;
@@ -170,14 +173,14 @@
         background-color: #e9ecef;
         z-index: 0;
     }
-    
+
     .step {
         text-align: center;
         z-index: 1;
         flex: 1;
         position: relative;
     }
-    
+
     .step-circle {
         width: 40px;
         height: 40px;
@@ -190,46 +193,46 @@
         margin: 0 auto 8px;
         font-weight: bold;
     }
-    
+
     .step.active .step-circle {
         background-color: #0d6efd;
         color: white;
     }
-    
+
     .step.completed .step-circle {
         background-color: #28a745;
         color: white;
     }
-    
+
     .step-text {
         font-size: 0.875rem;
         color: #6c757d;
     }
-    
+
     .step.active .step-text {
         color: #0d6efd;
         font-weight: bold;
     }
-    
+
     .step.completed .step-text {
         color: #28a745;
     }
-    
+
     /* Time slots styling */
     .time-slots-container {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
     }
-    
+
     .time-slot {
         position: relative;
     }
-    
+
     .time-slot-input {
         display: none;
     }
-    
+
     .time-slot-label {
         display: block;
         padding: 10px 15px;
@@ -240,17 +243,22 @@
         text-align: center;
         transition: all 0.2s;
     }
-    
+
     .time-slot-label:hover {
         background-color: #e9ecef;
     }
-    
+
     .time-slot-input:checked + .time-slot-label {
         background-color: #0d6efd;
         border-color: #0d6efd;
         color: white;
     }
-    
+
+    .time-slot-input:checked + .time-slot-label .badge {
+        background-color: #ffffff !important;
+        color: #0d6efd;
+    }
+
     .time-slot-input:disabled + .time-slot-label {
         background-color: #e9ecef;
         color: #adb5bd;
@@ -282,7 +290,7 @@
                 loadTimeSlots(dateStr);
             }
         });
-        
+
         // Load time slots khi chọn ngày
         function loadTimeSlots(date) {
             $.ajax({
@@ -298,13 +306,16 @@
                 },
                 success: function(response) {
                     let html = '';
-                    
+
                     if (response.timeSlots.length > 0) {
                         response.timeSlots.forEach(function(slot) {
                             html += `
                                 <div class="time-slot">
                                     <input type="radio" name="time_slot" id="slot-${slot.start}" value="${slot.formatted}" class="time-slot-input">
-                                    <label for="slot-${slot.start}" class="time-slot-label">${slot.formatted}</label>
+                                    <label for="slot-${slot.start}" class="time-slot-label">
+                                        ${slot.formatted}
+                                        <span class="badge bg-success ms-2">${slot.available_spots}/${slot.max_bookings} chỗ trống</span>
+                                    </label>
                                 </div>
                             `;
                         });
@@ -313,7 +324,7 @@
                         html = '<div class="alert alert-info">Không có khung giờ trống cho ngày này. Vui lòng chọn ngày khác.</div>';
                         $('#continueBtn').prop('disabled', true);
                     }
-                    
+
                     $('#timeSlots').html(html);
                 },
                 error: function() {
@@ -322,7 +333,7 @@
                 }
             });
         }
-        
+
         // Validate form trước khi submit
         $('#timeForm').on('submit', function(e) {
             if (!$('input[name="time_slot"]:checked').val()) {
@@ -332,4 +343,4 @@
         });
     });
 </script>
-@endsection 
+@endsection

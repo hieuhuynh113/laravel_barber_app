@@ -46,41 +46,41 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>Nhắc nhở lịch hẹn tại Barbershop</h2>
+            <h2>Nhắc nhở lịch hẹn tại Barber Shop</h2>
         </div>
-        
+
         <p>Chào {{ $appointment->customer->name }},</p>
-        
-        <p>Chúng tôi xin nhắc nhở bạn về lịch hẹn sắp tới tại Barbershop vào ngày mai:</p>
-        
+
+        <p>Chúng tôi xin nhắc nhở bạn về lịch hẹn sắp tới tại Barber Shop vào ngày mai:</p>
+
         <div class="booking-info">
             <p><strong>Mã đặt lịch:</strong></p>
             <div class="booking-code">{{ $appointment->booking_code }}</div>
-            
+
             <p><strong>Ngày hẹn:</strong> {{ date('d/m/Y', strtotime($appointment->appointment_date)) }}</p>
             <p><strong>Giờ hẹn:</strong> {{ date('H:i', strtotime($appointment->appointment_time)) }}</p>
             <p><strong>Thợ cắt tóc:</strong> {{ $appointment->barber->name }}</p>
-            
+
             <p><strong>Dịch vụ:</strong></p>
             <ul>
                 @foreach($appointment->services as $service)
                 <li>{{ $service->name }} - {{ number_format($service->price) }}đ</li>
                 @endforeach
             </ul>
-            
+
             <p><strong>Tổng giá tiền:</strong> {{ number_format($appointment->total_price) }}đ</p>
         </div>
-        
+
         <p>Vui lòng đến đúng giờ hẹn. Nếu bạn cần thay đổi hoặc hủy lịch hẹn, vui lòng liên hệ với chúng tôi sớm nhất có thể.</p>
-        
+
         <p>Chúng tôi rất mong được phục vụ quý khách!</p>
-        
-        <p>Trân trọng,<br>Đội ngũ Barbershop</p>
-        
+
+        <p>Trân trọng,<br>Đội ngũ Barber Shop</p>
+
         <div class="footer">
             <p>Địa chỉ: 123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh</p>
-            <p>Điện thoại: 028 1234 5678 | Email: info@barbershop.com</p>
-            <p>© 2025 Barbershop. Đã đăng ký Bản quyền.</p>
+            <p>Điện thoại: 028 1234 5678 | Email: info@barbershop.vn</p>
+            <p>© 2025 Barber Shop. Đã đăng ký Bản quyền.</p>
         </div>
     </div>
 </body>

@@ -29,6 +29,9 @@
                         <i class="fas fa-envelope-open-text fa-3x text-primary mb-3"></i>
                         <h5>Xác thực email của bạn</h5>
                         <p>Chúng tôi đã gửi mã xác thực (OTP) đến email <strong>{{ $email }}</strong>.<br>Vui lòng kiểm tra hộp thư đến và nhập mã xác thực để hoàn tất đăng ký.</p>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-clock"></i> Mã OTP sẽ hết hạn sau <span id="otpExpiryTimer" class="fw-bold">10:00</span> phút
+                        </div>
                     </div>
 
                     <form method="POST" action="{{ route('verification.verify') }}">
@@ -83,12 +86,82 @@
         const countdownElement = document.getElementById('countdown');
         const timerElement = document.getElementById('timer');
         const resendForm = document.getElementById('resendForm');
+        const otpExpiryTimer = document.getElementById('otpExpiryTimer');
 
         // Kiểm tra nếu có thời gian đếm ngược trong localStorage
         const resendTime = localStorage.getItem('resendTime');
         if (resendTime && new Date().getTime() < parseInt(resendTime)) {
             // Còn thời gian đếm ngược, hiển thị đếm ngược
             startCountdown(Math.ceil((parseInt(resendTime) - new Date().getTime()) / 1000));
+        }
+
+        // Bắt đầu đếm ngược thời gian hết hạn OTP
+        @if(isset($expiryTime) && $expiryTime > 0)
+            // Sử dụng thời gian hết hạn từ server
+            startOtpExpiryCountdown({{ $expiryTime }});
+        @else
+            // Sử dụng thời gian mặc định 10 phút
+            startOtpExpiryCountdown();
+        @endif
+
+        // Hàm bắt đầu đếm ngược thời gian hết hạn OTP
+        function startOtpExpiryCountdown(initialSeconds = null) {
+            let secondsRemaining;
+
+            // Nếu có thời gian ban đầu từ server, sử dụng nó
+            if (initialSeconds !== null) {
+                secondsRemaining = initialSeconds;
+                // Lưu thời gian hết hạn vào localStorage
+                const otpExpiryTime = new Date().getTime() + (secondsRemaining * 1000);
+                localStorage.setItem('otpExpiryTime', otpExpiryTime.toString());
+            } else {
+                // Lấy thời gian hết hạn OTP từ localStorage hoặc tạo mới
+                let otpExpiryTime = localStorage.getItem('otpExpiryTime');
+
+                // Nếu không có hoặc đã hết hạn, tạo mới (10 phút từ bây giờ)
+                if (!otpExpiryTime || new Date().getTime() > parseInt(otpExpiryTime)) {
+                    otpExpiryTime = new Date().getTime() + (10 * 60 * 1000); // 10 phút
+                    localStorage.setItem('otpExpiryTime', otpExpiryTime.toString());
+                }
+
+                // Tính số giây còn lại
+                secondsRemaining = Math.max(0, Math.ceil((parseInt(otpExpiryTime) - new Date().getTime()) / 1000));
+            }
+            updateOtpExpiryTimer(secondsRemaining);
+
+            // Cập nhật đếm ngược mỗi giây
+            const otpExpiryInterval = setInterval(function() {
+                secondsRemaining--;
+
+                if (secondsRemaining <= 0) {
+                    clearInterval(otpExpiryInterval);
+                    // Hiển thị thông báo OTP đã hết hạn
+                    otpExpiryTimer.parentElement.classList.remove('alert-warning');
+                    otpExpiryTimer.parentElement.classList.add('alert-danger');
+                    otpExpiryTimer.parentElement.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Mã OTP đã hết hạn. Vui lòng gửi lại mã mới.';
+
+                    // Vô hiệu hóa form nhập OTP
+                    document.getElementById('otp').disabled = true;
+                    document.querySelector('button[type="submit"]').disabled = true;
+
+                    // Xóa thời gian hết hạn khỏi localStorage
+                    localStorage.removeItem('otpExpiryTime');
+                } else {
+                    updateOtpExpiryTimer(secondsRemaining);
+                }
+            }, 1000);
+        }
+
+        // Hàm cập nhật hiển thị thời gian hết hạn OTP
+        function updateOtpExpiryTimer(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            otpExpiryTimer.textContent = `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+
+            // Đổi màu khi gần hết thời gian
+            if (seconds < 60) { // Dưới 1 phút
+                otpExpiryTimer.classList.add('text-danger');
+            }
         }
 
         // Xử lý sự kiện submit form gửi lại mã
@@ -100,6 +173,23 @@
             // Lưu thời gian kết thúc đếm ngược vào localStorage
             const endTime = new Date().getTime() + (60 * 1000);
             localStorage.setItem('resendTime', endTime.toString());
+
+            // Reset thời gian hết hạn OTP (10 phút mới)
+            const newOtpExpiryTime = new Date().getTime() + (10 * 60 * 1000);
+            localStorage.setItem('otpExpiryTime', newOtpExpiryTime.toString());
+
+            // Kích hoạt lại form nhập OTP nếu đã bị vô hiệu hóa
+            document.getElementById('otp').disabled = false;
+            document.querySelector('button[type="submit"]').disabled = false;
+
+            // Cập nhật giao diện thông báo
+            if (otpExpiryTimer.parentElement.classList.contains('alert-danger')) {
+                otpExpiryTimer.parentElement.classList.remove('alert-danger');
+                otpExpiryTimer.parentElement.classList.add('alert-warning');
+                otpExpiryTimer.parentElement.innerHTML = '<i class="fas fa-clock"></i> Mã OTP sẽ hết hạn sau <span id="otpExpiryTimer" class="fw-bold">10:00</span> phút';
+                // Cập nhật lại tham chiếu đến otpExpiryTimer vì đã thay đổi DOM
+                otpExpiryTimer = document.getElementById('otpExpiryTimer');
+            }
         });
 
         // Hàm bắt đầu đếm ngược
