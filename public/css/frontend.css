@@ -1,6 +1,6 @@
 /* Frontend Styles */
 :root {
-    --primary-color: #0d6efd;
+    --primary-color: #9e8a78;
     --secondary-color: #6c757d;
     --dark-color: #212529;
     --light-color: #f8f9fa;
@@ -161,8 +161,8 @@ main {
 }
 
 .btn-primary:hover {
-    background-color: #0b5ed7;
-    border-color: #0a58ca;
+    background-color: #8a7869;
+    border-color: #7f6e60;
 }
 
 .btn-outline-primary {
