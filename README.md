@@ -38,10 +38,10 @@
 ## 📸 Hình Ảnh Demo
 
 <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
-    <img src="https://i.imgur.com/jQTGu1S.jpg" alt="Trang chủ" width="400"/>
-    <img src="https://i.imgur.com/mVcvEiB.jpg" alt="Đặt lịch" width="400"/>
-    <img src="https://i.imgur.com/9D75h7G.jpg" alt="Admin Dashboard" width="400"/>
-    <img src="https://i.imgur.com/KtLGgQW.jpg" alt="Lịch hẹn" width="400"/>
+    <img src="image-1.png" alt="Trang chủ" width="400"/>
+    <img src="image-2.png" alt="Đặt lịch" width="400"/>
+    <img src="image-3.png" alt="Admin Dashboard" width="400"/>
+    <img src="image-4.png" alt="Lịch hẹn" width="400"/>
 </div>
 
 ## 🔧 Hướng Dẫn Cài Đặt
