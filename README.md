@@ -1,6 +1,6 @@
 # 💈 Barber Shop - Hệ Thống Quản Lý Tiệm Cắt Tóc
 
-![Barber Shop Banner](https://i.imgur.com/2uYCBxl.jpg)
+![Barber Shop Banner](image.png)
 
 ## 📝 Giới Thiệu
 
