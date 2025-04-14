@@ -12,7 +12,7 @@
                 <li class="breadcrumb-item active" aria-current="page">{{ $product->name }}</li>
             </ol>
         </nav>
-        
+
         <div class="row">
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <div class="product-image-container">
@@ -31,7 +31,7 @@
                     <h5>Mô tả sản phẩm</h5>
                     <p>{{ $product->description }}</p>
                 </div>
-                
+
                 <div class="product-features mb-4">
                     <h5>Đặc điểm nổi bật</h5>
                     <ul class="list-group list-group-flush">
@@ -46,7 +46,7 @@
                         </li>
                     </ul>
                 </div>
-                
+
                 <div class="product-action mb-4">
                     <div class="d-grid gap-2 d-md-block">
                         <a href="{{ route('contact.index') }}" class="btn btn-primary">
@@ -57,7 +57,7 @@
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="product-info">
                     <h5>Thông tin thêm</h5>
                     <div class="row">
@@ -78,7 +78,7 @@
                         </div>
                         <div class="col-6">
                             <div class="mb-2">
-                                <strong>Tình trạng:</strong> Còn hàng
+                                <strong>Tình trạng:</strong> <span class="{{ $product->stock > 0 ? 'text-success' : 'text-danger' }}">{{ $product->stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</span>
                             </div>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
 <section class="py-5 bg-light">
     <div class="container">
         <h2 class="text-center mb-5">Sản phẩm liên quan</h2>
-        
+
         <div class="row">
             @foreach($relatedProducts as $relatedProduct)
             <div class="col-md-6 col-lg-4 mb-4">
@@ -112,17 +112,11 @@
     </div>
 </section>
 
-<section class="py-5 bg-primary text-white">
+<section class="py-5 bg-primary text-white text-center cta-appointment">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-8 mb-4 mb-lg-0">
-                <h2 class="h1 mb-3">Cần tư vấn thêm về sản phẩm?</h2>
-                <p class="lead mb-0">Đừng ngần ngại liên hệ hoặc ghé cửa hàng để được tư vấn chi tiết về sản phẩm phù hợp.</p>
-            </div>
-            <div class="col-lg-4 text-lg-end">
-                <a href="{{ route('contact.index') }}" class="btn btn-light btn-lg">Liên hệ ngay</a>
-            </div>
-        </div>
+        <h2 class="h1 mb-4">Cần tư vấn thêm về sản phẩm?</h2>
+        <p class="lead mb-4">Đừng ngần ngại liên hệ hoặc ghé cửa hàng để được tư vấn chi tiết về sản phẩm phù hợp.</p>
+        <a href="{{ route('contact.index') }}" class="btn btn-light btn-lg appointment-btn">Liên hệ ngay</a>
     </div>
 </section>
-@endsection 
+@endsection

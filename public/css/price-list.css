@@ -51,7 +51,6 @@
     padding: 20px 30px;
     border-bottom: 1px solid #eee;
     transition: background-color 0.2s ease;
-    cursor: pointer;
     animation: fadeInUp 0.3s ease forwards;
     opacity: 0;
     will-change: transform, opacity;
@@ -76,9 +75,7 @@
     border-bottom: none;
 }
 
-.price-item:hover {
-    background-color: rgba(52, 152, 219, 0.05);
-}
+/* Đã bỏ hover effect vì không còn chức năng xem chi tiết */
 
 .price-item-title {
     font-weight: 600;

@@ -129,11 +129,22 @@
 .product-status {
     bottom: 10px;
     right: 10px;
-    background-color: rgba(25, 135, 84, 0.8); /* Success color with opacity */
-    color: white;
     padding: 5px 10px;
     border-radius: 4px;
     font-size: 0.8rem;
+    color: white;
+}
+
+.product-status .in-stock {
+    background-color: rgba(25, 135, 84, 0.8); /* Success color with opacity */
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.product-status .out-of-stock {
+    background-color: rgba(220, 53, 69, 0.8); /* Danger color with opacity */
+    padding: 5px 10px;
+    border-radius: 4px;
 }
 
 .product-category .badge {

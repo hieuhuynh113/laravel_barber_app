@@ -37,45 +37,11 @@
                                         </div>
                                         <div class="col-md-3 text-md-end">
                                             <div class="price-item-price">{{ number_format($service->price) }} VNĐ</div>
-                                            <button class="btn btn-sm btn-outline-primary mt-2 view-details" data-service-id="{{ $service->id }}">Xem chi tiết</button>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Modal for service details -->
-                                <div class="modal fade" id="serviceModal{{ $service->id }}" tabindex="-1" aria-labelledby="serviceModalLabel{{ $service->id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="serviceModalLabel{{ $service->id }}">{{ $service->name }}</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="service-detail-img mb-3">
-                                                    @if($service->image)
-                                                        <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" class="img-fluid rounded">
-                                                    @else
-                                                        <img src="{{ asset('images/default-service.jpg') }}" alt="{{ $service->name }}" class="img-fluid rounded">
-                                                    @endif
-                                                </div>
-                                                <div class="service-detail-info">
-                                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                                        <div class="service-detail-duration">
-                                                            <i class="far fa-clock me-2"></i>{{ $service->duration }} phút
-                                                        </div>
-                                                        <div class="service-detail-price fw-bold text-primary">{{ number_format($service->price) }} VNĐ</div>
-                                                    </div>
-                                                    <h6 class="fw-bold mb-2">Mô tả dịch vụ:</h6>
-                                                    <p>{{ $service->description }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                                <a href="{{ route('appointment.step1', ['service_id' => $service->id]) }}" class="btn btn-primary appointment-btn">Đặt lịch ngay</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+
                             @endforeach
                         </div>
                     </div>
@@ -184,44 +150,8 @@
             item.style.animationDelay = (index * 0.03) + 's';
         });
 
-        // Xử lý sự kiện click vào nút xem chi tiết
-        $('.view-details').on('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const serviceId = $(this).data('service-id');
-
-            // Sử dụng setTimeout để tránh lag UI
-            setTimeout(function() {
-                $('#serviceModal' + serviceId).modal('show');
-            }, 10);
-        });
-
-        // Xử lý sự kiện click vào price-item
-        $('.price-item').on('click', function() {
-            const serviceId = $(this).find('.view-details').data('service-id');
-
-            // Sử dụng setTimeout để tránh lag UI
-            setTimeout(function() {
-                $('#serviceModal' + serviceId).modal('show');
-            }, 10);
-        });
-
-        // Tối ưu hiệu suất modal
-        $('.modal').each(function() {
-            // Di chuyển modal ra ngoài DOM hiện tại để tránh reflow
-            $(this).appendTo(document.body);
-
-            // Preload hình ảnh trong modal
-            const img = $(this).find('img');
-            if (img.length > 0) {
-                const imgSrc = img.attr('src');
-                if (imgSrc) {
-                    const preloadImg = new Image();
-                    preloadImg.src = imgSrc;
-                }
-            }
-        });
+        // Animation cho price items
+        // Không cần xử lý sự kiện click vì đã bỏ chức năng xem chi tiết
     });
 </script>
 @endsection

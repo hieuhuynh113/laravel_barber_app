@@ -134,27 +134,50 @@
 </section>
 
 <!-- Dịch vụ -->
-<section class="py-5 section-services full-width-section">
+<section class="py-5 section-services full-width-bg">
     <div class="container">
-        <h2 class="section-title text-center">Dịch vụ của chúng tôi</h2>
-        <p class="section-description text-center">Chúng tôi cung cấp đa dạng các dịch vụ chăm sóc tóc và cắt tóc chuyên nghiệp.</p>
+        <h2 class="section-title text-center mb-5">Dịch vụ của chúng tôi</h2>
 
         <div class="row">
-            @foreach($featuredServices as $service)
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100">
-                    <img src="{{ asset('storage/' . $service->image) }}" class="card-img-top" alt="{{ $service->name }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $service->name }}</h5>
-                        <p class="card-text">{{ Str::limit($service->description, 100) }}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-primary fw-bold">{{ number_format($service->price) }} VNĐ</span>
-                            <a href="{{ route('services.show', $service->slug) }}" class="btn btn-outline-primary">Chi tiết</a>
-                        </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="service-card text-center p-4 bg-white rounded shadow-sm h-100">
+                    <div class="service-icon mb-3">
+                        <i class="fas fa-user"></i>
                     </div>
+                    <h3 class="service-title mb-3">Các Kiểu Tóc</h3>
+                    <p class="service-description">Thợ cắt tóc chuyên nghiệp với nhiều năm kinh nghiệm tạo kiểu.</p>
                 </div>
             </div>
-            @endforeach
+
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="service-card text-center p-4 bg-white rounded shadow-sm h-100">
+                    <div class="service-icon mb-3">
+                        <i class="fas fa-scissors"></i>
+                    </div>
+                    <h3 class="service-title mb-3">Tỉa Râu</h3>
+                    <p class="service-description">Thợ cắt tóc chuyên nghiệp với nhiều năm kinh nghiệm tạo kiểu.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="service-card text-center p-4 bg-white rounded shadow-sm h-100">
+                    <div class="service-icon mb-3">
+                        <i class="fas fa-brush"></i>
+                    </div>
+                    <h3 class="service-title mb-3">Cạo Râu Nhẵn</h3>
+                    <p class="service-description">Thợ cắt tóc chuyên nghiệp với nhiều năm kinh nghiệm tạo kiểu.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="service-card text-center p-4 bg-white rounded shadow-sm h-100">
+                    <div class="service-icon mb-3">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <h3 class="service-title mb-3">Đắp Mặt Nạ</h3>
+                    <p class="service-description">Thợ cắt tóc chuyên nghiệp với nhiều năm kinh nghiệm tạo kiểu.</p>
+                </div>
+            </div>
         </div>
 
         <div class="text-center mt-4">
@@ -220,7 +243,7 @@
 </section>
 
 <!-- Đặt lịch -->
-<section class="appointment-banner full-width-section py-5">
+<section class="appointment-banner py-5 full-width-bg">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 mb-4 mb-lg-0">

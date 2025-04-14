@@ -8,6 +8,8 @@
     --danger-color: #dc3545;
     --warning-color: #ffc107;
     --info-color: #0dcaf0;
+    --beige-color: #f9f5f0;
+    --icon-color: #a58a6e;
 }
 
 body {
@@ -17,6 +19,7 @@ body {
     background-color: #f8f9fa;
     overflow-x: hidden;
     padding-top: 0;
+    max-width: 100%;
 }
 
 /* Header Styles */
@@ -184,6 +187,8 @@ main {
     position: relative;
     padding-bottom: 1rem;
 }
+
+/* Định nghĩa full-width-section đã được di chuyển xuống dưới */
 
 .section-title:after {
     content: "";
@@ -417,6 +422,50 @@ label {
     margin-bottom: 0.5rem;
 }
 
+/* Service Card Styles */
+.service-card {
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.service-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--beige-color);
+    color: var(--icon-color);
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.service-card:hover .service-icon {
+    background-color: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+.service-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.75rem;
+}
+
+.service-description {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
 /* Appointment Styles */
 .appointment-steps {
     display: flex;
@@ -585,32 +634,17 @@ label {
 .full-width-section {
     position: relative;
     box-sizing: border-box;
-}
-
-.full-width-section::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 50%;
-    right: 50%;
-    bottom: 0;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    z-index: -1;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    overflow-x: hidden;
 }
 
 /* Appointment Banner */
 .appointment-banner {
-    background-color: transparent;
     color: white;
     position: relative;
-    width: 100%;
-    padding: 80px 0;
     box-sizing: border-box;
-}
-
-.appointment-banner::before {
-    background-color: var(--primary-color);
 }
 
 .appointment-banner .container {
@@ -619,8 +653,12 @@ label {
 }
 
 /* Section Services */
+.section-services {
+    background-color: var(--beige-color);
+}
+
 .section-services::before {
-    background-color: #fcf9f5;
+    background-color: var(--beige-color);
     background-image: none;
 }
 
@@ -633,6 +671,21 @@ label {
 html, body {
     overflow-x: hidden;
     max-width: 100%;
+}
+
+/* Full-width background */
+.full-width-bg {
+    position: relative;
+    margin: 0 -9999rem;
+    padding: 0.25rem 9999rem;
+}
+
+.appointment-banner.full-width-bg {
+    background-color: var(--primary-color);
+}
+
+.section-services.full-width-bg {
+    background-color: var(--beige-color);
 }
 
 /* Điều chỉnh padding-top cho main content khi không có hero carousel */
@@ -696,11 +749,29 @@ main > .container.py-5 {
     }
 }
 
+/* Breadcrumb divider mặc định */
 .breadcrumb-item + .breadcrumb-item::before {
+    color: #6c757d;
+}
+
+/* Breadcrumb divider trong page-header (nền tối) */
+.page-header .breadcrumb-item + .breadcrumb-item::before {
     color: rgba(255, 255, 255, 0.5);
 }
 
+.breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
 .breadcrumb-item a:hover {
+    color: var(--primary-color) !important;
+    text-decoration: none !important;
+}
+
+/* Breadcrumb trong page-header (nền tối) */
+.page-header .breadcrumb-item a:hover {
     color: #fff !important;
     text-decoration: underline !important;
 }

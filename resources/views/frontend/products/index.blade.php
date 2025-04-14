@@ -66,7 +66,7 @@
                     <div class="card-img-container position-relative">
                         <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}">
                         <div class="product-status position-absolute">
-                            <span>Còn hàng</span>
+                            <span class="{{ $product->stock > 0 ? 'in-stock' : 'out-of-stock' }}">{{ $product->stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</span>
                         </div>
                     </div>
                     <div class="card-body">
