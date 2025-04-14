@@ -125,7 +125,7 @@ Dự án này được phát hành dưới giấy phép MIT.
 
 ## 📞 Liên Hệ
 
-Nếu bạn có câu hỏi hoặc góp ý, vui lòng liên hệ qua email: [hieuhuynh113@gmail.com](mailto:hieuhuynh113@gmail.com)
+Nếu bạn có câu hỏi hoặc góp ý, vui lòng liên hệ qua email: [hieuhuynh113@gmail.com](hieu0559764554@gmail.com)
 
 ---
 
