@@ -38,7 +38,8 @@ DROP TABLE IF EXISTS `products`;
 DROP TABLE IF EXISTS `services`;
 DROP TABLE IF EXISTS `news`;
 DROP TABLE IF EXISTS `contacts`;
-DROP TABLE IF EXISTS `settings`;
+-- Bỏ bảng settings vì không còn sử dụng
+-- DROP TABLE IF EXISTS `settings`;
 DROP TABLE IF EXISTS `categories`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `password_reset_tokens`;
@@ -326,20 +327,8 @@ CREATE TABLE `contacts` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tạo bảng settings
--- Bảng này lưu trữ các cài đặt hệ thống
--- Sử dụng cặp key-value để lưu trữ các cài đặt
--- Các cài đặt được phân nhóm để dễ quản lý
-CREATE TABLE `settings` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL,
-  `value` text DEFAULT NULL,
-  `group` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `settings_key_unique` (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Bảng settings đã được loại bỏ vì không còn sử dụng
+-- Các giá trị cài đặt đã được thay thế bằng các giá trị mặc định trong code
 
 -- Tạo bảng reviews
 -- Bảng này lưu trữ đánh giá của khách hàng
