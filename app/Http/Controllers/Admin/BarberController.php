@@ -73,6 +73,12 @@ class BarberController extends Controller
     {
         $barber->load('barber', 'appointments.services');
 
+        // Kiểm tra xem người dùng có thông tin thợ cắt tóc hay không
+        if (!$barber->barber) {
+            return redirect()->route('admin.barbers.index')
+                ->with('error', 'Không tìm thấy thông tin thợ cắt tóc.');
+        }
+
         // Lấy đánh giá của thợ cắt tóc
         $reviews = Review::where('barber_id', $barber->barber->id)
             ->with(['user', 'service'])
@@ -107,13 +113,38 @@ class BarberController extends Controller
             ->take(5)
             ->get();
 
+        // Lấy lịch làm việc của thợ cắt tóc
+        $schedules = $barber->barber->schedules()->orderBy('day_of_week')->get();
+
+        // Đảm bảo có đủ 7 ngày trong tuần
+        $existingDays = $schedules->pluck('day_of_week')->toArray();
+
+        for ($day = 0; $day <= 6; $day++) {
+            if (!in_array($day, $existingDays)) {
+                $defaultStartTime = \Carbon\Carbon::createFromTime(8, 0, 0);
+                $defaultEndTime = \Carbon\Carbon::createFromTime(17, 0, 0);
+
+                $schedules->push(new \App\Models\BarberSchedule([
+                    'barber_id' => $barber->barber->id,
+                    'day_of_week' => $day,
+                    'start_time' => $defaultStartTime,
+                    'end_time' => $defaultEndTime,
+                    'is_day_off' => false,
+                    'max_appointments' => 3,
+                ]));
+            }
+        }
+
+        $schedules = $schedules->sortBy('day_of_week');
+
         return view('admin.barbers.show', compact(
             'barber',
             'reviews',
             'reviewsCount',
             'averageRating',
             'ratingDistribution',
-            'topServices'
+            'topServices',
+            'schedules'
         ));
     }
 

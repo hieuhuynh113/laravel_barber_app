@@ -96,7 +96,7 @@ class DashboardController extends BaseAdminController
         $recentInvoices = Invoice::with(['user', 'barber.user', 'services', 'appointment'])
             ->where('payment_status', 'paid')
             ->orderBy('created_at', 'desc')
-            ->take(5)
+            ->take(2)
             ->get();
 
         return view('admin.dashboard', compact(
