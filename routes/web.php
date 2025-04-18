@@ -155,12 +155,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::post('contacts/{contact}/mark-as-unread', [\App\Http\Controllers\Admin\ContactController::class, 'markAsUnread'])->name('contacts.markAsUnread');
     Route::post('contacts/bulk-action', [\App\Http\Controllers\Admin\ContactController::class, 'bulkAction'])->name('contacts.bulkAction');
 
-    // Setting Routes
-    Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
-    Route::post('settings/general', [\App\Http\Controllers\Admin\SettingController::class, 'updateGeneral'])->name('settings.updateGeneral');
-    Route::post('settings/contact', [\App\Http\Controllers\Admin\SettingController::class, 'updateContact'])->name('settings.updateContact');
-    Route::post('settings/social', [\App\Http\Controllers\Admin\SettingController::class, 'updateSocial'])->name('settings.updateSocial');
-    Route::post('settings/seo', [\App\Http\Controllers\Admin\SettingController::class, 'updateSeo'])->name('settings.updateSeo');
+    // Setting Routes đã bị xóa
 });
 
 // Barber Routes

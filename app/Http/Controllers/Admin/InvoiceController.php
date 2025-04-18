@@ -107,12 +107,12 @@ class InvoiceController extends Controller
         $services = Service::where('status', 1)->get();
         $products = Product::where('status', 1)->get();
 
-        // Lấy thông tin cửa hàng từ settings
+        // Thông tin cửa hàng
         $shopInfo = [
-            'shop_name' => setting('shop_name', 'Barber Shop'),
-            'shop_address' => setting('shop_address', 'Địa chỉ chưa cập nhật'),
-            'shop_phone' => setting('shop_phone', 'Chưa cập nhật'),
-            'shop_email' => setting('shop_email', 'Chưa cập nhật'),
+            'shop_name' => 'Barber Shop',
+            'shop_address' => '123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh',
+            'shop_phone' => '0123456789',
+            'shop_email' => 'hieu0559764554@gmail.com',
         ];
 
         return view('admin.invoices.create', compact(
@@ -223,12 +223,12 @@ class InvoiceController extends Controller
             'barber'
         ]);
 
-        // Lấy thông tin cửa hàng từ settings
+        // Thông tin cửa hàng
         $shopInfo = [
-            'shop_name' => setting('shop_name', 'Barber Shop'),
-            'shop_address' => setting('shop_address', 'Địa chỉ chưa cập nhật'),
-            'shop_phone' => setting('shop_phone', 'Chưa cập nhật'),
-            'shop_email' => setting('shop_email', 'Chưa cập nhật'),
+            'shop_name' => 'Barber Shop',
+            'shop_address' => '123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh',
+            'shop_phone' => '0123456789',
+            'shop_email' => 'hieu0559764554@gmail.com',
         ];
 
         return view('admin.invoices.show', compact('invoice', 'shopInfo'));
@@ -251,12 +251,12 @@ class InvoiceController extends Controller
         $services = Service::where('status', 1)->get();
         $products = Product::where('status', 1)->get();
 
-        // Lấy thông tin cửa hàng từ settings
+        // Thông tin cửa hàng
         $shopInfo = [
-            'shop_name' => setting('shop_name', 'Barber Shop'),
-            'shop_address' => setting('shop_address', 'Địa chỉ chưa cập nhật'),
-            'shop_phone' => setting('shop_phone', 'Chưa cập nhật'),
-            'shop_email' => setting('shop_email', 'Chưa cập nhật'),
+            'shop_name' => 'Barber Shop',
+            'shop_address' => '123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh',
+            'shop_phone' => '0123456789',
+            'shop_email' => 'hieu0559764554@gmail.com',
         ];
 
         return view('admin.invoices.edit', compact('invoice', 'users', 'barbers', 'services', 'products', 'shopInfo'));
@@ -341,12 +341,12 @@ class InvoiceController extends Controller
             'barber'
         ]);
 
-        // Lấy thông tin cửa hàng từ settings
+        // Thông tin cửa hàng
         $shopInfo = [
-            'shop_name' => setting('shop_name', 'Barber Shop'),
-            'shop_address' => setting('shop_address', 'Địa chỉ chưa cập nhật'),
-            'shop_phone' => setting('shop_phone', 'Chưa cập nhật'),
-            'shop_email' => setting('shop_email', 'Chưa cập nhật'),
+            'shop_name' => 'Barber Shop',
+            'shop_address' => '123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh',
+            'shop_phone' => '0123456789',
+            'shop_email' => 'hieu0559764554@gmail.com',
         ];
 
         return view('admin.invoices.print', compact('invoice', 'shopInfo'));

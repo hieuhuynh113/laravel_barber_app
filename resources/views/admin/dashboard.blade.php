@@ -611,16 +611,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col">
-                            <a href="{{ route('admin.settings.index') }}" class="btn btn-secondary btn-icon-split btn-block">
-                                <span class="icon text-white-50">
-                                    <i class="fas fa-cogs"></i>
-                                </span>
-                                <span class="text">Cài đặt hệ thống</span>
-                            </a>
-                        </div>
-                    </div>
+
                 </div>
             </div>
 
@@ -676,7 +667,7 @@
             <!-- Đánh giá cần chú ý -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3 bg-danger text-white">
-                    <h6 class="m-0 font-weight-bold">Đánh giá cần chú ý (1-2 sao)</h6>
+                    <h6 class="m-0 font-weight-bold text-white">Đánh giá cần chú ý (1-2 sao)</h6>
                 </div>
                 <div class="card-body">
                     @if($lowRatingReviews->count() > 0)
@@ -796,11 +787,7 @@
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    @if($barber->user->avatar)
-                                                        <img src="{{ asset('storage/' . $barber->user->avatar) }}" alt="{{ $barber->user->name }}" class="rounded-circle me-2" width="40" height="40">
-                                                    @else
-                                                        <img src="{{ asset('images/default-avatar.jpg') }}" alt="{{ $barber->user->name }}" class="rounded-circle me-2" width="40" height="40">
-                                                    @endif
+                                                    <img src="{{ get_user_avatar($barber->user, 'small') }}" alt="{{ $barber->user->name }}" class="rounded-circle me-2" width="40" height="40">
                                                     <a href="{{ route('admin.barbers.show', $barber->user->id) }}?tab=reviews">
                                                         {{ $barber->user->name }}
                                                     </a>

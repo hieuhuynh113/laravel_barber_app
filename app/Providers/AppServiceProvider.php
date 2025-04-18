@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Models\Category;
-use App\Models\Setting;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,11 +22,11 @@ class AppServiceProvider extends ServiceProvider
             $view->with('newsCategories', Category::query()->news()->active()->get());
 
             // Các cài đặt chung
-            $view->with('shopName', Setting::getValue('shop_name', 'Barber Shop'));
-            $view->with('shopAddress', Setting::getValue('shop_address', '123 Đường ABC, Quận XYZ, Thành phố HCM'));
-            $view->with('shopPhone', Setting::getValue('shop_phone', '0123456789'));
-            $view->with('shopEmail', Setting::getValue('shop_email', 'info@barbershop.com'));
-            $view->with('shopWorkingHours', Setting::getValue('shop_working_hours', '8:00 - 20:00'));
+            $view->with('shopName', 'Barber Shop');
+            $view->with('shopAddress', '123 Đường ABC, Quận XYZ, Thành phố HCM');
+            $view->with('shopPhone', '0123456789');
+            $view->with('shopEmail', 'hieu0559764554@gmail.com');
+            $view->with('shopWorkingHours', '8:00 - 20:00');
         });
     }
 }

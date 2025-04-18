@@ -81,22 +81,22 @@
 
                         <div class="mb-4">
                             <h5><i class="fas fa-map-marker-alt text-primary me-2"></i> Địa chỉ</h5>
-                            <p class="ms-4">{{ \App\Models\Setting::getValue('shop_address', '123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh') }}</p>
+                            <p class="ms-4">123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh</p>
                         </div>
 
                         <div class="mb-4">
                             <h5><i class="fas fa-phone-alt text-primary me-2"></i> Điện thoại</h5>
-                            <p class="ms-4">{{ \App\Models\Setting::getValue('shop_phone', '0123456789') }}</p>
+                            <p class="ms-4">0123456789</p>
                         </div>
 
                         <div class="mb-4">
                             <h5><i class="fas fa-envelope text-primary me-2"></i> Email</h5>
-                            <p class="ms-4">{{ \App\Models\Setting::getValue('shop_email', 'contact@barbershop.com') }}</p>
+                            <p class="ms-4">hieu0559764554@gmail.com</p>
                         </div>
 
                         <div class="mb-4">
                             <h5><i class="fas fa-clock text-primary me-2"></i> Giờ làm việc</h5>
-                            <p class="ms-4">{{ \App\Models\Setting::getValue('shop_working_hours', 'Thứ 2 - Chủ nhật: 8:00 - 20:00') }}</p>
+                            <p class="ms-4">Thứ 2 - Chủ nhật: 8:00 - 20:00</p>
                         </div>
 
                         <div class="mb-4">
