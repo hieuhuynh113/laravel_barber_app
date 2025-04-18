@@ -21,6 +21,33 @@
     <!-- Admin CSS -->
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+
+    <!-- Admin Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/admin-custom.css') }}">
+
+    <style>
+        /* Notification Styles */
+        .notification-item {
+            padding: 10px;
+            border-bottom: 1px solid #e3e6f0;
+            transition: all 0.3s;
+        }
+        .notification-item:hover {
+            background-color: #f8f9fc;
+        }
+        .notification-dropdown .dropdown-item:active {
+            background-color: transparent;
+        }
+        .badge.bg-danger {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 0.6rem;
+        }
+    </style>
+
     @yield('styles')
 </head>
 <body>
@@ -98,16 +125,26 @@
                     </ul>
                 </li>
 
-                <li class="{{ request()->routeIs('admin.invoices.*') ? 'active' : '' }}">
+                <li class="{{ request()->routeIs('admin.invoices.*') || request()->routeIs('admin.payment-receipts.*') ? 'active' : '' }}">
                     <a href="#invoiceSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                        <i class="fas fa-file-invoice-dollar me-2"></i> Hóa đơn
+                        <i class="fas fa-file-invoice-dollar me-2"></i> Thanh toán & Hóa đơn
                     </a>
-                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.invoices.*') ? 'show' : '' }}" id="invoiceSubmenu">
+                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.invoices.*') || request()->routeIs('admin.payment-receipts.*') ? 'show' : '' }}" id="invoiceSubmenu">
                         <li>
                             <a href="{{ route('admin.invoices.index') }}">Danh sách hóa đơn</a>
                         </li>
                         <li>
                             <a href="{{ route('admin.invoices.create') }}">Tạo hóa đơn</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.payment-receipts.index') }}">Biên lai chuyển khoản
+                                @php
+                                    $pendingReceipts = \App\Models\PaymentReceipt::where('status', 'pending')->count();
+                                @endphp
+                                @if($pendingReceipts > 0)
+                                    <span class="badge bg-danger rounded-pill ms-2">{{ $pendingReceipts }}</span>
+                                @endif
+                            </a>
                         </li>
                         <li>
                             <a href="{{ route('admin.invoices.statistics') }}">Thống kê doanh thu</a>
@@ -138,6 +175,29 @@
                     </a>
                 </li>
 
+                <li class="{{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.notifications.index') }}">
+                        <i class="fas fa-bell me-2"></i> Thông báo
+                        @if(Auth::user()->unreadNotifications->count() > 0)
+                            <span class="badge bg-danger rounded-pill ms-2">{{ Auth::user()->unreadNotifications->count() }}</span>
+                        @endif
+                    </a>
+                </li>
+
+                <li class="{{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">
+                    <a href="#reviewSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-star me-2"></i> Đánh giá
+                    </a>
+                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.reviews.*') ? 'show' : '' }}" id="reviewSubmenu">
+                        <li>
+                            <a href="{{ route('admin.reviews.index') }}">Danh sách đánh giá</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.reviews.statistics') }}">Thống kê đánh giá</a>
+                        </li>
+                    </ul>
+                </li>
+
                 <li class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.settings.index') }}">
                         <i class="fas fa-cog me-2"></i> Cài đặt
@@ -157,6 +217,73 @@
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="nav navbar-nav ms-auto">
+                            <!-- Notifications Dropdown -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-bell me-2"></i>
+                                    @if(Auth::user()->unreadNotifications->count() > 0)
+                                        <span class="badge rounded-pill bg-danger">{{ Auth::user()->unreadNotifications->count() }}</span>
+                                    @endif
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationsDropdown" style="width: 300px; max-height: 400px; overflow-y: auto;">
+                                    <li>
+                                        <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+                                            <h6 class="mb-0">Thông báo</h6>
+                                            <a href="{{ route('admin.notifications.index') }}" class="text-decoration-none small">Xem tất cả</a>
+                                        </div>
+                                    </li>
+                                    @forelse(Auth::user()->unreadNotifications->take(5) as $notification)
+                                        <li>
+                                            <div class="dropdown-item notification-item" style="white-space: normal;">
+                                                @if($notification->type == 'App\\Notifications\\NewReviewNotification')
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="small text-muted">{{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</span>
+                                                        @if($notification->data['is_low_rating'])
+                                                            <span class="badge bg-danger">Cần chú ý</span>
+                                                        @endif
+                                                    </div>
+                                                    <div>
+                                                        <strong>{{ $notification->data['user_name'] }}</strong> đã đánh giá
+                                                        <strong>{{ $notification->data['rating'] }}</strong> sao cho dịch vụ
+                                                        <strong>{{ $notification->data['service_name'] }}</strong>
+                                                    </div>
+                                                    <div class="mt-1">
+                                                        <a href="{{ route('admin.reviews.show', $notification->data['review_id']) }}" class="btn btn-sm btn-primary">
+                                                            Xem chi tiết
+                                                        </a>
+                                                        <form action="{{ route('admin.notifications.markAsRead', $notification->id) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-sm btn-secondary">
+                                                                Đánh dấu đã đọc
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                @else
+                                                    <div class="small text-muted">{{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</div>
+                                                    <div>{{ json_encode($notification->data) }}</div>
+                                                @endif
+                                            </div>
+                                        </li>
+                                    @empty
+                                        <li><div class="dropdown-item text-center">Không có thông báo mới</div></li>
+                                    @endforelse
+                                    @if(Auth::user()->unreadNotifications->count() > 0)
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <div class="text-center py-2">
+                                                <form action="{{ route('admin.notifications.markAllAsRead') }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-primary">
+                                                        Đánh dấu tất cả đã đọc
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </li>
+
+                            <!-- User Dropdown -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-user me-2"></i>{{ Auth::user()->name }}

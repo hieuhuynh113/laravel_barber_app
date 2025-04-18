@@ -90,34 +90,6 @@ class ServiceController extends Controller
         return view('frontend.services.show', compact('service', 'relatedServices', 'reviews'));
     }
 
-    public function storeReview(Request $request, Service $service)
-    {
-        $validated = $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|max:500',
-            'barber_id' => 'required|exists:barbers,id',
-            'review_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
-
-        $review = new Review();
-        $review->user_id = Auth::id();
-        $review->service_id = $service->id;
-        $review->barber_id = $validated['barber_id'];
-        $review->rating = $validated['rating'];
-        $review->comment = $validated['comment'];
-
-        // Handle images upload
-        if ($request->hasFile('review_images')) {
-            $images = [];
-            foreach ($request->file('review_images') as $image) {
-                $path = $image->store('reviews', 'public');
-                $images[] = 'storage/' . $path;
-            }
-            $review->images = json_encode($images);
-        }
-
-        $review->save();
-
-        return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi thành công!');
-    }
+    // Phương thức storeReview đã được chuyển sang ProfileController
+    // Đánh giá dịch vụ chỉ được thực hiện từ trang lịch hẹn đã hoàn thành
 }

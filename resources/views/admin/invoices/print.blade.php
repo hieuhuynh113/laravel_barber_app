@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hóa đơn #{{ $invoice->invoice_code }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 30px;
+        }
+        .invoice-header {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .invoice-header .logo {
+            max-width: 200px;
+            height: auto;
+        }
+        .invoice-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4e73df;
+            margin-bottom: 5px;
+        }
+        .invoice-subtitle {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+        .col-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding-right: 15px;
+            padding-left: 15px;
+            box-sizing: border-box;
+        }
+        .invoice-details {
+            margin-bottom: 30px;
+        }
+        .invoice-details h5 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #4e73df;
+        }
+        .invoice-details p {
+            margin: 5px 0;
+        }
+        .invoice-items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .invoice-items th, .invoice-items td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: left;
+        }
+        .invoice-items th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #495057;
+        }
+        .invoice-items tr:last-child td {
+            border-bottom: none;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .invoice-total {
+            margin-top: 20px;
+            border-top: 1px solid #dee2e6;
+            padding-top: 20px;
+        }
+        .invoice-total table {
+            width: 300px;
+            margin-left: auto;
+        }
+        .invoice-total table td {
+            padding: 5px 0;
+        }
+        .invoice-total table td:last-child {
+            text-align: right;
+            font-weight: bold;
+        }
+        .invoice-total table tr:last-child td {
+            font-size: 18px;
+            color: #4e73df;
+            border-top: 1px solid #dee2e6;
+            padding-top: 10px;
+        }
+        .invoice-notes {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+        .invoice-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .btn-print {
+            background-color: #4e73df;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        .btn-print:hover {
+            background-color: #2e59d9;
+        }
+        .print-only {
+            display: none;
+        }
+        @media print {
+            body {
+                background-color: #fff;
+                padding: 0;
+            }
+            .invoice-container {
+                box-shadow: none;
+                padding: 0;
+            }
+            .no-print {
+                display: none;
+            }
+            .print-only {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="invoice-header">
+            <div class="row">
+                <div class="col-6">
+                    <div class="invoice-title">{{ $shopInfo['shop_name'] }}</div>
+                    <div class="invoice-subtitle">{{ $shopInfo['shop_address'] }}</div>
+                    <div class="invoice-subtitle">Điện thoại: {{ $shopInfo['shop_phone'] }}</div>
+                    <div class="invoice-subtitle">Email: {{ $shopInfo['shop_email'] }}</div>
+                </div>
+                <div class="col-6 text-right">
+                    <div class="invoice-title">HÓA ĐƠN</div>
+                    <div class="invoice-subtitle">Mã hóa đơn: {{ $invoice->invoice_code }}</div>
+                    <div class="invoice-subtitle">Ngày: {{ \Carbon\Carbon::parse($invoice->created_at)->format('d/m/Y') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="invoice-details">
+            <div class="row">
+                <div class="col-6">
+                    <h5>Thông tin khách hàng</h5>
+                    <p><strong>Tên:</strong> {{ $invoice->user->name ?? $invoice->appointment->user->name ?? 'Không xác định' }}</p>
+                    <p><strong>Email:</strong> {{ $invoice->user->email ?? $invoice->appointment->user->email ?? 'Không xác định' }}</p>
+                    <p><strong>Điện thoại:</strong> {{ $invoice->user->phone ?? $invoice->appointment->user->phone ?? 'Không xác định' }}</p>
+                </div>
+                <div class="col-6">
+                    <h5>Thông tin dịch vụ</h5>
+                    <p><strong>Thợ cắt tóc:</strong> {{ $invoice->barber->user->name ?? $invoice->appointment->barber->user->name ?? 'Không xác định' }}</p>
+                    @if($invoice->appointment)
+                    <p><strong>Ngày hẹn:</strong> {{ \Carbon\Carbon::parse($invoice->appointment->appointment_date)->format('d/m/Y') }}</p>
+                    <p><strong>Giờ hẹn:</strong> {{ $invoice->appointment->appointment_time }}</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <table class="invoice-items">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Dịch vụ</th>
+                    <th>Đơn giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if($invoice->services->count() > 0)
+                    @foreach($invoice->services as $index => $service)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $service->name }}</td>
+                            <td>{{ number_format($service->pivot->price) }} VNĐ</td>
+                            <td>{{ $service->pivot->quantity }}</td>
+                            <td>{{ number_format($service->pivot->price * $service->pivot->quantity) }} VNĐ</td>
+                        </tr>
+                    @endforeach
+                @else
+                    <tr>
+                        <td colspan="5" class="text-center">Không có dịch vụ nào trong hóa đơn này</td>
+                    </tr>
+                @endif
+            </tbody>
+        </table>
+
+        <div class="invoice-total">
+            <table>
+                <tr>
+                    <td>Tạm tính:</td>
+                    <td>{{ number_format($invoice->subtotal) }} VNĐ</td>
+                </tr>
+                @if($invoice->discount > 0)
+                <tr>
+                    <td>Giảm giá:</td>
+                    <td>{{ number_format($invoice->discount) }} VNĐ</td>
+                </tr>
+                @endif
+                @if($invoice->tax > 0)
+                <tr>
+                    <td>Thuế:</td>
+                    <td>{{ number_format($invoice->tax) }} VNĐ</td>
+                </tr>
+                @endif
+                <tr>
+                    <td>Tổng cộng:</td>
+                    <td>{{ number_format($invoice->total) }} VNĐ</td>
+                </tr>
+            </table>
+        </div>
+
+        @if($invoice->notes)
+        <div class="invoice-notes">
+            <h5>Ghi chú</h5>
+            <p>{{ $invoice->notes }}</p>
+        </div>
+        @endif
+
+        <div class="invoice-footer">
+            <p>Cảm ơn quý khách đã sử dụng dịch vụ của chúng tôi!</p>
+            <p>{{ $shopInfo['shop_name'] }} - {{ $shopInfo['shop_address'] }}</p>
+        </div>
+
+        <div class="no-print" style="text-align: center; margin-top: 30px;">
+            <button class="btn-print" onclick="window.print()">In hóa đơn</button>
+            <button class="btn-print" onclick="window.close()">Đóng</button>
+        </div>
+    </div>
+</body>
+</html>

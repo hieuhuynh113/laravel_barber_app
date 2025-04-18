@@ -112,43 +112,45 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($invoice->items as $index => $item)
-                                        <tr>
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>
-                                                {{ $item->name }}
-                                                @if($item->type == 'service')
+                                    @if($invoice->services)
+                                        @foreach($invoice->services as $index => $service)
+                                            <tr>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td>
+                                                    {{ $service->name }}
                                                     <span class="badge bg-primary">Dịch vụ</span>
-                                                @else
-                                                    <span class="badge bg-info">Sản phẩm</span>
-                                                @endif
-                                            </td>
-                                            <td>{{ number_format($item->price) }} VNĐ</td>
-                                            <td>{{ $item->quantity }}</td>
-                                            <td>{{ number_format($item->price * $item->quantity) }} VNĐ</td>
+                                                </td>
+                                                <td>{{ number_format($service->pivot->price) }} VNĐ</td>
+                                                <td>{{ $service->pivot->quantity }}</td>
+                                                <td>{{ number_format($service->pivot->price * $service->pivot->quantity) }} VNĐ</td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="5" class="text-center">Không có dịch vụ nào trong hóa đơn này</td>
                                         </tr>
-                                    @endforeach
+                                    @endif
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <th colspan="4" class="text-right">Tạm tính:</th>
                                         <td>{{ number_format($invoice->subtotal) }} VNĐ</td>
                                     </tr>
-                                    @if($invoice->discount_amount > 0)
+                                    @if($invoice->discount > 0)
                                         <tr>
                                             <th colspan="4" class="text-right">Giảm giá:</th>
-                                            <td>{{ number_format($invoice->discount_amount) }} VNĐ</td>
+                                            <td>{{ number_format($invoice->discount) }} VNĐ</td>
                                         </tr>
                                     @endif
-                                    @if($invoice->tax_amount > 0)
+                                    @if($invoice->tax > 0)
                                         <tr>
-                                            <th colspan="4" class="text-right">Thuế ({{ $invoice->tax_rate }}%):</th>
-                                            <td>{{ number_format($invoice->tax_amount) }} VNĐ</td>
+                                            <th colspan="4" class="text-right">Thuế:</th>
+                                            <td>{{ number_format($invoice->tax) }} VNĐ</td>
                                         </tr>
                                     @endif
                                     <tr>
                                         <th colspan="4" class="text-right">Tổng cộng:</th>
-                                        <td class="font-weight-bold">{{ number_format($invoice->total_amount) }} VNĐ</td>
+                                        <td class="font-weight-bold">{{ number_format($invoice->total) }} VNĐ</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -183,36 +185,36 @@
                                 <option value="canceled" {{ $invoice->status == 'canceled' ? 'selected' : '' }}>Đã hủy</option>
                             </select>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="payment_status" class="form-label">Tình trạng thanh toán</label>
                             <select class="form-select" id="payment_status" name="payment_status">
-                                <option value="0" {{ !$invoice->payment_status ? 'selected' : '' }}>Chưa thanh toán</option>
-                                <option value="1" {{ $invoice->payment_status ? 'selected' : '' }}>Đã thanh toán</option>
+                                <option value="pending" {{ $invoice->payment_status == 'pending' ? 'selected' : '' }}>Chưa thanh toán</option>
+                                <option value="paid" {{ $invoice->payment_status == 'paid' ? 'selected' : '' }}>Đã thanh toán</option>
                             </select>
                         </div>
-                        
+
                         <div class="mb-3">
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="fas fa-save"></i> Cập nhật
                             </button>
                         </div>
                     </form>
-                    
+
                     <hr>
-                    
+
                     <div class="mb-3">
                         <a href="{{ route('admin.invoices.print', $invoice->id) }}" class="btn btn-info w-100" target="_blank">
                             <i class="fas fa-print"></i> In hóa đơn
                         </a>
                     </div>
-                    
+
                     <div class="mb-3">
                         <a href="{{ route('admin.invoices.send-email', $invoice->id) }}" class="btn btn-success w-100">
                             <i class="fas fa-envelope"></i> Gửi email hóa đơn
                         </a>
                     </div>
-                    
+
                     <div class="mb-3">
                         <form action="{{ route('admin.invoices.destroy', $invoice->id) }}" method="POST">
                             @csrf
@@ -224,7 +226,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Lịch sử</h6>
@@ -258,19 +260,19 @@
         position: relative;
         padding-left: 20px;
     }
-    
+
     .timeline-item {
         position: relative;
         padding-bottom: 20px;
         padding-left: 15px;
         border-left: 2px solid #e3e6f0;
     }
-    
+
     .timeline-date {
         font-weight: bold;
         margin-bottom: 5px;
     }
-    
+
     .timeline-content {
         background-color: #f8f9fc;
         padding: 10px;
@@ -278,4 +280,4 @@
         border-left: 3px solid #4e73df;
     }
 </style>
-@endsection 
+@endsection

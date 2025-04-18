@@ -29,7 +29,6 @@ Route::get('/about', [HomeController::class, 'about'])->name('about');
 // Service Routes
 Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
 Route::get('/services/{slug}', [ServiceController::class, 'show'])->name('services.show');
-Route::post('/services/{service}/review', [ServiceController::class, 'storeReview'])->name('services.review')->middleware('auth');
 
 // Product Routes
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
@@ -67,6 +66,10 @@ Route::prefix('appointment')->name('appointment.')->middleware(\App\Http\Middlew
     Route::get('/step-6', [AppointmentController::class, 'step6'])->name('step6');
     Route::get('/complete', [AppointmentController::class, 'complete'])->name('complete');
     Route::post('/complete', [AppointmentController::class, 'complete'])->name('post.complete');
+
+    // Thanh toán chuyển khoản
+    Route::get('/payment-confirmation/{id}', [AppointmentController::class, 'paymentConfirmation'])->name('payment.confirmation');
+    Route::post('/upload-receipt/{id}', [AppointmentController::class, 'uploadReceipt'])->name('upload-receipt');
 });
 
 // Auth Routes
@@ -84,6 +87,7 @@ Route::middleware('auth')->prefix('profile')->name('profile.')->group(function (
     Route::get('/appointments', [ProfileController::class, 'appointments'])->name('appointments');
     Route::get('/reviews', [ProfileController::class, 'reviews'])->name('reviews');
     Route::delete('/reviews/{id}', [ProfileController::class, 'deleteReview'])->name('reviews.delete');
+    Route::post('/reviews', [ProfileController::class, 'storeReview'])->name('reviews.store');
     Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
     Route::put('/update', [ProfileController::class, 'update'])->name('update');
     Route::put('/change-password', [ProfileController::class, 'changePassword'])->name('change-password');
@@ -117,6 +121,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::resource('invoices', \App\Http\Controllers\Admin\InvoiceController::class);
     Route::get('invoices/{invoice}/print', [\App\Http\Controllers\Admin\InvoiceController::class, 'print'])->name('invoices.print');
     Route::get('invoices-statistics', [\App\Http\Controllers\Admin\InvoiceController::class, 'statistics'])->name('invoices.statistics');
+    Route::patch('invoices/{invoice}/update-status', [\App\Http\Controllers\Admin\InvoiceController::class, 'updateStatus'])->name('invoices.update-status');
+    Route::get('invoices/{invoice}/send-email', [\App\Http\Controllers\Admin\InvoiceController::class, 'sendEmail'])->name('invoices.send-email');
+
+    // Payment Receipt Routes
+    Route::resource('payment-receipts', \App\Http\Controllers\Admin\PaymentReceiptController::class)->only(['index', 'show', 'destroy']);
+    Route::post('payment-receipts/{id}/update-status', [\App\Http\Controllers\Admin\PaymentReceiptController::class, 'updateStatus'])->name('payment-receipts.update-status');
 
     // User Routes
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
@@ -124,6 +134,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     // News Routes
     Route::resource('news', \App\Http\Controllers\Admin\NewsController::class);
     Route::post('news/{news}/toggle-featured', [\App\Http\Controllers\Admin\NewsController::class, 'toggleFeatured'])->name('news.toggleFeatured');
+
+    // Review Routes
+    Route::resource('reviews', \App\Http\Controllers\Admin\ReviewController::class);
+    Route::get('reviews-statistics', [\App\Http\Controllers\Admin\ReviewController::class, 'statistics'])->name('reviews.statistics');
+    Route::post('reviews/{review}/toggle-status', [\App\Http\Controllers\Admin\ReviewController::class, 'toggleStatus'])->name('reviews.toggleStatus');
+
+    // Notification Routes
+    Route::get('notifications', [\App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('notifications/{id}/mark-as-read', [\App\Http\Controllers\Admin\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('notifications/mark-all-as-read', [\App\Http\Controllers\Admin\NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
     // Image Upload for CKEditor
     Route::post('upload/image', [\App\Http\Controllers\Admin\UploadController::class, 'uploadImage'])->name('upload.image');

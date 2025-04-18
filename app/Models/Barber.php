@@ -36,6 +36,11 @@ class Barber extends Model
         return $this->hasMany(Appointment::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('status', 1);

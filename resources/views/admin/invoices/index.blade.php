@@ -2,6 +2,99 @@
 
 @section('title', 'Quản lý hóa đơn')
 
+@section('styles')
+<style>
+    #dataTable td {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Đảm bảo các nút thao tác không bị chồng lên nhau */
+    #dataTable td:last-child {
+        white-space: nowrap;
+        text-align: center;
+    }
+
+    /* Tạo khoảng cách giữa các nút thao tác */
+    .gap-1 {
+        gap: 0.25rem !important;
+    }
+
+    /* Đảm bảo các nút có kích thước đồng nhất */
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        border-radius: 0.2rem;
+    }
+
+    /* Đảm bảo mã hóa đơn hiển thị đầy đủ */
+    #dataTable td:first-child {
+        font-weight: 500;
+    }
+
+    /* Đảm bảo tiêu đề cột hiển thị đúng */
+    #dataTable th {
+        vertical-align: middle;
+        text-align: center;
+        font-size: 0.9rem;
+        line-height: 1.3;
+        padding: 0.5rem;
+        word-wrap: break-word;
+        white-space: normal;
+    }
+
+    /* CSS đặc biệt cho cột Phương thức thanh toán */
+    .payment-method-header {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.2rem;
+    }
+
+    .payment-method-cell {
+        padding: 0.5rem 0.25rem;
+    }
+
+    /* CSS đặc biệt cho cột Ngày tạo */
+    .date-column {
+        text-align: center;
+    }
+
+    .date-cell {
+        padding: 0.5rem 0.25rem !important;
+        text-align: center;
+    }
+
+    .date-part {
+        font-weight: 500;
+        font-size: 0.9rem;
+        line-height: 1.2;
+    }
+
+    .time-part {
+        color: #6c757d;
+        font-size: 0.85rem;
+        margin-top: 2px;
+    }
+
+    /* Đảm bảo bảng hiển thị đúng trên các thiết bị di động */
+    @media (max-width: 767.98px) {
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        #dataTable {
+            min-width: 900px; /* Đảm bảo bảng không bị co lại quá nhỏ trên thiết bị di động */
+        }
+
+        #dataTable th {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="container-fluid py-4">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -51,34 +144,37 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>Mã hóa đơn</th>
-                            <th>Khách hàng</th>
-                            <th>Ngày tạo</th>
-                            <th>Tổng tiền</th>
-                            <th>Trạng thái</th>
-                            <th>Phương thức thanh toán</th>
-                            <th style="width: 150px">Thao tác</th>
+                            <th style="width: 140px">Mã hóa đơn</th>
+                            <th style="width: 180px">Khách hàng</th>
+                            <th style="width: 140px" class="date-column">Ngày tạo</th>
+                            <th style="width: 120px">Tổng tiền</th>
+                            <th style="width: 120px">Trạng thái</th>
+                            <th style="width: 170px" class="payment-method-header">Phương thức<br>thanh toán</th>
+                            <th style="width: 120px">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($invoices as $invoice)
                             <tr>
-                                <td>{{ $invoice->invoice_code }}</td>
-                                <td>
+                                <td class="text-nowrap">{{ $invoice->invoice_code }}</td>
+                                <td class="text-truncate">
                                     @if($invoice->user)
-                                        <a href="{{ route('admin.users.show', $invoice->user_id) }}">{{ $invoice->user->name }}</a>
+                                        <a href="{{ route('admin.users.show', $invoice->user_id) }}" title="{{ $invoice->user->name }}">{{ $invoice->user->name }}</a>
                                     @else
-                                        {{ $invoice->customer_name ?? 'Khách vãng lai' }}
+                                        <span title="{{ $invoice->customer_name ?? 'Khách vãng lai' }}">{{ $invoice->customer_name ?? 'Khách vãng lai' }}</span>
                                     @endif
                                 </td>
-                                <td>{{ $invoice->created_at->format('d/m/Y H:i') }}</td>
-                                <td>{{ number_format($invoice->total_amount) }} VNĐ</td>
-                                <td>
+                                <td class="text-center date-cell" title="{{ $invoice->created_at->format('d/m/Y H:i:s') }}">
+                                    <div class="date-part">{{ $invoice->created_at->format('d/m/Y') }}</div>
+                                    <div class="time-part">{{ $invoice->created_at->format('H:i') }}</div>
+                                </td>
+                                <td class="text-nowrap">{{ number_format($invoice->total_amount) }} VNĐ</td>
+                                <td class="text-center">
                                     @if($invoice->status == 'pending')
                                         <span class="badge bg-warning">Chờ xác nhận</span>
                                     @elseif($invoice->status == 'confirmed')
@@ -89,7 +185,7 @@
                                         <span class="badge bg-danger">Đã hủy</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-center payment-method-cell">
                                     @if($invoice->payment_method == 'cash')
                                         <span class="badge bg-secondary">Tiền mặt</span>
                                     @elseif($invoice->payment_method == 'card')
@@ -100,20 +196,22 @@
                                         <span class="badge bg-secondary">{{ $invoice->payment_method }}</span>
                                     @endif
                                 </td>
-                                <td>
-                                    <a href="{{ route('admin.invoices.show', $invoice->id) }}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('admin.invoices.edit', $invoice->id) }}" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('admin.invoices.destroy', $invoice->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa hóa đơn này?')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-1">
+                                        <a href="{{ route('admin.invoices.show', $invoice->id) }}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('admin.invoices.edit', $invoice->id) }}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ route('admin.invoices.destroy', $invoice->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa hóa đơn này?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -124,7 +222,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <div class="mt-3">
                 {{ $invoices->appends(request()->query())->links() }}
             </div>
@@ -155,4 +253,4 @@
         window.location.href = '{{ route("admin.invoices.index") }}?' + urlParams.toString();
     }
 </script>
-@endsection 
+@endsection

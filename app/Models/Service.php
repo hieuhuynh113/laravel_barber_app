@@ -47,6 +47,16 @@ class Service extends Model
         return $this->hasMany(Review::class);
     }
 
+    /**
+     * Mối quan hệ với Invoice (nhiều-nhiều)
+     */
+    public function invoices()
+    {
+        return $this->belongsToMany(Invoice::class, 'invoice_service')
+                    ->withPivot('quantity', 'price', 'discount', 'subtotal')
+                    ->withTimestamps();
+    }
+
     public function scopeActive($query)
     {
         return $query->where('status', 1);

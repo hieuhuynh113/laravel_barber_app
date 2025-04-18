@@ -1,0 +1,151 @@
+/* Custom CSS để sửa lỗi hiển thị bảng */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100% !important;
+    table-layout: fixed;
+}
+
+.table th, .table td {
+    white-space: nowrap;
+    min-width: 100px;
+}
+
+/* Đảm bảo cột trạng thái hiển thị */
+.status-column {
+    display: table-cell !important;
+    visibility: visible !important;
+    min-width: 120px !important;
+}
+
+/* Style cho badge */
+.badge {
+    padding: 0.5rem 0.75rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.badge-warning {
+    background-color: #f39c12;
+    color: white;
+}
+
+.badge-success {
+    background-color: #27ae60;
+    color: white;
+}
+
+.badge-danger {
+    background-color: #e74c3c;
+    color: white;
+}
+
+/* Fix DataTables */
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_length {
+    margin-bottom: 10px;
+}
+
+.dataTables_wrapper table.dataTable {
+    width: 100% !important;
+    margin-bottom: 20px;
+}
+
+.dataTables_wrapper table.dataTable th,
+.dataTables_wrapper table.dataTable td {
+    box-sizing: border-box;
+}
+
+/* Fix cho bảng quản lý người dùng */
+.table th {
+    vertical-align: middle;
+    text-align: center;
+    background-color: #f8f9fa;
+    padding: 12px 8px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 10px 8px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Căn giữa nội dung của cột ID */
+.table td:first-child {
+    text-align: center;
+}
+
+/* Đảm bảo email hiển thị đầy đủ */
+.table td:nth-child(4),
+.email-column,
+.email-cell {
+    min-width: 250px;
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+}
+
+.email-cell {
+    cursor: pointer;
+}
+
+.email-cell:hover {
+    overflow: visible;
+    white-space: normal;
+    word-break: break-all;
+    background-color: #f8f9fa;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    padding: 10px !important;
+    transition: all 0.3s ease;
+}
+
+/* Đảm bảo các cột có chiều rộng phù hợp */
+.table th:nth-child(1) { width: 5%; } /* ID */
+.table th:nth-child(2) { width: 8%; } /* Ảnh đại diện */
+.table th:nth-child(3) { width: 15%; } /* Tên */
+.table th:nth-child(4) { width: 25%; } /* Email */
+.table th:nth-child(5) { width: 10%; } /* Vai trò */
+.table th:nth-child(6) { width: 12%; } /* Trạng thái */
+.table th:nth-child(7) { width: 10%; } /* Ngày tạo */
+.table th:nth-child(8) { width: 15%; } /* Thao tác */
+
+/* Cải thiện hiển thị của các nút thao tác */
+.table .btn-sm {
+    padding: 0.25rem 0.5rem;
+    margin-right: 2px;
+    margin-bottom: 2px;
+}
+
+.table .btn-sm i {
+    font-size: 0.875rem;
+}
+
+/* Căn giữa các badge */
+.badge {
+    display: inline-block;
+    padding: 0.4em 0.6em;
+    font-size: 75%;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+}

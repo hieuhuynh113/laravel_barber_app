@@ -157,41 +157,25 @@
                                 <p class="card-text">Hãy chia sẻ trải nghiệm của bạn về dịch vụ này.</p>
 
                                 @auth
-                                <form action="{{ route('services.review', $service->id) }}" method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="mb-3">
-                                        <label class="form-label">Barber</label>
-                                        <select name="barber_id" class="form-select" required>
-                                            <option value="">Select a barber</option>
-                                            @foreach(App\Models\Barber::active()->get() as $barber)
-                                                <option value="{{ $barber->id }}">{{ $barber->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Rating</label>
-                                        <div class="rating-stars">
-                                            <input type="hidden" name="rating" id="rating" value="5">
-                                            <i class="fas fa-star text-warning rating-star" data-value="1"></i>
-                                            <i class="fas fa-star text-warning rating-star" data-value="2"></i>
-                                            <i class="fas fa-star text-warning rating-star" data-value="3"></i>
-                                            <i class="fas fa-star text-warning rating-star" data-value="4"></i>
-                                            <i class="fas fa-star text-warning rating-star" data-value="5"></i>
+                                    @php
+                                        // Kiểm tra xem người dùng đã sử dụng dịch vụ này chưa
+                                        $hasUsedService = \App\Models\Appointment::where('user_id', Auth::id())
+                                            ->where('status', 'completed')
+                                            ->whereHas('services', function($query) use ($service) {
+                                                $query->where('services.id', $service->id);
+                                            })
+                                            ->exists();
+                                    @endphp
+
+                                    @if($hasUsedService)
+                                        <div class="alert alert-info">
+                                            Bạn đã sử dụng dịch vụ này. Để đánh giá, vui lòng vào <a href="{{ route('profile.appointments') }}" class="alert-link">trang lịch hẹn</a> và chọn tab "Đã hoàn thành" để đánh giá dịch vụ.
                                         </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="comment" class="form-label">Nhận xét</label>
-                                        <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="review_images" class="form-label">Ảnh (tùy chọn)</label>
-                                        <input class="form-control" type="file" id="review_images" name="review_images[]" multiple accept="image/*">
-                                    </div>
-
-                                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
-                                </form>
+                                    @else
+                                        <div class="alert alert-warning">
+                                            Bạn chỉ có thể đánh giá dịch vụ sau khi đã sử dụng. Vui lòng <a href="{{ route('appointment.step1', ['service_id' => $service->id]) }}" class="alert-link">đặt lịch</a> và sử dụng dịch vụ trước.
+                                        </div>
+                                    @endif
                                 @else
                                 <div class="alert alert-info">
                                     Vui lòng <a href="{{ route('login') }}">đăng nhập</a> để đánh giá dịch vụ này.

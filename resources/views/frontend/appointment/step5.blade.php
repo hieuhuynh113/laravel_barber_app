@@ -156,33 +156,7 @@
                                 </div>
 
                                 <div class="form-check mb-3 payment-option">
-                                    <input class="form-check-input" type="radio" name="payment_method" id="payment_momo" value="momo">
-                                    <label class="form-check-label d-flex align-items-center" for="payment_momo">
-                                        <span class="payment-icon me-3 rounded p-2" style="background-color: #f5f5f5;">
-                                            <img src="{{ asset('images/momo-logo.png') }}" alt="MoMo" width="40" height="40">
-                                        </span>
-                                        <div>
-                                            <div class="fw-bold">Thanh toán qua MoMo</div>
-                                            <div class="text-muted small">Thanh toán trực tuyến qua ví điện tử MoMo</div>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <div class="form-check mb-3 payment-option">
-                                    <input class="form-check-input" type="radio" name="payment_method" id="payment_vnpay" value="vnpay">
-                                    <label class="form-check-label d-flex align-items-center" for="payment_vnpay">
-                                        <span class="payment-icon me-3 rounded p-2" style="background-color: #f5f5f5;">
-                                            <img src="{{ asset('images/vnpay-logo.png') }}" alt="VNPay" width="40" height="40">
-                                        </span>
-                                        <div>
-                                            <div class="fw-bold">Thanh toán qua VNPay</div>
-                                            <div class="text-muted small">Thanh toán trực tuyến qua cổng thanh toán VNPay</div>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <div class="form-check payment-option">
-                                    <input class="form-check-input" type="radio" name="payment_method" id="payment_bank" value="bank">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="payment_bank" value="bank_transfer">
                                     <label class="form-check-label d-flex align-items-center" for="payment_bank">
                                         <span class="payment-icon me-3 bg-light rounded p-2">
                                             <i class="fas fa-university text-primary fs-4"></i>
@@ -194,13 +168,53 @@
                                     </label>
 
                                     <div class="bank-details mt-3 ms-4 p-3 border rounded" id="bank_details" style="display: none;">
-                                        <p class="mb-2">Vui lòng chuyển khoản đến tài khoản sau:</p>
-                                        <ul class="list-unstyled mb-0">
-                                            <li><strong>Ngân hàng:</strong> Vietcombank</li>
-                                            <li><strong>Số tài khoản:</strong> 1234567890</li>
-                                            <li><strong>Chủ tài khoản:</strong> CÔNG TY TNHH BARBER SHOP</li>
-                                            <li><strong>Nội dung:</strong> Thanh toan dich vu {{ session('customer_name') }}</li>
-                                        </ul>
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle me-2"></i> Vui lòng chuyển khoản trong vòng 24 giờ sau khi đặt lịch. Lịch hẹn sẽ được xác nhận sau khi chúng tôi nhận được thanh toán của bạn.
+                                        </div>
+
+                                        <h6 class="mt-3 mb-3">Thông tin chuyển khoản:</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <th style="width: 35%">Ngân hàng:</th>
+                                                        <td>Vietcombank</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Số tài khoản:</th>
+                                                        <td><span class="fw-bold">1234567890</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Chủ tài khoản:</th>
+                                                        <td>CÔNG TY TNHH BARBER SHOP</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Số tiền:</th>
+                                                        <td class="fw-bold text-danger">{{ number_format($totalPrice) }} VNĐ</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Nội dung chuyển khoản:</th>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="fw-bold" id="transferContent">{{ session('appointment_customer_name') }}_{{ date('dmY') }}</span>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary ms-2" onclick="copyToClipboard('transferContent')">
+                                                                    <i class="fas fa-copy"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="mt-3">
+                                            <h6>Sau khi chuyển khoản:</h6>
+                                            <ol>
+                                                <li>Chụp màn hình hoặc lưu biên lai chuyển khoản</li>
+                                                <li>Gửi biên lai qua email <a href="mailto:info@barbershop.com">info@barbershop.com</a> hoặc số Zalo <strong>0123456789</strong></li>
+                                                <li>Bạn sẽ nhận được email xác nhận sau khi chúng tôi xác nhận thanh toán</li>
+                                            </ol>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -384,6 +398,34 @@
                 radio.dispatchEvent(event);
             });
         });
+
+        // Kiểm tra xem nếu payment_bank đã được chọn, hiển thị chi tiết ngân hàng
+        if (bankRadio.checked) {
+            bankDetails.style.display = 'block';
+        }
     });
+
+    // Hàm sao chép nội dung vào clipboard
+    function copyToClipboard(elementId) {
+        const element = document.getElementById(elementId);
+        const text = element.textContent;
+
+        navigator.clipboard.writeText(text).then(function() {
+            // Hiển thị thông báo đã sao chép
+            const button = element.nextElementSibling;
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            button.classList.remove('btn-outline-primary');
+            button.classList.add('btn-success');
+
+            setTimeout(function() {
+                button.innerHTML = originalHTML;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-primary');
+            }, 2000);
+        }).catch(function(err) {
+            console.error('Không thể sao chép nội dung: ', err);
+        });
+    }
 </script>
 @endsection

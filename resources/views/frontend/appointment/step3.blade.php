@@ -120,13 +120,13 @@
 
                             <div class="row mb-4">
                                 <div class="col-md-12">
-                                    <label class="form-label">Chọn giờ</label>
+                                    <label class="form-label">Chọn giờ bắt đầu</label>
                                     <div class="time-slots-container" id="timeSlots">
                                         @if(count($timeSlots) > 0)
                                             @foreach($timeSlots as $slot)
                                                 <div class="time-slot">
-                                                    <input type="radio" name="time_slot" id="slot-{{ $slot['start'] }}" value="{{ $slot['formatted'] }}" class="time-slot-input" {{ old('time_slot') == $slot['formatted'] ? 'checked' : '' }}>
-                                                    <label for="slot-{{ $slot['start'] }}" class="time-slot-label">
+                                                    <input type="radio" name="time_slot" id="slot-{{ $slot['time'] }}" value="{{ $slot['formatted'] }}" class="time-slot-input" {{ old('time_slot') == $slot['formatted'] ? 'checked' : '' }}>
+                                                    <label for="slot-{{ $slot['time'] }}" class="time-slot-label">
                                                         {{ $slot['formatted'] }}
                                                         <span class="badge bg-success ms-2">{{ $slot['available_spots'] }}/{{ $slot['max_bookings'] }} chỗ trống</span>
                                                     </label>
@@ -134,7 +134,7 @@
                                             @endforeach
                                         @else
                                             <div class="alert alert-info">
-                                                Không có khung giờ trống cho ngày này. Vui lòng chọn ngày khác.
+                                                Không có giờ trống cho ngày này. Vui lòng chọn ngày khác.
                                             </div>
                                         @endif
                                     </div>
@@ -311,8 +311,8 @@
                         response.timeSlots.forEach(function(slot) {
                             html += `
                                 <div class="time-slot">
-                                    <input type="radio" name="time_slot" id="slot-${slot.start}" value="${slot.formatted}" class="time-slot-input">
-                                    <label for="slot-${slot.start}" class="time-slot-label">
+                                    <input type="radio" name="time_slot" id="slot-${slot.time}" value="${slot.formatted}" class="time-slot-input">
+                                    <label for="slot-${slot.time}" class="time-slot-label">
                                         ${slot.formatted}
                                         <span class="badge bg-success ms-2">${slot.available_spots}/${slot.max_bookings} chỗ trống</span>
                                     </label>
@@ -321,7 +321,7 @@
                         });
                         $('#continueBtn').prop('disabled', false);
                     } else {
-                        html = '<div class="alert alert-info">Không có khung giờ trống cho ngày này. Vui lòng chọn ngày khác.</div>';
+                        html = '<div class="alert alert-info">Không có giờ trống cho ngày này. Vui lòng chọn ngày khác.</div>';
                         $('#continueBtn').prop('disabled', true);
                     }
 
@@ -338,7 +338,7 @@
         $('#timeForm').on('submit', function(e) {
             if (!$('input[name="time_slot"]:checked').val()) {
                 e.preventDefault();
-                alert('Vui lòng chọn khung giờ');
+                alert('Vui lòng chọn giờ bắt đầu');
             }
         });
     });

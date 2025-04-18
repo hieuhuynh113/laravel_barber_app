@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Barber;
 use App\Models\User;
+use App\Models\Review;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -17,15 +19,15 @@ class BarberController extends Controller
             ->with('barber')
             ->latest()
             ->paginate(10);
-        
+
         return view('admin.barbers.index', compact('barbers'));
     }
-    
+
     public function create()
     {
         return view('admin.barbers.create');
     }
-    
+
     public function store(Request $request)
     {
         $request->validate([
@@ -66,18 +68,60 @@ class BarberController extends Controller
         return redirect()->route('admin.barbers.index')
             ->with('success', 'Thợ cắt tóc đã được tạo thành công.');
     }
-    
+
     public function show(User $barber)
     {
         $barber->load('barber', 'appointments.services');
-        return view('admin.barbers.show', compact('barber'));
+
+        // Lấy đánh giá của thợ cắt tóc
+        $reviews = Review::where('barber_id', $barber->barber->id)
+            ->with(['user', 'service'])
+            ->latest()
+            ->paginate(5, ['*'], 'reviews_page');
+
+        // Tính toán thống kê đánh giá
+        $reviewsCount = Review::where('barber_id', $barber->barber->id)->count();
+        $averageRating = Review::where('barber_id', $barber->barber->id)->avg('rating') ?? 0;
+
+        // Phân bố đánh giá theo số sao
+        $ratingDistribution = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $count = Review::where('barber_id', $barber->barber->id)->where('rating', $i)->count();
+            $ratingDistribution[$i] = [
+                'count' => $count,
+                'percentage' => $reviewsCount > 0 ? round(($count / $reviewsCount) * 100, 1) : 0
+            ];
+        }
+
+        // Dịch vụ được đánh giá cao nhất của thợ cắt tóc
+        $topServices = Service::whereHas('reviews', function($query) use ($barber) {
+                $query->where('barber_id', $barber->barber->id);
+            })
+            ->withCount(['reviews' => function($query) use ($barber) {
+                $query->where('barber_id', $barber->barber->id);
+            }])
+            ->withAvg(['reviews' => function($query) use ($barber) {
+                $query->where('barber_id', $barber->barber->id);
+            }], 'rating')
+            ->orderByDesc('reviews_avg_rating')
+            ->take(5)
+            ->get();
+
+        return view('admin.barbers.show', compact(
+            'barber',
+            'reviews',
+            'reviewsCount',
+            'averageRating',
+            'ratingDistribution',
+            'topServices'
+        ));
     }
-    
+
     public function edit(User $barber)
     {
         return view('admin.barbers.edit', compact('barber'));
     }
-    
+
     public function update(Request $request, User $barber)
     {
         $request->validate([
@@ -126,19 +170,19 @@ class BarberController extends Controller
         return redirect()->route('admin.barbers.index')
             ->with('success', 'Thông tin thợ cắt tóc đã được cập nhật thành công.');
     }
-    
+
     public function destroy(User $barber)
     {
         // Xóa avatar nếu có
         if ($barber->avatar) {
             Storage::disk('public')->delete($barber->avatar);
         }
-        
+
         // Xóa thông tin liên quan trước
         $barber->barber()->delete();
         $barber->delete();
-        
+
         return redirect()->route('admin.barbers.index')
             ->with('success', 'Thợ cắt tóc đã được xóa thành công.');
     }
-} 
+}

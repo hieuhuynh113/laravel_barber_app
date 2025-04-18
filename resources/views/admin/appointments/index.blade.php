@@ -69,35 +69,64 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <table class="table table-bordered table-hover table-striped" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Khách hàng</th>
-                            <th>Thợ cắt tóc</th>
-                            <th>Dịch vụ</th>
-                            <th>Ngày & Giờ</th>
-                            <th>Trạng thái</th>
-                            <th>Tác vụ</th>
+                            <th class="id-cell">ID</th>
+                            <th class="customer-name">Khách hàng</th>
+                            <th class="customer-name">Thợ cắt tóc</th>
+                            <th class="services-cell">Dịch vụ</th>
+                            <th class="date-cell">Ngày & Giờ</th>
+                            <th class="status-cell">Trạng thái</th>
+                            <th class="payment-cell">Thanh toán</th>
+                            <th class="actions-cell">Tác vụ</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($appointments as $appointment)
                             <tr>
-                                <td>{{ $appointment->id }}</td>
-                                <td>{{ $appointment->user->name }} <br> <small>{{ $appointment->user->phone }}</small></td>
-                                <td>{{ $appointment->barber->user->name }}</td>
-                                <td>
+                                <td class="id-cell">{{ $appointment->id }}</td>
+                                <td class="customer-name">
+                                    @if($appointment->user)
+                                        <div class="d-flex align-items-center">
+                                            <div>
+                                                <a href="{{ route('admin.users.show', $appointment->user->id) }}" class="customer-name-link">
+                                                    {{ $appointment->user->name }}
+                                                </a>
+                                                <span class="customer-phone">{{ $appointment->user->phone ?? 'Không có SĐT' }}</span>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <span class="text-muted">Không xác định</span>
+                                    @endif
+                                </td>
+                                <td class="customer-name">
+                                    @if($appointment->barber && $appointment->barber->user)
+                                        <div class="d-flex align-items-center">
+                                            <div>
+                                                <a href="{{ route('admin.users.show', $appointment->barber->user->id) }}" class="customer-name-link">
+                                                    {{ $appointment->barber->user->name }}
+                                                </a>
+                                                @if($appointment->barber->specialty)
+                                                    <span class="customer-phone">{{ $appointment->barber->specialty }}</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @else
+                                        <span class="text-muted">Không xác định</span>
+                                    @endif
+                                </td>
+                                <td class="services-cell">
                                     @foreach($appointment->services as $service)
                                         <span class="badge bg-primary">{{ $service->name }}</span>
                                     @endforeach
                                 </td>
-                                <td>
+                                <td class="date-cell">
                                     {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d/m/Y') }}
                                     <br>
-                                    {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('H:i') }}
+                                    <span class="time-cell">{{ \Carbon\Carbon::parse($appointment->appointment_time)->format('H:i') }}</span>
                                 </td>
-                                <td>
+                                <td class="status-cell">
                                     @if($appointment->status == 'pending')
                                         <span class="badge bg-warning">Chờ xác nhận</span>
                                     @elseif($appointment->status == 'confirmed')
@@ -108,10 +137,35 @@
                                         <span class="badge bg-danger">Đã hủy</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="payment-cell">
+                                    <div>
+                                        @if($appointment->payment_status == 'paid')
+                                            <span class="badge bg-success">Đã thanh toán</span>
+                                        @else
+                                            <span class="badge bg-warning">Chưa thanh toán</span>
+                                        @endif
+                                    </div>
+                                    <div class="mt-1">
+                                        @if($appointment->payment_method == 'cash')
+                                            <small><i class="fas fa-money-bill-wave text-success"></i> Tiền mặt</small>
+                                        @elseif($appointment->payment_method == 'bank_transfer')
+                                            <small><i class="fas fa-university text-primary"></i> Chuyển khoản</small>
+                                            @if($appointment->paymentReceipt)
+                                                @if($appointment->paymentReceipt->status == 'pending')
+                                                    <span class="badge bg-info">Có biên lai</span>
+                                                @elseif($appointment->paymentReceipt->status == 'approved')
+                                                    <span class="badge bg-success">Đã xác nhận</span>
+                                                @elseif($appointment->paymentReceipt->status == 'rejected')
+                                                    <span class="badge bg-danger">Đã từ chối</span>
+                                                @endif
+                                            @endif
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="actions-cell">
                                     <div class="dropdown">
                                         <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                            Thao tác
+                                            <i class="fas fa-ellipsis-h"></i>
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li>
@@ -195,7 +249,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center">Không có lịch hẹn nào</td>
+                                <td colspan="8" class="text-center">Không có lịch hẹn nào</td>
                             </tr>
                         @endforelse
                     </tbody>

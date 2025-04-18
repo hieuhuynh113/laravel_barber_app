@@ -6,10 +6,12 @@ use App\Models\Appointment;
 use App\Models\Barber;
 use App\Models\Service;
 use App\Models\TimeSlot;
+use App\Models\PaymentReceipt;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AppointmentController extends Controller
@@ -89,7 +91,7 @@ class AppointmentController extends Controller
 
         $schedule = $barber->schedules->first();
 
-        // Tạo các slot thời gian từ giờ bắt đầu đến giờ kết thúc (mỗi slot 30 phút)
+        // Tạo các giờ cụ thể từ giờ bắt đầu đến giờ kết thúc (mỗi slot 30 phút)
         $startTime = Carbon::parse($date . ' ' . $schedule->start_time->format('H:i:s'));
         $endTime = Carbon::parse($date . ' ' . $schedule->end_time->format('H:i:s'));
 
@@ -97,18 +99,14 @@ class AppointmentController extends Controller
         $currentTime = clone $startTime;
 
         while ($currentTime < $endTime) {
-            $slotStart = clone $currentTime;
+            $formattedTime = $currentTime->format('H:i');
+
+            $slots[] = [
+                'time' => $formattedTime,
+                'formatted' => $formattedTime,
+            ];
+
             $currentTime->addMinutes(30);
-
-            if ($currentTime <= $endTime) {
-                $formattedSlot = $slotStart->format('H:i') . ' - ' . $currentTime->format('H:i');
-
-                $slots[] = [
-                    'start' => $slotStart->format('H:i'),
-                    'end' => $currentTime->format('H:i'),
-                    'formatted' => $formattedSlot,
-                ];
-            }
         }
 
         // Lấy hoặc tạo các time slot trong cơ sở dữ liệu
@@ -135,7 +133,7 @@ class AppointmentController extends Controller
             $slot['time_slot_id'] = $timeSlot->id;
         }
 
-        // Lọc ra các khung giờ còn trống
+        // Lọc ra các giờ còn trống
         $availableSlots = array_filter($slots, function($slot) {
             return $slot['is_available'];
         });
@@ -168,9 +166,11 @@ class AppointmentController extends Controller
             'time_slot' => 'required',
         ]);
 
-        list($startTime, $endTime) = explode(' - ', $request->time_slot);
+        $startTime = $request->time_slot;
+        // Tính toán giờ kết thúc (30 phút sau giờ bắt đầu)
+        $endTime = Carbon::parse($startTime)->addMinutes(30)->format('H:i');
 
-        // Kiểm tra xem mốc thời gian này còn trống không
+        // Kiểm tra xem giờ này còn trống không
         $timeSlot = TimeSlot::where([
             'barber_id' => session('appointment_barber')->id,
             'date' => $request->date,
@@ -178,10 +178,10 @@ class AppointmentController extends Controller
         ])->first();
 
         if (!$timeSlot || !$timeSlot->isAvailable()) {
-            return back()->withErrors(['time_slot' => 'Mốc thời gian này đã hết chỗ. Vui lòng chọn mốc thời gian khác.']);
+            return back()->withErrors(['time_slot' => 'Giờ này đã hết chỗ. Vui lòng chọn giờ khác.']);
         }
 
-        // Tăng số lượng đặt chỗ cho mốc thời gian này
+        // Tăng số lượng đặt chỗ cho giờ này
         $timeSlot->incrementBookedCount();
 
         // Lưu thời gian đã chọn vào session
@@ -244,7 +244,17 @@ class AppointmentController extends Controller
         // Lưu phương thức thanh toán vào session
         session(['appointment_payment_method' => $request->payment_method]);
 
-        return redirect()->route('appointment.step6');
+        // Nếu chọn thanh toán bằng tiền mặt, chuyển đến bước 6
+        if ($request->payment_method === 'cash') {
+            return redirect()->route('appointment.step6');
+        }
+
+        // Nếu chọn chuyển khoản, tạo lịch hẹn ngay và chuyển đến trang xác nhận thanh toán
+        // Tạo lịch hẹn
+        $appointment = $this->createAppointment();
+
+        // Chuyển đến trang xác nhận thanh toán
+        return redirect()->route('appointment.payment.confirmation', $appointment->id);
     }
 
     public function step6()
@@ -266,17 +276,13 @@ class AppointmentController extends Controller
         return redirect()->route('appointment.complete');
     }
 
-    public function complete(Request $request)
+    /**
+     * Tạo lịch hẹn mới từ dữ liệu session
+     *
+     * @return \App\Models\Appointment
+     */
+    private function createAppointment()
     {
-        if (!session('appointment_services') || !session('appointment_barber') || !session('appointment_date') || !session('appointment_customer_name') || !session('appointment_payment_method')) {
-            return redirect()->route('appointment.step1');
-        }
-
-        // Nếu đã tạo lịch hẹn rồi, chuyển hướng đến trang xác nhận
-        if (session('appointment_created')) {
-            return redirect()->route('appointment.step6');
-        }
-
         // Lấy dữ liệu từ session
         $services = session('appointment_services');
         $barber = session('appointment_barber');
@@ -299,7 +305,7 @@ class AppointmentController extends Controller
         $appointment->appointment_date = $date;
         $appointment->start_time = $startTime;
         $appointment->end_time = $endTime;
-        $appointment->time_slot = session('appointment_time_slot');
+        $appointment->time_slot = $startTime; // Lưu giờ cụ thể thay vì khoảng thời gian
         $appointment->status = 'pending';
         $appointment->booking_code = $bookingCode;
         $appointment->customer_name = $customerName;
@@ -327,7 +333,92 @@ class AppointmentController extends Controller
         session(['appointment_created' => true]);
         session(['appointment_id' => $appointment->id]);
 
+        return $appointment;
+    }
+
+    public function complete(Request $request)
+    {
+        if (!session('appointment_services') || !session('appointment_barber') || !session('appointment_date') || !session('appointment_customer_name') || !session('appointment_payment_method')) {
+            return redirect()->route('appointment.step1');
+        }
+
+        // Nếu đã tạo lịch hẹn rồi, chuyển hướng đến trang xác nhận
+        if (session('appointment_created')) {
+            return redirect()->route('appointment.step6');
+        }
+
+        // Tạo lịch hẹn
+        $appointment = $this->createAppointment();
+
         // Trả về trang xác nhận
         return redirect()->route('appointment.step6');
+    }
+
+    /**
+     * Hiển thị trang xác nhận thanh toán cho lịch hẹn
+     *
+     * @param int $id ID của lịch hẹn
+     * @return \Illuminate\View\View
+     */
+    public function paymentConfirmation($id)
+    {
+        $appointment = Appointment::with(['services', 'barber.user'])->findOrFail($id);
+
+        // Kiểm tra quyền truy cập
+        if (Auth::check() && Auth::id() != $appointment->user_id && !Auth::user()->isAdmin() && !Auth::user()->isBarber()) {
+            abort(403, 'Bạn không có quyền truy cập lịch hẹn này');
+        }
+
+        return view('frontend.appointment.payment_confirmation', compact('appointment'));
+    }
+
+    /**
+     * Xử lý tải lên biên lai chuyển khoản
+     *
+     * @param Request $request
+     * @param int $id ID của lịch hẹn
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function uploadReceipt(Request $request, $id)
+    {
+        $request->validate([
+            'receipt' => 'required|image|max:2048',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        $appointment = Appointment::findOrFail($id);
+
+        // Kiểm tra quyền truy cập
+        if (Auth::check() && Auth::id() != $appointment->user_id && !Auth::user()->isAdmin() && !Auth::user()->isBarber()) {
+            abort(403, 'Bạn không có quyền truy cập lịch hẹn này');
+        }
+
+        // Lưu biên lai
+        if ($request->hasFile('receipt')) {
+            $path = $request->file('receipt')->store('receipts', 'public');
+
+            // Tạo hoặc cập nhật biên lai
+            $receipt = PaymentReceipt::updateOrCreate(
+                ['appointment_id' => $appointment->id],
+                [
+                    'file_path' => $path,
+                    'notes' => $request->notes,
+                    'status' => 'pending',
+                ]
+            );
+
+            // Gửi email thông báo cho admin
+            try {
+                Mail::to(config('mail.admin_email', 'admin@example.com'))
+                    ->send(new \App\Mail\NewPaymentReceipt($appointment, $receipt));
+            } catch (\Exception $e) {
+                \Log::error("Không thể gửi email thông báo biên lai: " . $e->getMessage());
+            }
+
+            return redirect()->route('profile.appointments')
+                ->with('success', 'Biên lai chuyển khoản đã được gửi thành công. Chúng tôi sẽ xác nhận thanh toán của bạn sớm.');
+        }
+
+        return back()->with('error', 'Có lỗi xảy ra khi tải lên biên lai. Vui lòng thử lại.');
     }
 }

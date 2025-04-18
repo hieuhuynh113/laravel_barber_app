@@ -1,13 +1,24 @@
 -- Barber Shop Database SQL Script
 -- Tạo bởi Augment Agent
+-- Phiên bản: 2.0 (Cập nhật ngày 15/04/2025)
 
 -- Hướng dẫn sử dụng:
 -- 1. Tạo database mới: CREATE DATABASE barber_shop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 -- 2. Sử dụng database: USE barber_shop;
--- 3. Chạy file SQL này để tạo cấu trúc và dữ liệu mẫu
+-- 3. Chạy file SQL này để tạo cấu trúc cơ sở dữ liệu
 
 -- Lưu ý: File này sẽ xóa tất cả các bảng hiện có trong database và tạo lại từ đầu
 -- Nếu bạn muốn giữ lại dữ liệu hiện tại, hãy sao lưu trước khi chạy file này
+
+-- Cập nhật trong phiên bản 2.0:
+-- 1. Thêm trường appointment_id vào bảng reviews để liên kết với lịch hẹn
+-- 2. Cập nhật cấu trúc bảng invoices để phù hợp với nghiệp vụ mới
+-- 3. Thêm bảng invoice_service để lưu trữ thông tin chi tiết về dịch vụ trong hóa đơn
+-- 4. Cập nhật các phương thức thanh toán trong bảng appointments và invoices
+-- 5. Loại bỏ dữ liệu mẫu, chỉ giữ lại cấu trúc cơ sở dữ liệu
+-- 6. Loại bỏ bảng personal_access_tokens vì dự án không sử dụng API
+-- 7. Thêm comment giải thích ý nghĩa của từng bảng
+-- 8. Thêm bảng payment_receipts để lưu trữ biên lai thanh toán
 
 -- Đặt charset và collation
 SET NAMES utf8mb4;
@@ -17,6 +28,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `time_slots`;
 DROP TABLE IF EXISTS `email_verifications`;
 DROP TABLE IF EXISTS `reviews`;
+DROP TABLE IF EXISTS `invoice_service`;
 DROP TABLE IF EXISTS `appointment_services`;
 DROP TABLE IF EXISTS `invoices`;
 DROP TABLE IF EXISTS `appointments`;
@@ -30,9 +42,12 @@ DROP TABLE IF EXISTS `settings`;
 DROP TABLE IF EXISTS `categories`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `password_reset_tokens`;
-DROP TABLE IF EXISTS `personal_access_tokens`;
+-- Bảng personal_access_tokens đã được loại bỏ vì dự án không sử dụng API
+-- DROP TABLE IF EXISTS `personal_access_tokens`;
 
 -- Tạo bảng users
+-- Bảng này lưu trữ thông tin người dùng trong hệ thống, bao gồm admin, thợ cắt tóc và khách hàng
+-- Mỗi người dùng có thông tin cơ bản như tên, email, mật khẩu, vai trò, số điện thoại, địa chỉ, và trạng thái
 CREATE TABLE `users` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -52,6 +67,8 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng password_reset_tokens
+-- Bảng này lưu trữ các token đặt lại mật khẩu
+-- Sử dụng cho chức năng đặt lại mật khẩu khi người dùng quên mật khẩu
 CREATE TABLE `password_reset_tokens` (
   `email` varchar(255) NOT NULL,
   `token` varchar(255) NOT NULL,
@@ -59,24 +76,13 @@ CREATE TABLE `password_reset_tokens` (
   PRIMARY KEY (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tạo bảng personal_access_tokens
-CREATE TABLE `personal_access_tokens` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `tokenable_type` varchar(255) NOT NULL,
-  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `token` varchar(64) NOT NULL,
-  `abilities` text DEFAULT NULL,
-  `last_used_at` timestamp NULL DEFAULT NULL,
-  `expires_at` timestamp NULL DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
-  KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Bảng personal_access_tokens đã được loại bỏ vì không cần thiết cho dự án
+-- Dự án không sử dụng API nên không cần lưu trữ các token truy cập
 
 -- Tạo bảng categories
+-- Bảng này lưu trữ thông tin danh mục
+-- Sử dụng cho phân loại dịch vụ, sản phẩm và tin tức
+-- Mỗi danh mục có tên, slug, mô tả, loại (service, product, news) và trạng thái
 CREATE TABLE `categories` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -91,6 +97,9 @@ CREATE TABLE `categories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng services
+-- Bảng này lưu trữ thông tin dịch vụ cắt tóc
+-- Mỗi dịch vụ thuộc về một danh mục
+-- Lưu trữ thông tin như tên, slug, mô tả, giá, thời gian thực hiện, hình ảnh và trạng thái
 CREATE TABLE `services` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `category_id` bigint(20) UNSIGNED NOT NULL,
@@ -110,6 +119,9 @@ CREATE TABLE `services` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng products
+-- Bảng này lưu trữ thông tin sản phẩm chăm sóc tóc
+-- Mỗi sản phẩm thuộc về một danh mục
+-- Lưu trữ thông tin như tên, slug, mô tả, giá, số lượng tồn kho, hình ảnh và trạng thái
 CREATE TABLE `products` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `category_id` bigint(20) UNSIGNED NOT NULL,
@@ -129,6 +141,9 @@ CREATE TABLE `products` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng barbers
+-- Bảng này lưu trữ thông tin chi tiết về thợ cắt tóc
+-- Mỗi thợ cắt tóc liên kết với một người dùng trong bảng users (vai trò 'barber')
+-- Lưu trữ thông tin như mô tả, kinh nghiệm, chuyên môn và trạng thái
 CREATE TABLE `barbers` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) UNSIGNED NOT NULL,
@@ -144,6 +159,9 @@ CREATE TABLE `barbers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng barber_schedules
+-- Bảng này lưu trữ lịch làm việc của thợ cắt tóc
+-- Mỗi bản ghi đại diện cho một ngày trong tuần với thời gian bắt đầu và kết thúc
+-- Cũng lưu trữ thông tin về ngày nghỉ và số lượng lịch hẹn tối đa có thể nhận trong ngày
 CREATE TABLE `barber_schedules` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `barber_id` bigint(20) UNSIGNED NOT NULL,
@@ -160,6 +178,10 @@ CREATE TABLE `barber_schedules` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng appointments
+-- Bảng này lưu trữ thông tin lịch hẹn cắt tóc
+-- Mỗi lịch hẹn liên kết với một khách hàng và một thợ cắt tóc
+-- Lưu trữ thông tin như ngày hẹn, giờ bắt đầu, giờ kết thúc, trạng thái, mã đặt lịch
+-- Cũng lưu trữ thông tin thanh toán và ghi chú
 CREATE TABLE `appointments` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) UNSIGNED DEFAULT NULL,
@@ -187,6 +209,9 @@ CREATE TABLE `appointments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng appointment_services
+-- Bảng trung gian liên kết giữa lịch hẹn và dịch vụ
+-- Mỗi lịch hẹn có thể bao gồm nhiều dịch vụ
+-- Lưu trữ giá dịch vụ tại thời điểm đặt lịch
 CREATE TABLE `appointment_services` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `appointment_id` bigint(20) UNSIGNED NOT NULL,
@@ -202,23 +227,65 @@ CREATE TABLE `appointment_services` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng invoices
+-- Bảng này lưu trữ thông tin hóa đơn
+-- Mỗi hóa đơn có thể liên kết với một lịch hẹn, một khách hàng và một thợ cắt tóc
+-- Lưu trữ thông tin như mã hóa đơn, tạm tính, giảm giá, thuế, tổng tiền
+-- Cũng lưu trữ phương thức thanh toán, trạng thái thanh toán, trạng thái hóa đơn và ghi chú
 CREATE TABLE `invoices` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `appointment_id` bigint(20) UNSIGNED NOT NULL,
+  `invoice_code` varchar(20) NOT NULL,
+  `appointment_id` bigint(20) UNSIGNED NULL,
+  `user_id` bigint(20) UNSIGNED NULL,
+  `barber_id` bigint(20) UNSIGNED NULL,
   `invoice_number` varchar(20) NOT NULL,
-  `amount` decimal(10,2) NOT NULL,
-  `payment_method` enum('cash','bank_transfer') NOT NULL DEFAULT 'cash',
+  `subtotal` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `discount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `tax` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `total` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `total_amount` decimal(10,2) NOT NULL,
+  `payment_method` enum('cash','bank_transfer','card') NOT NULL DEFAULT 'cash',
   `payment_status` enum('pending','paid') NOT NULL DEFAULT 'pending',
+  `status` enum('pending','confirmed','completed','canceled') NOT NULL DEFAULT 'pending',
   `notes` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `invoices_invoice_code_unique` (`invoice_code`),
   UNIQUE KEY `invoices_invoice_number_unique` (`invoice_number`),
   KEY `invoices_appointment_id_foreign` (`appointment_id`),
-  CONSTRAINT `invoices_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE CASCADE
+  KEY `invoices_user_id_foreign` (`user_id`),
+  KEY `invoices_barber_id_foreign` (`barber_id`),
+  CONSTRAINT `invoices_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `invoices_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `invoices_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tạo bảng invoice_service
+-- Bảng trung gian liên kết giữa hóa đơn và dịch vụ
+-- Mỗi hóa đơn có thể bao gồm nhiều dịch vụ
+-- Lưu trữ thông tin như số lượng, giá, giảm giá và thành tiền của từng dịch vụ trong hóa đơn
+CREATE TABLE `invoice_service` (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `invoice_id` bigint(20) UNSIGNED NOT NULL,
+  `service_id` bigint(20) UNSIGNED NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `price` decimal(10,2) NOT NULL,
+  `discount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `subtotal` decimal(10,2) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `invoice_service_invoice_id_foreign` (`invoice_id`),
+  KEY `invoice_service_service_id_foreign` (`service_id`),
+  CONSTRAINT `invoice_service_invoice_id_foreign` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `invoice_service_service_id_foreign` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng news
+-- Bảng này lưu trữ thông tin tin tức và bài viết
+-- Mỗi bài viết thuộc về một danh mục và được tạo bởi một người dùng
+-- Lưu trữ thông tin như tiêu đề, slug, nội dung, hình ảnh, trạng thái
+-- Cũng lưu trữ thông tin về việc có được đề xuất hay không và số lượt xem
 CREATE TABLE `news` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `category_id` bigint(20) UNSIGNED NOT NULL,
@@ -241,6 +308,9 @@ CREATE TABLE `news` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng contacts
+-- Bảng này lưu trữ thông tin liên hệ từ khách hàng
+-- Lưu trữ thông tin như tên, email, số điện thoại, tiêu đề, nội dung
+-- Cũng lưu trữ trạng thái đã đọc và phản hồi từ admin
 CREATE TABLE `contacts` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -257,6 +327,9 @@ CREATE TABLE `contacts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng settings
+-- Bảng này lưu trữ các cài đặt hệ thống
+-- Sử dụng cặp key-value để lưu trữ các cài đặt
+-- Các cài đặt được phân nhóm để dễ quản lý
 CREATE TABLE `settings` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `key` varchar(255) NOT NULL,
@@ -269,27 +342,38 @@ CREATE TABLE `settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng reviews
+-- Bảng này lưu trữ đánh giá của khách hàng
+-- Mỗi đánh giá liên kết với một khách hàng, một thợ cắt tóc, một dịch vụ và một lịch hẹn
+-- Lưu trữ thông tin như điểm đánh giá, bình luận, hình ảnh, trạng thái
+-- Cũng lưu trữ phản hồi từ admin
 CREATE TABLE `reviews` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `barber_id` bigint(20) UNSIGNED NOT NULL,
   `service_id` bigint(20) UNSIGNED NOT NULL,
+  `appointment_id` bigint(20) UNSIGNED NULL,
   `rating` int(11) NOT NULL,
   `comment` text DEFAULT NULL,
   `images` json DEFAULT NULL,
   `status` tinyint(1) NOT NULL DEFAULT 1,
+  `admin_response` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `reviews_user_id_foreign` (`user_id`),
   KEY `reviews_barber_id_foreign` (`barber_id`),
   KEY `reviews_service_id_foreign` (`service_id`),
+  KEY `reviews_appointment_id_foreign` (`appointment_id`),
   CONSTRAINT `reviews_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`) ON DELETE CASCADE,
   CONSTRAINT `reviews_service_id_foreign` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `reviews_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+  CONSTRAINT `reviews_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `reviews_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng email_verifications
+-- Bảng này lưu trữ thông tin xác thực email
+-- Sử dụng cho quá trình đăng ký tài khoản với xác thực OTP
+-- Lưu trữ thông tin như email, tên, mật khẩu, mã OTP và thời gian hết hạn
 CREATE TABLE `email_verifications` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
@@ -304,6 +388,9 @@ CREATE TABLE `email_verifications` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng time_slots
+-- Bảng này lưu trữ thông tin các khung giờ có thể đặt lịch
+-- Mỗi khung giờ liên kết với một thợ cắt tóc và một ngày cụ thể
+-- Lưu trữ số lượng lịch hẹn đã đặt và số lượng lịch hẹn tối đa có thể nhận
 CREATE TABLE `time_slots` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `barber_id` bigint(20) UNSIGNED NOT NULL,
@@ -318,116 +405,22 @@ CREATE TABLE `time_slots` (
   CONSTRAINT `time_slots_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Tạo bảng payment_receipts
+-- Bảng này lưu trữ thông tin biên lai thanh toán
+-- Mỗi biên lai liên kết với một lịch hẹn
+-- Lưu trữ thông tin như đường dẫn tệp, ghi chú, trạng thái và ghi chú của admin
+CREATE TABLE `payment_receipts` (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `appointment_id` bigint(20) UNSIGNED NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `notes` text DEFAULT NULL,
+  `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `admin_notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `payment_receipts_appointment_id_foreign` (`appointment_id`),
+  CONSTRAINT `payment_receipts_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;
-
--- Thêm dữ liệu mẫu
-
--- Thêm dữ liệu vào bảng users
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `role`, `phone`, `address`, `avatar`, `status`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Admin', 'admin@example.com', NOW(), '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', '0123456789', 'Hà Nội, Việt Nam', NULL, 1, NULL, NOW(), NOW()),
-(2, 'Dũng', 'dung@example.com', NOW(), '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'barber', '0987654321', 'Hà Nội, Việt Nam', 'barbers/dung.jpg', 1, NULL, NOW(), NOW()),
-(3, 'Hùng', 'hung@example.com', NOW(), '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'barber', '0912345678', 'Hà Nội, Việt Nam', 'barbers/hung.jpg', 1, NULL, NOW(), NOW()),
-(4, 'Huyền Trần', 'huyen@example.com', NOW(), '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'customer', '0923456789', 'Hà Nội, Việt Nam', NULL, 1, NULL, NOW(), NOW()),
-(5, 'Minh Nguyễn', 'minh@example.com', NOW(), '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'customer', '0934567890', 'Hà Nội, Việt Nam', NULL, 1, NULL, NOW(), NOW());
-
--- Thêm dữ liệu vào bảng categories
-INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `type`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'Dịch vụ cắt tóc', 'dich-vu-cat-toc', 'Các dịch vụ cắt tóc cơ bản', 'service', 1, NOW(), NOW()),
-(2, 'Dịch vụ uốn tóc', 'dich-vu-uon-toc', 'Các dịch vụ uốn tóc', 'service', 1, NOW(), NOW()),
-(3, 'Dịch vụ nhuộm tóc', 'dich-vu-nhuom-toc', 'Các dịch vụ nhuộm tóc', 'service', 1, NOW(), NOW()),
-(4, 'Sản phẩm chăm sóc tóc', 'san-pham-cham-soc-toc', 'Các sản phẩm chăm sóc tóc', 'product', 1, NOW(), NOW()),
-(5, 'Sản phẩm tạo kiểu tóc', 'san-pham-tao-kieu-toc', 'Các sản phẩm tạo kiểu tóc', 'product', 1, NOW(), NOW()),
-(6, 'Tin tức', 'tin-tuc', 'Tin tức về barber shop', 'news', 1, NOW(), NOW()),
-(7, 'Mẹo chăm sóc tóc', 'meo-cham-soc-toc', 'Mẹo chăm sóc tóc', 'news', 1, NOW(), NOW());
-
--- Thêm dữ liệu vào bảng services
-INSERT INTO `services` (`id`, `category_id`, `name`, `slug`, `description`, `price`, `duration`, `image`, `status`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Cắt tóc nam cơ bản', 'cat-toc-nam-co-ban', 'Dịch vụ cắt tóc nam cơ bản bao gồm cắt, gội, sấy và vẽ kiểu', 100000.00, 30, 'services/cat-toc-nam-co-ban.jpg', 1, NOW(), NOW()),
-(2, 1, 'Cắt tóc + xả râu', 'cat-toc-xa-rau', 'Dịch vụ cắt tóc kèm xả râu', 150000.00, 45, 'services/cat-toc-xa-rau.jpg', 1, NOW(), NOW()),
-(3, 2, 'Uốn tóc nam', 'uon-toc-nam', 'Dịch vụ uốn tóc nam cơ bản', 200000.00, 60, 'services/uon-toc-nam.jpg', 1, NOW(), NOW()),
-(4, 3, 'Nhuộm tóc nam', 'nhuom-toc-nam', 'Dịch vụ nhuộm tóc nam cơ bản', 250000.00, 90, 'services/nhuom-toc-nam.jpg', 1, NOW(), NOW()),
-(5, 1, 'Cạo râu', 'cao-rau', 'Dịch vụ cạo râu chuyên nghiệp', 50000.00, 15, 'services/cao-rau.jpg', 1, NOW(), NOW());
-
--- Thêm dữ liệu vào bảng products
-INSERT INTO `products` (`id`, `category_id`, `name`, `slug`, `description`, `price`, `stock`, `image`, `status`, `created_at`, `updated_at`) VALUES
-(1, 4, 'Dầu gội nam Dove', 'dau-goi-nam-dove', 'Dầu gội dành cho nam giới', 120000.00, 50, 'products/dau-goi-nam-dove.jpg', 1, NOW(), NOW()),
-(2, 5, 'Sáp vuốt tóc Glanzen', 'sap-vuot-toc-glanzen', 'Sáp vuốt tóc giữ nếp lâu', 180000.00, 30, 'products/sap-vuot-toc-glanzen.jpg', 1, NOW(), NOW()),
-(3, 5, 'Gồm xịt tóc Glanzen', 'gom-xit-toc-glanzen', 'Gồm xịt tóc giữ nếp lâu', 150000.00, 25, 'products/gom-xit-toc-glanzen.jpg', 1, NOW(), NOW());
-
--- Thêm dữ liệu vào bảng barbers
-INSERT INTO `barbers` (`id`, `user_id`, `description`, `experience`, `specialty`, `status`, `created_at`, `updated_at`) VALUES
-(1, 2, 'Thợ cắt tóc chuyên nghiệp với nhiều năm kinh nghiệm', 5, 'Cắt tóc, tạo kiểu tóc nam', 1, NOW(), NOW()),
-(2, 3, 'Thợ cắt tóc chuyên nghiệp với nhiều năm kinh nghiệm', 3, 'Nhuộm tóc, uốn tóc nam', 1, NOW(), NOW());
-
--- Thêm dữ liệu vào bảng barber_schedules
-INSERT INTO `barber_schedules` (`id`, `barber_id`, `day_of_week`, `start_time`, `end_time`, `is_day_off`, `max_appointments`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, '08:00:00', '18:00:00', 0, 3, NOW(), NOW()),
-(2, 1, 2, '08:00:00', '18:00:00', 0, 3, NOW(), NOW()),
-(3, 1, 3, '08:00:00', '18:00:00', 0, 3, NOW(), NOW()),
-(4, 1, 4, '08:00:00', '18:00:00', 0, 3, NOW(), NOW()),
-(5, 1, 5, '08:00:00', '18:00:00', 0, 3, NOW(), NOW()),
-(6, 1, 6, '08:00:00', '18:00:00', 0, 3, NOW(), NOW()),
-(7, 1, 0, '00:00:00', '00:00:00', 1, 0, NOW(), NOW()),
-(8, 2, 1, '08:00:00', '18:00:00', 0, 3, NOW(), NOW()),
-(9, 2, 2, '08:00:00', '18:00:00', 0, 3, NOW(), NOW()),
-(10, 2, 3, '08:00:00', '18:00:00', 0, 3, NOW(), NOW()),
-(11, 2, 4, '08:00:00', '18:00:00', 0, 3, NOW(), NOW()),
-(12, 2, 5, '08:00:00', '18:00:00', 0, 3, NOW(), NOW()),
-(13, 2, 6, '00:00:00', '00:00:00', 1, 0, NOW(), NOW()),
-(14, 2, 0, '00:00:00', '00:00:00', 1, 0, NOW(), NOW());
-
--- Thêm dữ liệu vào bảng news
-INSERT INTO `news` (`id`, `category_id`, `user_id`, `title`, `slug`, `content`, `image`, `status`, `is_featured`, `view_count`, `created_at`, `updated_at`) VALUES
-(1, 6, 1, 'Khai trương Barber Shop chi nhánh mới', 'khai-truong-barber-shop-chi-nhanh-moi', '<p>Chúng tôi vui mừng thông báo khai trương chi nhánh mới tại trung tâm thành phố.</p><p>Nhiều ưu đãi hấp dẫn dành cho khách hàng trong tuần khai trương.</p>', 'news/khai-truong.jpg', 1, 1, 120, NOW(), NOW()),
-(2, 7, 1, 'Cách chăm sóc tóc nam hiệu quả', 'cach-cham-soc-toc-nam-hieu-qua', '<p>Bài viết chia sẻ các mẹo chăm sóc tóc nam hiệu quả tại nhà.</p><p>Các sản phẩm chăm sóc tóc phù hợp với từng loại tóc.</p>', 'news/cham-soc-toc.jpg', 1, 1, 85, NOW(), NOW());
-
--- Thêm dữ liệu vào bảng settings
-INSERT INTO `settings` (`id`, `key`, `value`, `group`, `created_at`, `updated_at`) VALUES
-(1, 'site_name', 'Barber Shop', 'general', NOW(), NOW()),
-(2, 'site_description', 'Tiệm cắt tóc nam chuyên nghiệp', 'general', NOW(), NOW()),
-(3, 'shop_address', '123 Đường ABC, Quận XYZ, Hà Nội', 'contact', NOW(), NOW()),
-(4, 'shop_phone', '0123456789', 'contact', NOW(), NOW()),
-(5, 'shop_email', 'info@barbershop.com', 'contact', NOW(), NOW()),
-(6, 'facebook', 'https://facebook.com/barbershop', 'social', NOW(), NOW()),
-(7, 'instagram', 'https://instagram.com/barbershop', 'social', NOW(), NOW()),
-(8, 'working_hours', 'Thứ 2 - Thứ 7: 8:00 - 18:00', 'general', NOW(), NOW());
-
--- Thêm dữ liệu vào bảng time_slots
-INSERT INTO `time_slots` (`id`, `barber_id`, `date`, `time_slot`, `booked_count`, `max_bookings`, `created_at`, `updated_at`) VALUES
-(1, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '08:00 - 08:30', 0, 2, NOW(), NOW()),
-(2, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '08:30 - 09:00', 1, 2, NOW(), NOW()),
-(3, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '09:00 - 09:30', 0, 2, NOW(), NOW()),
-(4, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '09:30 - 10:00', 0, 2, NOW(), NOW()),
-(5, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '10:00 - 10:30', 2, 2, NOW(), NOW()),
-(6, 2, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '08:00 - 08:30', 0, 2, NOW(), NOW()),
-(7, 2, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '08:30 - 09:00', 0, 2, NOW(), NOW()),
-(8, 2, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '09:00 - 09:30', 1, 2, NOW(), NOW());
-
--- Thêm dữ liệu vào bảng appointments
-INSERT INTO `appointments` (`id`, `user_id`, `barber_id`, `appointment_date`, `start_time`, `end_time`, `time_slot`, `status`, `booking_code`, `customer_name`, `email`, `phone`, `payment_method`, `payment_status`, `notes`, `created_at`, `updated_at`) VALUES
-(1, 4, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '08:30:00', '09:00:00', '08:30 - 09:00', 'confirmed', 'BK-ABCDEF12', 'Huyền Trần', 'huyen@example.com', '0923456789', 'cash', 'pending', 'Không có ghi chú', NOW(), NOW()),
-(2, 5, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '10:00:00', '10:30:00', '10:00 - 10:30', 'confirmed', 'BK-ABCDEF13', 'Minh Nguyễn', 'minh@example.com', '0934567890', 'cash', 'pending', 'Không có ghi chú', NOW(), NOW()),
-(3, NULL, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '10:00:00', '10:30:00', '10:00 - 10:30', 'pending', 'BK-ABCDEF14', 'Khách hàng mới', 'khachhang@example.com', '0912345678', 'bank_transfer', 'pending', 'Không có ghi chú', NOW(), NOW()),
-(4, 4, 2, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '09:00:00', '09:30:00', '09:00 - 09:30', 'pending', 'BK-ABCDEF15', 'Huyền Trần', 'huyen@example.com', '0923456789', 'cash', 'pending', 'Không có ghi chú', NOW(), NOW());
-
--- Thêm dữ liệu vào bảng appointment_services
-INSERT INTO `appointment_services` (`id`, `appointment_id`, `service_id`, `price`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 100000.00, NOW(), NOW()),
-(2, 1, 5, 50000.00, NOW(), NOW()),
-(3, 2, 3, 200000.00, NOW(), NOW()),
-(4, 3, 4, 250000.00, NOW(), NOW()),
-(5, 4, 2, 150000.00, NOW(), NOW());
-
--- Thêm dữ liệu vào bảng invoices
-INSERT INTO `invoices` (`id`, `appointment_id`, `invoice_number`, `amount`, `payment_method`, `payment_status`, `notes`, `created_at`, `updated_at`) VALUES
-(1, 1, 'INV-20250001', 150000.00, 'cash', 'pending', NULL, NOW(), NOW()),
-(2, 2, 'INV-20250002', 200000.00, 'cash', 'pending', NULL, NOW(), NOW());
-
--- Thêm dữ liệu vào bảng reviews
-INSERT INTO `reviews` (`id`, `user_id`, `barber_id`, `service_id`, `rating`, `comment`, `images`, `status`, `created_at`, `updated_at`) VALUES
-(1, 4, 1, 1, 5, 'Dịch vụ rất tốt, thợ cắt tóc chuyên nghiệp', NULL, 1, NOW(), NOW()),
-(2, 5, 2, 3, 4, 'Dịch vụ tốt, giá cả hợp lý', NULL, 1, NOW(), NOW());
-
--- Thêm dữ liệu vào bảng email_verifications
-INSERT INTO `email_verifications` (`id`, `email`, `name`, `password`, `otp`, `expires_at`, `created_at`, `updated_at`) VALUES
-(1, 'test@example.com', 'Người dùng mới', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '123456', DATE_ADD(NOW(), INTERVAL 10 MINUTE), NOW(), NOW());

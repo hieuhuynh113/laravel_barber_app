@@ -38,13 +38,13 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" width="100%" cellspacing="0">
+                <table class="table table-bordered table-hover" width="100%" cellspacing="0" id="usersTable">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Ảnh đại diện</th>
                             <th>Tên</th>
-                            <th>Email</th>
+                            <th class="email-column">Email</th>
                             <th>Vai trò</th>
                             <th>Trạng thái</th>
                             <th>Ngày tạo</th>
@@ -63,7 +63,7 @@
                                 @endif
                             </td>
                             <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
+                            <td class="email-cell" title="{{ $user->email }}">{{ $user->email }}</td>
                             <td>
                                 @if($user->isAdmin())
                                     <span class="badge bg-danger">Admin</span>
@@ -109,4 +109,27 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        $('#usersTable').DataTable({
+            "paging": false,
+            "ordering": true,
+            "info": false,
+            "searching": true,
+            "columnDefs": [
+                { "width": "5%", "targets": 0 },
+                { "width": "8%", "targets": 1 },
+                { "width": "15%", "targets": 2 },
+                { "width": "25%", "targets": 3 },
+                { "width": "10%", "targets": 4 },
+                { "width": "12%", "targets": 5 },
+                { "width": "10%", "targets": 6 },
+                { "width": "15%", "targets": 7 }
+            ]
+        });
+    });
+</script>
+@endsection

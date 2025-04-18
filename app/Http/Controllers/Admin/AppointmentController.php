@@ -134,12 +134,77 @@ class AppointmentController extends Controller
             'status' => 'required|in:pending,confirmed,completed,canceled',
         ]);
 
+        $oldStatus = $appointment->status;
+        $newStatus = $request->status;
+
         $appointment->update([
-            'status' => $request->status,
+            'status' => $newStatus,
         ]);
+
+        // Nếu trạng thái thay đổi từ "confirmed" sang "completed"
+        if ($oldStatus == 'confirmed' && $newStatus == 'completed') {
+            // Tạo hóa đơn mới
+            $this->createInvoiceFromAppointment($appointment);
+
+            return redirect()->back()
+                ->with('success', 'Trạng thái lịch hẹn đã được cập nhật thành công và hóa đơn đã được tạo.');
+        }
 
         return redirect()->back()
             ->with('success', 'Trạng thái lịch hẹn đã được cập nhật thành công.');
+    }
+
+    /**
+     * Tạo hóa đơn từ lịch hẹn
+     */
+    private function createInvoiceFromAppointment(Appointment $appointment)
+    {
+        // Kiểm tra xem đã có hóa đơn cho lịch hẹn này chưa
+        if ($appointment->invoice) {
+            return $appointment->invoice;
+        }
+
+        // Tạo mã hóa đơn
+        $invoiceCode = 'INV-' . date('Ymd') . '-' . str_pad($appointment->id, 4, '0', STR_PAD_LEFT);
+
+        // Tính tổng tiền từ các dịch vụ
+        $subtotal = 0;
+        foreach ($appointment->services as $service) {
+            $subtotal += $service->pivot->price ?? $service->price;
+        }
+
+        // Tạo hóa đơn mới
+        $invoice = new \App\Models\Invoice([
+            'invoice_code' => $invoiceCode,
+            'appointment_id' => $appointment->id,
+            'user_id' => $appointment->user_id,
+            'barber_id' => $appointment->barber_id,
+            'invoice_number' => 'INV-' . time(),
+            'subtotal' => $subtotal,
+            'discount' => 0, // Có thể thêm logic giảm giá nếu cần
+            'tax' => 0, // Có thể thêm thuế nếu cần
+            'total' => $subtotal,
+            'total_amount' => $subtotal,
+            'payment_method' => $appointment->payment_method ?? 'cash',
+            'payment_status' => 'paid', // Đã thanh toán
+            'status' => 'completed', // Hoàn thành
+            'notes' => 'Tự động tạo từ lịch hẹn #' . $appointment->id,
+        ]);
+
+        $invoice->save();
+
+        // Thêm các dịch vụ vào hóa đơn
+        foreach ($appointment->services as $service) {
+            $price = $service->pivot->price ?? $service->price;
+            $invoice->services()->attach($service->id, [
+                'quantity' => 1,
+                'price' => $price,
+                'discount' => 0,
+                'subtotal' => $price
+            ]);
+        }
+
+        return $invoice;
     }
 
 

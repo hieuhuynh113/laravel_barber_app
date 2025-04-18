@@ -66,6 +66,16 @@ class Appointment extends Model
         return $this->hasOne(Invoice::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function paymentReceipt()
+    {
+        return $this->hasOne(PaymentReceipt::class);
+    }
+
     public function getTotalPriceAttribute()
     {
         return $this->appointmentServices->sum('price');
