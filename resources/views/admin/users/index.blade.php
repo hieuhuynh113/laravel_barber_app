@@ -56,11 +56,7 @@
                         <tr>
                             <td>{{ $user->id }}</td>
                             <td>
-                                @if($user->avatar)
-                                    <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="img-profile rounded-circle" width="40">
-                                @else
-                                    <img src="{{ asset('images/undraw_profile.svg') }}" alt="{{ $user->name }}" class="img-profile rounded-circle" width="40">
-                                @endif
+                                <img src="{{ get_user_avatar($user, 'small') }}" alt="{{ $user->name }}" class="img-profile rounded-circle" width="40">
                             </td>
                             <td>{{ $user->name }}</td>
                             <td class="email-cell" title="{{ $user->email }}">{{ $user->email }}</td>

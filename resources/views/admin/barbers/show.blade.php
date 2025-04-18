@@ -72,11 +72,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">Thông tin cá nhân</h6>
                 </div>
                 <div class="card-body text-center">
-                    @if($barber->avatar)
-                        <img src="{{ asset('storage/' . $barber->avatar) }}" alt="{{ $barber->name }}" class="img-profile rounded-circle mb-3" width="150" height="150">
-                    @else
-                        <img src="{{ asset('images/default-avatar.jpg') }}" alt="{{ $barber->name }}" class="img-profile rounded-circle mb-3" width="150" height="150">
-                    @endif
+                    <img src="{{ get_user_avatar($barber, 'large') }}" alt="{{ $barber->name }}" class="img-profile rounded-circle mb-3" width="150" height="150">
 
                     <h4 class="mb-0">{{ $barber->name }}</h4>
                     <p class="text-muted mb-3">Thợ cắt tóc</p>

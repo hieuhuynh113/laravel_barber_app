@@ -97,32 +97,38 @@
                     </a>
                 </li>
 
-                <li class="{{ request()->routeIs('admin.services.*') || request()->routeIs('admin.categories.*') && request()->input('type') == 'service' ? 'active' : '' }}">
+                <li class="{{ request()->routeIs('admin.services.*') ? 'active' : '' }}">
                     <a href="#serviceSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="fas fa-concierge-bell me-2"></i> Dịch vụ
                     </a>
-                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.services.*') || request()->routeIs('admin.categories.*') && request()->input('type') == 'service' ? 'show' : '' }}" id="serviceSubmenu">
+                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.services.*') ? 'show' : '' }}" id="serviceSubmenu">
                         <li>
                             <a href="{{ route('admin.services.index') }}">Danh sách dịch vụ</a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.categories.index', ['type' => 'service']) }}">Danh mục dịch vụ</a>
+                            <a href="{{ route('admin.services.create') }}">Thêm dịch vụ</a>
                         </li>
                     </ul>
                 </li>
 
-                <li class="{{ request()->routeIs('admin.products.*') || request()->routeIs('admin.categories.*') && request()->input('type') == 'product' ? 'active' : '' }}">
+                <li class="{{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
                     <a href="#productSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="fas fa-shopping-bag me-2"></i> Sản phẩm
                     </a>
-                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.products.*') || request()->routeIs('admin.categories.*') && request()->input('type') == 'product' ? 'show' : '' }}" id="productSubmenu">
+                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.products.*') ? 'show' : '' }}" id="productSubmenu">
                         <li>
                             <a href="{{ route('admin.products.index') }}">Danh sách sản phẩm</a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.categories.index', ['type' => 'product']) }}">Danh mục sản phẩm</a>
+                            <a href="{{ route('admin.products.create') }}">Thêm sản phẩm</a>
                         </li>
                     </ul>
+                </li>
+
+                <li class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.categories.index') }}">
+                        <i class="fas fa-tags me-2"></i> Quản lý danh mục
+                    </a>
                 </li>
 
                 <li class="{{ request()->routeIs('admin.invoices.*') || request()->routeIs('admin.payment-receipts.*') ? 'active' : '' }}">
@@ -152,19 +158,16 @@
                     </ul>
                 </li>
 
-                <li class="{{ request()->routeIs('admin.news.*') || request()->routeIs('admin.categories.*') && request()->input('type') == 'news' ? 'active' : '' }}">
+                <li class="{{ request()->routeIs('admin.news.*') ? 'active' : '' }}">
                     <a href="#newsSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="fas fa-newspaper me-2"></i> Tin tức
                     </a>
-                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.news.*') || request()->routeIs('admin.categories.*') && request()->input('type') == 'news' ? 'show' : '' }}" id="newsSubmenu">
+                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.news.*') ? 'show' : '' }}" id="newsSubmenu">
                         <li>
                             <a href="{{ route('admin.news.index') }}">Danh sách tin tức</a>
                         </li>
                         <li>
                             <a href="{{ route('admin.news.create') }}">Thêm tin tức</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.categories.index', ['type' => 'news']) }}">Danh mục tin tức</a>
                         </li>
                     </ul>
                 </li>

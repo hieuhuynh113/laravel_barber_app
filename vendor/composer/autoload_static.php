@@ -39,7 +39,7 @@ class ComposerStaticInit88970a0117c062eed55fa8728fc43833
         'ce9671a430e4846b44e1c68c7611f9f5' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery.php',
         'a1cfe24d14977df6878b9bf804af2d1c' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
-        'd21d43db5f6e840ee7b10744ec7fdf66' => __DIR__ . '/../..' . '/app/Helpers/helpers.php',
+        'b4e3f29b106af37a2bb239f73cdf68c7' => __DIR__ . '/../..' . '/app/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -545,6 +545,7 @@ class ComposerStaticInit88970a0117c062eed55fa8728fc43833
         'App\\Http\\Controllers\\Admin\\InvoiceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/InvoiceController.php',
         'App\\Http\\Controllers\\Admin\\NewsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/NewsController.php',
         'App\\Http\\Controllers\\Admin\\NotificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/NotificationController.php',
+        'App\\Http\\Controllers\\Admin\\PaymentReceiptController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/PaymentReceiptController.php',
         'App\\Http\\Controllers\\Admin\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ProductController.php',
         'App\\Http\\Controllers\\Admin\\ReviewController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ReviewController.php',
         'App\\Http\\Controllers\\Admin\\ServiceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ServiceController.php',
@@ -579,6 +580,9 @@ class ComposerStaticInit88970a0117c062eed55fa8728fc43833
         'App\\Mail\\AppointmentConfirmation' => __DIR__ . '/../..' . '/app/Mail/AppointmentConfirmation.php',
         'App\\Mail\\AppointmentReminder' => __DIR__ . '/../..' . '/app/Mail/AppointmentReminder.php',
         'App\\Mail\\ContactReply' => __DIR__ . '/../..' . '/app/Mail/ContactReply.php',
+        'App\\Mail\\NewPaymentReceipt' => __DIR__ . '/../..' . '/app/Mail/NewPaymentReceipt.php',
+        'App\\Mail\\PaymentConfirmation' => __DIR__ . '/../..' . '/app/Mail/PaymentConfirmation.php',
+        'App\\Mail\\PaymentRejected' => __DIR__ . '/../..' . '/app/Mail/PaymentRejected.php',
         'App\\Models\\Appointment' => __DIR__ . '/../..' . '/app/Models/Appointment.php',
         'App\\Models\\AppointmentService' => __DIR__ . '/../..' . '/app/Models/AppointmentService.php',
         'App\\Models\\Barber' => __DIR__ . '/../..' . '/app/Models/Barber.php',
@@ -588,6 +592,7 @@ class ComposerStaticInit88970a0117c062eed55fa8728fc43833
         'App\\Models\\EmailVerification' => __DIR__ . '/../..' . '/app/Models/EmailVerification.php',
         'App\\Models\\Invoice' => __DIR__ . '/../..' . '/app/Models/Invoice.php',
         'App\\Models\\News' => __DIR__ . '/../..' . '/app/Models/News.php',
+        'App\\Models\\PaymentReceipt' => __DIR__ . '/../..' . '/app/Models/PaymentReceipt.php',
         'App\\Models\\Product' => __DIR__ . '/../..' . '/app/Models/Product.php',
         'App\\Models\\Review' => __DIR__ . '/../..' . '/app/Models/Review.php',
         'App\\Models\\Service' => __DIR__ . '/../..' . '/app/Models/Service.php',

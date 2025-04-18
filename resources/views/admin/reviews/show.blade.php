@@ -79,10 +79,10 @@
                             </div>
                             <span class="text-muted">{{ $review->created_at->format('d/m/Y H:i') }}</span>
                         </div>
-                        
+
                         <h5 class="card-title">Nhận xét</h5>
                         <p class="card-text">{{ $review->comment }}</p>
-                        
+
                         @if($review->images)
                             <h5 class="card-title mt-4">Hình ảnh</h5>
                             <div class="review-images">
@@ -93,7 +93,7 @@
                                 @endforeach
                             </div>
                         @endif
-                        
+
                         @if($review->admin_response)
                             <div class="admin-response">
                                 <h5 class="card-title">Phản hồi của admin</h5>
@@ -101,7 +101,7 @@
                             </div>
                         @endif
                     </div>
-                    
+
                     <div class="d-flex justify-content-between mt-4">
                         <form action="{{ route('admin.reviews.toggleStatus', $review->id) }}" method="POST">
                             @csrf
@@ -110,7 +110,7 @@
                                 {{ $review->status ? 'Ẩn đánh giá' : 'Hiển thị đánh giá' }}
                             </button>
                         </form>
-                        
+
                         <form action="{{ route('admin.reviews.destroy', $review->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đánh giá này?');">
                             @csrf
                             @method('DELETE')
@@ -122,7 +122,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-lg-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -130,31 +130,27 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
-                        @if($review->user->avatar)
-                            <img src="{{ asset('storage/' . $review->user->avatar) }}" alt="{{ $review->user->name }}" class="rounded-circle me-3" width="50" height="50">
-                        @else
-                            <img src="{{ asset('images/default-avatar.jpg') }}" alt="{{ $review->user->name }}" class="rounded-circle me-3" width="50" height="50">
-                        @endif
+                        <img src="{{ get_user_avatar($review->user, 'small') }}" alt="{{ $review->user->name }}" class="rounded-circle me-3" width="50" height="50">
                         <div>
                             <h6 class="mb-0">{{ $review->user->name }}</h6>
                             <small class="text-muted">{{ $review->user->email }}</small>
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <strong>Số điện thoại:</strong> {{ $review->user->phone ?? 'Chưa cập nhật' }}
                     </div>
-                    
+
                     <div class="mb-3">
                         <strong>Thành viên từ:</strong> {{ $review->user->created_at->format('d/m/Y') }}
                     </div>
-                    
+
                     <a href="{{ route('admin.users.show', $review->user->id) }}" class="btn btn-info btn-sm">
                         <i class="fas fa-user"></i> Xem hồ sơ
                     </a>
                 </div>
             </div>
-            
+
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Thông tin dịch vụ</h6>
@@ -163,21 +159,21 @@
                     <div class="mb-3">
                         <strong>Dịch vụ:</strong> {{ $review->service->name }}
                     </div>
-                    
+
                     <div class="mb-3">
                         <strong>Giá:</strong> {{ number_format($review->service->price) }} VNĐ
                     </div>
-                    
+
                     <div class="mb-3">
                         <strong>Thời gian:</strong> {{ $review->service->duration }} phút
                     </div>
-                    
+
                     <a href="{{ route('admin.services.edit', $review->service->id) }}" class="btn btn-info btn-sm">
                         <i class="fas fa-edit"></i> Xem dịch vụ
                     </a>
                 </div>
             </div>
-            
+
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Thông tin thợ cắt tóc</h6>
@@ -193,11 +189,11 @@
                             <h6 class="mb-0">{{ $review->barber->user->name }}</h6>
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <strong>Kinh nghiệm:</strong> {{ $review->barber->experience }} năm
                     </div>
-                    
+
                     <a href="{{ route('admin.barbers.show', $review->barber->user->id) }}" class="btn btn-info btn-sm">
                         <i class="fas fa-user"></i> Xem hồ sơ
                     </a>

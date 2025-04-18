@@ -11,11 +11,36 @@ use Illuminate\Support\Str;
 
 class ServiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $services = Service::with('category')->latest()->paginate(10);
+        $categoryId = $request->input('category_id');
+        $status = $request->input('status');
+        $search = $request->input('search');
 
-        return view('admin.services.index', compact('services'));
+        $query = Service::with('category');
+
+        // Lọc theo danh mục
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        // Lọc theo trạng thái
+        if ($status !== null && $status !== '') {
+            $query->where('status', $status);
+        }
+
+        // Tìm kiếm theo tên hoặc mô tả
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $services = $query->latest()->paginate(10)->withQueryString();
+        $categories = Category::where('type', 'service')->get();
+
+        return view('admin.services.index', compact('services', 'categories', 'categoryId', 'status', 'search'));
     }
 
     public function create()

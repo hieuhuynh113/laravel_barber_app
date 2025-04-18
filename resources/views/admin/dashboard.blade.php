@@ -21,6 +21,9 @@
         border-radius: 0.25rem;
         font-size: 0.75rem;
         font-weight: 600;
+        display: inline-block;
+        text-align: center;
+        min-width: 100px;
     }
     .status-pending {
         background-color: #f6c23e;
@@ -37,6 +40,112 @@
     .status-canceled {
         background-color: #e74a3b;
         color: #fff;
+    }
+
+    /* Bảng lịch hẹn sắp tới */
+    .upcoming-appointments-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #e3e6f0;
+    }
+
+    .upcoming-appointments-table th {
+        background-color: #f8f9fc;
+        font-weight: 600;
+        text-align: left;
+        padding: 12px 15px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #4e73df;
+        border-bottom: 1px solid #e3e6f0;
+        border-right: 1px solid #e3e6f0;
+    }
+
+    .upcoming-appointments-table th:last-child {
+        border-right: none;
+    }
+
+    .upcoming-appointments-table td {
+        padding: 12px 15px;
+        vertical-align: middle;
+        border-bottom: 1px solid #e3e6f0;
+        border-right: 1px solid #e3e6f0;
+        font-size: 0.9rem;
+    }
+
+    .upcoming-appointments-table td:last-child {
+        border-right: none;
+    }
+
+    .upcoming-appointments-table tr:hover {
+        background-color: #f8f9fc;
+    }
+
+    /* Cột trong bảng lịch hẹn */
+    .col-customer {
+        width: 18%;
+    }
+
+    .col-barber {
+        width: 18%;
+    }
+
+    .col-service {
+        width: 20%;
+    }
+
+    .col-time {
+        width: 15%;
+        text-align: center;
+    }
+
+    .col-status {
+        width: 15%;
+        text-align: center;
+    }
+
+    .col-action {
+        width: 80px;
+        text-align: center;
+    }
+
+    /* Badge dịch vụ */
+    .service-badge {
+        display: inline-block;
+        margin: 2px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        background-color: #36b9cc;
+        color: white;
+    }
+
+    /* Text truncate */
+    .text-truncate-custom {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
+
+    /* Date display */
+    .date-display {
+        text-align: center;
+    }
+
+    .date-display .date {
+        font-weight: 500;
+        display: block;
+        font-size: 0.9rem;
+    }
+
+    .date-display .time {
+        color: #6c757d;
+        font-size: 0.8rem;
+        display: block;
+        margin-top: 2px;
     }
     .star-rating {
         color: #f6c23e;
@@ -329,29 +438,42 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="upcoming-appointments-table">
                             <thead>
                                 <tr>
-                                    <th>Khách hàng</th>
-                                    <th>Thợ cắt tóc</th>
-                                    <th>Dịch vụ</th>
-                                    <th>Thời gian</th>
-                                    <th>Trạng thái</th>
-                                    <th></th>
+                                    <th class="col-customer">Khách hàng</th>
+                                    <th class="col-barber">Thợ cắt tóc</th>
+                                    <th class="col-service">Dịch vụ</th>
+                                    <th class="col-time">Thời gian</th>
+                                    <th class="col-status">Trạng thái</th>
+                                    <th class="col-action">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($upcomingAppointments as $appointment)
                                 <tr>
-                                    <td>{{ $appointment->user ? $appointment->user->name : 'Không xác định' }}</td>
-                                    <td>{{ $appointment->barber && $appointment->barber->user ? $appointment->barber->user->name : 'Không xác định' }}</td>
-                                    <td>
+                                    <td class="col-customer">
+                                        <a href="{{ route('admin.users.show', $appointment->user ? $appointment->user->id : '#') }}" class="text-truncate-custom" title="{{ $appointment->user ? $appointment->user->name : 'Không xác định' }}">
+                                            {{ $appointment->user ? $appointment->user->name : 'Không xác định' }}
+                                        </a>
+                                    </td>
+                                    <td class="col-barber">
+                                        <a href="{{ route('admin.barbers.show', $appointment->barber && $appointment->barber->user ? $appointment->barber->user->id : '#') }}" class="text-truncate-custom" title="{{ $appointment->barber && $appointment->barber->user ? $appointment->barber->user->name : 'Không xác định' }}">
+                                            {{ $appointment->barber && $appointment->barber->user ? $appointment->barber->user->name : 'Không xác định' }}
+                                        </a>
+                                    </td>
+                                    <td class="col-service">
                                         @foreach($appointment->services as $service)
-                                            <span class="badge bg-info">{{ $service->name }}</span>
+                                            <span class="service-badge">{{ $service->name }}</span>
                                         @endforeach
                                     </td>
-                                    <td>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d/m/Y') }} {{ $appointment->appointment_time }}</td>
-                                    <td>
+                                    <td class="col-time">
+                                        <div class="date-display">
+                                            <span class="date">{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d/m/Y') }}</span>
+                                            <span class="time">{{ $appointment->appointment_time }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="col-status">
                                         @if($appointment->status == 'pending')
                                             <span class="status-badge status-pending">Chờ xác nhận</span>
                                         @elseif($appointment->status == 'confirmed')
@@ -362,8 +484,8 @@
                                             <span class="status-badge status-canceled">Đã hủy</span>
                                         @endif
                                     </td>
-                                    <td>
-                                        <a href="{{ route('admin.appointments.show', $appointment->id) }}" class="btn btn-sm btn-info">
+                                    <td class="col-action">
+                                        <a href="{{ route('admin.appointments.show', $appointment->id) }}" class="btn btn-info btn-sm" title="Xem chi tiết">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </td>
@@ -391,11 +513,7 @@
                             <div class="review-item">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <div class="d-flex align-items-center">
-                                        @if($review->user->avatar)
-                                            <img src="{{ asset('storage/' . $review->user->avatar) }}" alt="{{ $review->user->name }}" class="rounded-circle me-2" width="40" height="40">
-                                        @else
-                                            <img src="{{ asset('images/default-avatar.jpg') }}" alt="{{ $review->user->name }}" class="rounded-circle me-2" width="40" height="40">
-                                        @endif
+                                        <img src="{{ get_user_avatar($review->user, 'small') }}" alt="{{ $review->user->name }}" class="rounded-circle me-2" width="40" height="40">
                                         <div>
                                             <h6 class="mb-0">{{ $review->user->name }}</h6>
                                             <small class="text-muted">{{ $review->created_at->format('d/m/Y H:i') }}</small>

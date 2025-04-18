@@ -72,11 +72,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">Thông tin cá nhân</h6>
                 </div>
                 <div class="card-body text-center">
-                    @if($user->avatar)
-                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="rounded-circle mb-3" width="150" height="150">
-                    @else
-                        <img src="{{ asset('images/default-avatar.jpg') }}" alt="{{ $user->name }}" class="rounded-circle mb-3" width="150" height="150">
-                    @endif
+                    <img src="{{ get_user_avatar($user, 'large') }}" alt="{{ $user->name }}" class="rounded-circle mb-3" width="150" height="150">
 
                     <h4 class="mb-0">{{ $user->name }}</h4>
                     <p class="text-muted mb-3">

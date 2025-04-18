@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Notification;
 use App\Models\User;
 use App\Models\Appointment;
@@ -52,9 +53,14 @@ class ProfileController extends Controller
         $user->address = $validated['address'];
 
         if ($request->hasFile('avatar')) {
-            $avatarName = time() . '.' . $request->avatar->extension();
-            $request->avatar->move(public_path('images/avatars'), $avatarName);
-            $user->avatar = 'images/avatars/' . $avatarName;
+            // Xóa avatar cũ nếu có
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            // Lưu avatar mới vào storage/public/avatars
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $avatarPath;
         }
 
         $user->save();

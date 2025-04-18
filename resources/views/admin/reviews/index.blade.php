@@ -4,12 +4,17 @@
 
 @section('styles')
 <style>
+    /* Styling cho đánh giá sao */
     .star-rating {
         color: #ffc107;
+        font-size: 14px;
+        white-space: nowrap;
     }
+
+    /* Styling cho trạng thái */
     .review-status {
-        width: 12px;
-        height: 12px;
+        width: 10px;
+        height: 10px;
         display: inline-block;
         border-radius: 50%;
         margin-right: 5px;
@@ -20,8 +25,193 @@
     .status-inactive {
         background-color: #dc3545;
     }
+
+    /* Card styling */
     .filter-card {
         margin-bottom: 20px;
+        border-radius: 8px;
+    }
+
+    /* Bảng đánh giá */
+    .reviews-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #e3e6f0;
+    }
+
+    .reviews-table th {
+        background-color: #f8f9fc;
+        font-weight: 600;
+        text-align: left;
+        padding: 12px 15px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #4e73df;
+        border-bottom: 1px solid #e3e6f0;
+        border-right: 1px solid #e3e6f0;
+    }
+
+    .reviews-table th:last-child {
+        border-right: none;
+    }
+
+    .reviews-table td {
+        padding: 12px 15px;
+        vertical-align: middle;
+        border-bottom: 1px solid #e3e6f0;
+        border-right: 1px solid #e3e6f0;
+        font-size: 0.9rem;
+    }
+
+    .reviews-table td:last-child {
+        border-right: none;
+    }
+
+    .reviews-table tr:hover {
+        background-color: #f8f9fc;
+    }
+
+    .reviews-table thead {
+        border-bottom: 2px solid #e3e6f0;
+    }
+
+    /* Cột ID */
+    .col-id {
+        width: 60px;
+        text-align: center;
+        background-color: #f8f9fc;
+    }
+
+    /* Cột khách hàng */
+    .col-customer {
+        width: 15%;
+    }
+
+    /* Cột dịch vụ */
+    .col-service {
+        width: 15%;
+    }
+
+    /* Cột thợ cắt tóc */
+    .col-barber {
+        width: 15%;
+    }
+
+    /* Cột đánh giá */
+    .col-rating {
+        width: 10%;
+        text-align: center;
+    }
+
+    /* Cột nhận xét */
+    .col-comment {
+        width: 20%;
+    }
+
+    /* Cột trạng thái */
+    .col-status {
+        width: 10%;
+        text-align: center;
+    }
+
+    /* Cột ngày tạo */
+    .col-date {
+        width: 10%;
+        text-align: center;
+    }
+
+    /* Cột thao tác */
+    .col-actions {
+        width: 120px;
+        text-align: center;
+        background-color: #f8f9fc;
+    }
+
+    /* Truncate text */
+    .text-truncate-custom {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
+
+    /* Ngày giờ */
+    .date-display {
+        text-align: center;
+    }
+
+    .date-display .date {
+        font-weight: 500;
+        display: block;
+    }
+
+    .date-display .time {
+        color: #6c757d;
+        font-size: 0.8rem;
+        display: block;
+        margin-top: 2px;
+    }
+
+    /* Nút thao tác */
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .action-buttons .btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+    }
+
+    .action-buttons .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .action-buttons .btn-info {
+        background-color: #36b9cc;
+        border-color: #36b9cc;
+    }
+
+    .action-buttons .btn-primary {
+        background-color: #4e73df;
+        border-color: #4e73df;
+    }
+
+    .action-buttons .btn-warning {
+        background-color: #f6c23e;
+        border-color: #f6c23e;
+    }
+
+    .action-buttons .btn-success {
+        background-color: #1cc88a;
+        border-color: #1cc88a;
+    }
+
+    .action-buttons .btn-danger {
+        background-color: #e74a3b;
+        border-color: #e74a3b;
+    }
+
+    .action-buttons form {
+        margin: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .reviews-table {
+            min-width: 1000px;
+        }
     }
 </style>
 @endsection
@@ -113,72 +303,81 @@
             @endif
 
             <div class="table-responsive">
-                <table class="table table-bordered" width="100%" cellspacing="0">
+                <table class="reviews-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Khách hàng</th>
-                            <th>Dịch vụ</th>
-                            <th>Thợ cắt tóc</th>
-                            <th>Đánh giá</th>
-                            <th>Nhận xét</th>
-                            <th>Trạng thái</th>
-                            <th>Ngày tạo</th>
-                            <th>Thao tác</th>
+                            <th class="col-id">ID</th>
+                            <th class="col-customer">Khách hàng</th>
+                            <th class="col-service">Dịch vụ</th>
+                            <th class="col-barber">Thợ cắt tóc</th>
+                            <th class="col-rating">Đánh giá</th>
+                            <th class="col-comment">Nhận xét</th>
+                            <th class="col-status">Trạng thái</th>
+                            <th class="col-date">Ngày tạo</th>
+                            <th class="col-actions">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($reviews as $review)
                             <tr>
-                                <td>{{ $review->id }}</td>
-                                <td>
-                                    <a href="{{ route('admin.users.show', $review->user->id) }}">
+                                <td class="col-id">{{ $review->id }}</td>
+                                <td class="col-customer">
+                                    <a href="{{ route('admin.users.show', $review->user->id) }}" class="text-truncate-custom" title="{{ $review->user->name }}">
                                         {{ $review->user->name }}
                                     </a>
                                 </td>
-                                <td>
-                                    <a href="{{ route('admin.services.edit', $review->service->id) }}">
+                                <td class="col-service">
+                                    <a href="{{ route('admin.services.edit', $review->service->id) }}" class="text-truncate-custom" title="{{ $review->service->name }}">
                                         {{ $review->service->name }}
                                     </a>
                                 </td>
-                                <td>
-                                    <a href="{{ route('admin.barbers.show', $review->barber->user->id) }}">
+                                <td class="col-barber">
+                                    <a href="{{ route('admin.barbers.show', $review->barber->user->id) }}" class="text-truncate-custom" title="{{ $review->barber->user->name }}">
                                         {{ $review->barber->user->name }}
                                     </a>
                                 </td>
-                                <td>
+                                <td class="col-rating">
                                     <div class="star-rating">
                                         @for($i = 1; $i <= 5; $i++)
                                             <i class="{{ $i <= $review->rating ? 'fas' : 'far' }} fa-star"></i>
                                         @endfor
                                     </div>
                                 </td>
-                                <td>{{ Str::limit($review->comment, 50) }}</td>
-                                <td>
+                                <td class="col-comment">
+                                    <span class="text-truncate-custom" title="{{ $review->comment }}">{{ Str::limit($review->comment, 50) }}</span>
+                                </td>
+                                <td class="col-status">
                                     <span class="review-status {{ $review->status ? 'status-active' : 'status-inactive' }}"></span>
                                     {{ $review->status ? 'Hiển thị' : 'Ẩn' }}
                                 </td>
-                                <td>{{ $review->created_at->format('d/m/Y H:i') }}</td>
-                                <td>
-                                    <a href="{{ route('admin.reviews.show', $review->id) }}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('admin.reviews.edit', $review->id) }}" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('admin.reviews.toggleStatus', $review->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-{{ $review->status ? 'warning' : 'success' }} btn-sm" title="{{ $review->status ? 'Ẩn đánh giá' : 'Hiển thị đánh giá' }}">
-                                            <i class="fas {{ $review->status ? 'fa-eye-slash' : 'fa-eye' }}"></i>
-                                        </button>
-                                    </form>
-                                    <form action="{{ route('admin.reviews.destroy', $review->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa đánh giá này?')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                <td class="col-date">
+                                    <div class="date-display">
+                                        <span class="date">{{ $review->created_at->format('d/m/Y') }}</span>
+                                        <span class="time">{{ $review->created_at->format('H:i') }}</span>
+                                    </div>
+                                </td>
+                                <td class="col-actions">
+                                    <div class="action-buttons">
+                                        <a href="{{ route('admin.reviews.show', $review->id) }}" class="btn btn-info" title="Xem chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('admin.reviews.edit', $review->id) }}" class="btn btn-primary" title="Chỉnh sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ route('admin.reviews.toggleStatus', $review->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-{{ $review->status ? 'warning' : 'success' }}" title="{{ $review->status ? 'Ẩn đánh giá' : 'Hiển thị đánh giá' }}">
+                                                <i class="fas {{ $review->status ? 'fa-eye-slash' : 'fa-eye' }}"></i>
+                                            </button>
+                                        </form>
+                                        <form action="{{ route('admin.reviews.destroy', $review->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa đánh giá này?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
