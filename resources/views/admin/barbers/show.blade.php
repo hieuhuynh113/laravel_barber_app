@@ -48,6 +48,113 @@
     .nav-tabs .nav-link.active {
         border-bottom: 3px solid #4e73df;
     }
+
+    /* Styles for schedule table */
+    .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #e3e6f0;
+        table-layout: fixed;
+    }
+
+    .schedule-table th, .schedule-table td {
+        border: 1px solid #e3e6f0;
+        padding: 12px 15px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .schedule-table th {
+        background-color: #f8f9fc;
+        border-bottom-width: 1px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        color: #4e73df;
+    }
+
+    .schedule-table .col-day {
+        width: 20%;
+        text-align: left;
+    }
+
+    .schedule-table .col-time {
+        width: 15%;
+    }
+
+    .schedule-table .col-max {
+        width: 20%;
+    }
+
+    .schedule-table .col-status {
+        width: 15%;
+    }
+
+    .schedule-table tr.day-off {
+        background-color: #f8f9fc;
+    }
+
+    .schedule-status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-align: center;
+        min-width: 80px;
+    }
+
+    /* Styles for reviews */
+    .review-item {
+        border: 1px solid #e3e6f0;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .review-avatar {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid #e3e6f0;
+    }
+
+    .star-rating .fas.fa-star {
+        color: #f6c23e;
+    }
+
+    .star-rating .far.fa-star {
+        color: #d1d3e2;
+    }
+
+    .review-images {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .review-image-link {
+        display: inline-block;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .review-image-link:hover {
+        transform: scale(1.05);
+    }
+
+    .review-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 0.25rem;
+        border: 1px solid #e3e6f0;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
 </style>
 @endsection
 
@@ -182,6 +289,11 @@
             </button>
         </li>
         <li class="nav-item" role="presentation">
+            <button class="nav-link" id="schedule-tab" data-bs-toggle="tab" data-bs-target="#schedule" type="button" role="tab" aria-controls="schedule" aria-selected="false">
+                <i class="fas fa-calendar-alt"></i> Lịch làm việc
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
             <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">
                 <i class="fas fa-star"></i> Đánh giá ({{ $reviewsCount }})
             </button>
@@ -258,6 +370,61 @@
             </div>
         </div>
 
+        <!-- Schedule Tab -->
+        <div class="tab-pane fade" id="schedule" role="tabpanel" aria-labelledby="schedule-tab">
+            <div class="card shadow mb-4 mt-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Lịch làm việc của thợ cắt tóc</h6>
+                    <a href="{{ route('admin.schedules.index', ['barber_id' => $barber->barber->id]) }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-edit"></i> Chỉnh sửa lịch làm việc
+                    </a>
+                </div>
+                <div class="card-body">
+                    <form id="schedule-form">
+                        <div class="table-responsive">
+                            <table class="schedule-table">
+                                <thead>
+                                    <tr>
+                                        <th class="col-day">Ngày trong tuần</th>
+                                        <th class="col-time">Giờ bắt đầu</th>
+                                        <th class="col-time">Giờ kết thúc</th>
+                                        <th class="col-max">Số KH tối đa</th>
+                                        <th class="col-status">Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($schedules as $schedule)
+                                        <tr class="{{ $schedule->is_day_off ? 'day-off' : '' }}">
+                                            <td class="col-day">{{ $schedule->getDayNameAttribute() }}</td>
+                                            <td class="col-time">{{ optional($schedule->start_time)->format('H:i') }}</td>
+                                            <td class="col-time">{{ optional($schedule->end_time)->format('H:i') }}</td>
+                                            <td class="col-max">{{ $schedule->max_appointments ?? 3 }}</td>
+                                            <td class="col-status">
+                                                @if($schedule->is_day_off)
+                                                    <span class="schedule-status-badge bg-secondary">Ngày nghỉ</span>
+                                                @else
+                                                    <span class="schedule-status-badge bg-success">Làm việc</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+
+                    <div class="alert alert-info mt-3">
+                        <h6><i class="fas fa-info-circle"></i> Thông tin:</h6>
+                        <ul class="mb-0">
+                            <li>Lịch làm việc được sử dụng để xác định thời gian thợ cắt tóc có thể nhận lịch hẹn.</li>
+                            <li>Khách hàng sẽ không thể đặt lịch vào ngày nghỉ hoặc ngoài giờ làm việc.</li>
+                            <li>Số KH tối đa là số lượng khách hàng tối đa có thể đặt lịch trong một ngày.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Reviews Tab -->
         <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
             <div class="card shadow mb-4 mt-4">
@@ -316,13 +483,9 @@
                                     <div class="review-item">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <div class="d-flex align-items-center">
-                                                @if($review->user->avatar)
-                                                    <img src="{{ asset('storage/' . $review->user->avatar) }}" alt="{{ $review->user->name }}" class="rounded-circle me-2" width="40" height="40">
-                                                @else
-                                                    <img src="{{ asset('images/default-avatar.jpg') }}" alt="{{ $review->user->name }}" class="rounded-circle me-2" width="40" height="40">
-                                                @endif
+                                                <img src="{{ get_user_avatar($review->user, 'small') }}" alt="{{ $review->user ? $review->user->name : 'Khách hàng' }}" class="review-avatar me-2">
                                                 <div>
-                                                    <h6 class="mb-0">{{ $review->user->name }}</h6>
+                                                    <h6 class="mb-0">{{ $review->user ? $review->user->name : 'Khách hàng' }}</h6>
                                                     <small class="text-muted">{{ $review->created_at->format('d/m/Y H:i') }}</small>
                                                 </div>
                                             </div>
@@ -342,8 +505,8 @@
                                         @if($review->images)
                                             <div class="review-images">
                                                 @foreach(json_decode($review->images) as $image)
-                                                    <a href="{{ asset($image) }}" target="_blank">
-                                                        <img src="{{ asset($image) }}" alt="Review image" class="review-image">
+                                                    <a href="{{ asset($image) }}" target="_blank" class="review-image-link">
+                                                        <img src="{{ asset($image) }}" alt="Hình ảnh đánh giá" class="review-image">
                                                     </a>
                                                 @endforeach
                                             </div>
@@ -441,9 +604,6 @@
         <a href="{{ route('admin.barbers.edit', $barber->id) }}" class="btn btn-primary">
             <i class="fas fa-edit"></i> Chỉnh sửa
         </a>
-        <a href="{{ route('admin.schedules.index', ['barber_id' => $barber->id]) }}" class="btn btn-info">
-            <i class="fas fa-calendar-alt"></i> Quản lý lịch làm việc
-        </a>
         <form action="{{ route('admin.barbers.destroy', $barber->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa thợ cắt tóc này?');">
             @csrf
             @method('DELETE')
@@ -465,7 +625,9 @@
         const urlParams = new URLSearchParams(window.location.search);
         const activeTab = urlParams.get('tab');
 
-        if (activeTab === 'reviews') {
+        if (activeTab === 'schedule') {
+            $('#schedule-tab').tab('show');
+        } else if (activeTab === 'reviews') {
             $('#reviews-tab').tab('show');
         } else if (activeTab === 'services') {
             $('#services-tab').tab('show');
@@ -474,7 +636,9 @@
         // Lưu tab đang active vào URL khi chuyển tab
         $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
             const target = $(e.target).attr('id');
-            if (target === 'reviews-tab') {
+            if (target === 'schedule-tab') {
+                history.replaceState(null, null, '?tab=schedule');
+            } else if (target === 'reviews-tab') {
                 history.replaceState(null, null, '?tab=reviews');
             } else if (target === 'services-tab') {
                 history.replaceState(null, null, '?tab=services');

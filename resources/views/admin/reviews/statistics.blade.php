@@ -234,11 +234,7 @@
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                @if($barber->user->avatar)
-                                                    <img src="{{ asset('storage/' . $barber->user->avatar) }}" alt="{{ $barber->user->name }}" class="rounded-circle me-2" width="40" height="40">
-                                                @else
-                                                    <img src="{{ asset('images/default-avatar.jpg') }}" alt="{{ $barber->user->name }}" class="rounded-circle me-2" width="40" height="40">
-                                                @endif
+                                                <img src="{{ get_user_avatar($barber->user, 'small') }}" alt="{{ $barber->user->name }}" class="rounded-circle me-2" width="40" height="40">
                                                 <a href="{{ route('admin.barbers.show', $barber->user->id) }}">
                                                     {{ $barber->user->name }}
                                                 </a>

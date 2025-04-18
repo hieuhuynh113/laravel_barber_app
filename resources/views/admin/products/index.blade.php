@@ -57,7 +57,121 @@
     }
 
     .col-name {
-        width: 25%;
+        width: 15%;
+    }
+
+    .col-description {
+        width: 20%;
+    }
+
+    /* Styles for description content */
+    .description-wrapper {
+        position: relative;
+        margin-left: 5px;
+        display: inline-block;
+        width: calc(100% - 25px);
+        vertical-align: top;
+    }
+
+    .description-content {
+        position: relative;
+        max-height: 40px;
+        overflow: hidden;
+        margin-bottom: 0;
+        line-height: 1.4;
+        font-size: 0.9rem;
+        color: #555;
+        text-align: justify;
+        transition: max-height 0.3s ease;
+    }
+
+    .description-content::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 20px;
+        background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
+        pointer-events: none;
+    }
+
+    .description-full {
+        max-height: 500px;
+    }
+
+    .description-full::after {
+        display: none;
+    }
+
+    .description-toggle {
+        display: inline-block;
+        margin-top: 5px;
+        color: #4e73df;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 500;
+        background-color: #f8f9fc;
+        padding: 2px 8px;
+        border-radius: 12px;
+        border: 1px solid #e3e6f0;
+        transition: all 0.2s ease;
+    }
+
+    .description-toggle:hover {
+        background-color: #eaecf4;
+        color: #2e59d9;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        text-decoration: none;
+    }
+
+    /* Tooltip styles */
+    .description-tooltip {
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 2px;
+    }
+
+    .description-tooltip i {
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .description-tooltip .tooltip-text {
+        visibility: hidden;
+        width: 300px;
+        background-color: #333;
+        color: #fff;
+        text-align: left;
+        border-radius: 6px;
+        padding: 10px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+
+    .description-tooltip .tooltip-text::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #333 transparent transparent transparent;
+    }
+
+    .description-tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
     }
 
     .col-category {
@@ -208,6 +322,7 @@
                             <th class="col-id">ID</th>
                             <th class="col-image">Hình ảnh</th>
                             <th class="col-name">Tên sản phẩm</th>
+                            <th class="col-description">Mô tả</th>
                             <th class="col-category">Danh mục</th>
                             <th class="col-price">Giá</th>
                             <th class="col-stock">Tồn kho</th>
@@ -230,6 +345,22 @@
                                     <a href="{{ route('admin.products.show', $product->id) }}" class="fw-bold text-decoration-none">
                                         {{ $product->name }}
                                     </a>
+                                </td>
+                                <td class="col-description">
+                                    @if($product->description)
+                                        <div class="description-tooltip">
+                                            <i class="fas fa-info-circle text-primary" title="Xem mô tả đầy đủ"></i>
+                                            <div class="tooltip-text">{{ $product->description }}</div>
+                                        </div>
+                                        <div class="description-wrapper">
+                                            <p class="description-content">{{ $product->description }}</p>
+                                            @if(strlen($product->description) > 100)
+                                                <span class="description-toggle" data-action="expand">Xem thêm</span>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-muted">Không có mô tả</span>
+                                    @endif
                                 </td>
                                 <td class="col-category">
                                     @if($product->category)
@@ -280,4 +411,32 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        // Xử lý nút xem thêm/thu gọn mô tả
+        $('.description-toggle').on('click', function() {
+            var $this = $(this);
+            var $content = $this.closest('.description-wrapper').find('.description-content');
+
+            if ($this.data('action') === 'expand') {
+                $content.addClass('description-full');
+                $this.text('Thu gọn');
+                $this.data('action', 'collapse');
+            } else {
+                $content.removeClass('description-full');
+                $this.text('Xem thêm');
+                $this.data('action', 'expand');
+            }
+        });
+
+        // Khởi tạo tooltip cho các nút
+        $('[title]').tooltip({
+            placement: 'top',
+            trigger: 'hover'
+        });
+    });
+</script>
 @endsection

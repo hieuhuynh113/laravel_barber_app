@@ -180,11 +180,7 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
-                        @if($review->barber->user->avatar)
-                            <img src="{{ asset('storage/' . $review->barber->user->avatar) }}" alt="{{ $review->barber->user->name }}" class="rounded-circle me-3" width="50" height="50">
-                        @else
-                            <img src="{{ asset('images/default-avatar.jpg') }}" alt="{{ $review->barber->user->name }}" class="rounded-circle me-3" width="50" height="50">
-                        @endif
+                        <img src="{{ get_user_avatar($review->barber->user, 'small') }}" alt="{{ $review->barber->user->name }}" class="rounded-circle me-3" width="50" height="50">
                         <div>
                             <h6 class="mb-0">{{ $review->barber->user->name }}</h6>
                         </div>

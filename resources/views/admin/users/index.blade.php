@@ -41,41 +41,50 @@
                 <table class="table table-bordered table-hover" width="100%" cellspacing="0" id="usersTable">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Ảnh đại diện</th>
-                            <th>Tên</th>
-                            <th class="email-column">Email</th>
-                            <th>Vai trò</th>
-                            <th>Trạng thái</th>
-                            <th>Ngày tạo</th>
-                            <th>Thao tác</th>
+                            <th class="id-cell">ID</th>
+                            <th class="avatar-cell">Ảnh</th>
+                            <th class="name-cell">Tên</th>
+                            <th class="email-cell">Email</th>
+                            <th class="role-cell">Vai trò</th>
+                            <th class="status-cell">Trạng thái</th>
+                            <th class="date-cell">Ngày tạo</th>
+                            <th class="actions-cell">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($users as $user)
                         <tr>
-                            <td>{{ $user->id }}</td>
-                            <td>
+                            <td class="id-cell">{{ $user->id }}</td>
+                            <td class="avatar-cell text-center">
                                 <img src="{{ get_user_avatar($user, 'small') }}" alt="{{ $user->name }}" class="img-profile rounded-circle" width="40">
                             </td>
-                            <td>{{ $user->name }}</td>
+                            <td class="name-cell">{{ $user->name }}</td>
                             <td class="email-cell" title="{{ $user->email }}">{{ $user->email }}</td>
-                            <td>
-                                @if($user->isAdmin())
-                                    <span class="badge bg-danger">Admin</span>
-                                @elseif($user->isBarber())
-                                    <span class="badge bg-info">Thợ cắt tóc</span>
-                                @else
-                                    <span class="badge bg-secondary">Khách hàng</span>
-                                @endif
+                            <td class="role-cell text-center">
+                                @php
+                                    $roleClass = '';
+                                    $roleName = '';
+
+                                    if ($user->role === 'admin') {
+                                        $roleClass = 'bg-danger';
+                                        $roleName = 'Quản trị viên';
+                                    } elseif ($user->role === 'barber') {
+                                        $roleClass = 'bg-info';
+                                        $roleName = 'Thợ cắt tóc';
+                                    } elseif ($user->role === 'customer') {
+                                        $roleClass = 'bg-secondary';
+                                        $roleName = 'Khách hàng';
+                                    }
+                                @endphp
+                                <span class="badge {{ $roleClass }}">{{ $roleName }}</span>
                             </td>
-                            <td>
+                            <td class="status-cell text-center">
                                 <span class="badge bg-{{ $user->status ? 'success' : 'danger' }}">
                                     {{ $user->status ? 'Hoạt động' : 'Bị khóa' }}
                                 </span>
                             </td>
-                            <td>{{ $user->created_at->format('d/m/Y') }}</td>
-                            <td>
+                            <td class="date-cell text-center">{{ $user->created_at->format('d/m/Y') }}</td>
+                            <td class="actions-cell text-center">
                                 <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-info btn-sm">
                                     <i class="fas fa-eye"></i>
                                 </a>
@@ -115,15 +124,17 @@
             "ordering": true,
             "info": false,
             "searching": true,
+            "autoWidth": false,
+            "responsive": true,
             "columnDefs": [
-                { "width": "5%", "targets": 0 },
-                { "width": "8%", "targets": 1 },
-                { "width": "15%", "targets": 2 },
-                { "width": "25%", "targets": 3 },
-                { "width": "10%", "targets": 4 },
-                { "width": "12%", "targets": 5 },
-                { "width": "10%", "targets": 6 },
-                { "width": "15%", "targets": 7 }
+                { "width": "50px", "targets": 0, "className": "id-cell" },
+                { "width": "100px", "targets": 1, "className": "avatar-cell text-center" },
+                { "width": "150px", "targets": 2, "className": "name-cell" },
+                { "width": "200px", "targets": 3, "className": "email-cell" },
+                { "width": "120px", "targets": 4, "className": "role-cell text-center" },
+                { "width": "100px", "targets": 5, "className": "status-cell text-center" },
+                { "width": "100px", "targets": 6, "className": "date-cell text-center" },
+                { "width": "120px", "targets": 7, "className": "actions-cell text-center" }
             ]
         });
     });

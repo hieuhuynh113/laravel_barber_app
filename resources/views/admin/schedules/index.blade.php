@@ -2,6 +2,62 @@
 
 @section('title', 'Quản lý lịch làm việc')
 
+@section('styles')
+<style>
+    /* Styles for schedule table */
+    .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #e3e6f0;
+        table-layout: fixed;
+    }
+
+    .schedule-table th, .schedule-table td {
+        border: 1px solid #e3e6f0;
+        padding: 12px 15px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .schedule-table th {
+        background-color: #f8f9fc;
+        border-bottom-width: 1px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        color: #4e73df;
+    }
+
+    .schedule-table .col-day {
+        width: 20%;
+        text-align: left;
+    }
+
+    .schedule-table .col-time {
+        width: 20%;
+    }
+
+    .schedule-table .col-max {
+        width: 15%;
+    }
+
+    .schedule-table .col-off {
+        width: 15%;
+    }
+
+    .time-input:disabled, .form-control:disabled {
+        background-color: #f8f9fc;
+        opacity: 0.7;
+    }
+
+    .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: #e74a3b;
+        border-color: #e74a3b;
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="container-fluid">
     <!-- Page Heading -->
@@ -12,9 +68,7 @@
     @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     @endif
 
@@ -38,48 +92,48 @@
             <form action="{{ route('admin.schedules.batch-update') }}" method="POST">
                 @csrf
                 <input type="hidden" name="barber_id" value="{{ $barberId }}">
-                
+
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="schedule-table">
                         <thead>
                             <tr>
-                                <th>Ngày trong tuần</th>
-                                <th>Giờ bắt đầu</th>
-                                <th>Giờ kết thúc</th>
-                                <th>Số KH tối đa</th>
-                                <th>Ngày nghỉ</th>
+                                <th class="col-day">Ngày trong tuần</th>
+                                <th class="col-time">Giờ bắt đầu</th>
+                                <th class="col-time">Giờ kết thúc</th>
+                                <th class="col-max">Số KH tối đa</th>
+                                <th class="col-off">Ngày nghỉ</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($schedules as $schedule)
-                                <tr>
-                                    <td>{{ $schedule->getDayNameAttribute() }}</td>
-                                    <td>
-                                        <input type="time" class="form-control time-input" 
-                                               name="days[{{ $schedule->day_of_week }}][start_time]" 
+                                <tr class="{{ $schedule->is_day_off ? 'day-off' : '' }}">
+                                    <td class="col-day">{{ $schedule->getDayNameAttribute() }}</td>
+                                    <td class="col-time">
+                                        <input type="time" class="form-control time-input"
+                                               name="days[{{ $schedule->day_of_week }}][start_time]"
                                                value="{{ optional($schedule->start_time)->format('H:i') }}"
                                                {{ $schedule->is_day_off ? 'disabled' : '' }}>
                                     </td>
-                                    <td>
-                                        <input type="time" class="form-control time-input" 
-                                               name="days[{{ $schedule->day_of_week }}][end_time]" 
+                                    <td class="col-time">
+                                        <input type="time" class="form-control time-input"
+                                               name="days[{{ $schedule->day_of_week }}][end_time]"
                                                value="{{ optional($schedule->end_time)->format('H:i') }}"
                                                {{ $schedule->is_day_off ? 'disabled' : '' }}>
                                     </td>
-                                    <td>
-                                        <input type="number" class="form-control" 
-                                               name="days[{{ $schedule->day_of_week }}][max_appointments]" 
+                                    <td class="col-max">
+                                        <input type="number" class="form-control"
+                                               name="days[{{ $schedule->day_of_week }}][max_appointments]"
                                                value="{{ $schedule->max_appointments ?? 3 }}"
                                                min="1" max="20"
                                                {{ $schedule->is_day_off ? 'disabled' : '' }}>
                                     </td>
-                                    <td class="text-center">
+                                    <td class="col-off">
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input day-off-checkbox" 
-                                                   id="day_off_{{ $schedule->day_of_week }}" 
-                                                   name="days[{{ $schedule->day_of_week }}][is_day_off]" 
+                                            <input type="checkbox" class="custom-control-input day-off-checkbox"
+                                                   id="day_off_{{ $schedule->day_of_week }}"
+                                                   name="days[{{ $schedule->day_of_week }}][is_day_off]"
                                                    {{ $schedule->is_day_off ? 'checked' : '' }}>
-                                            <label class="custom-control-label" for="day_off_{{ $schedule->day_of_week }}"></label>
+                                            <label class="custom-control-label" for="day_off_{{ $schedule->day_of_week }}">Ngày nghỉ</label>
                                         </div>
                                     </td>
                                 </tr>
@@ -87,17 +141,17 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 <div class="mt-3">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Lưu thay đổi
                     </button>
-                    <a href="{{ route('admin.barbers.show', $barberId) }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Quay lại
+                    <a href="{{ route('admin.barbers.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại danh sách thợ cắt tóc
                     </a>
                 </div>
             </form>
-            
+
             <div class="alert alert-info mt-4">
                 <h5><i class="fas fa-info-circle"></i> Hướng dẫn:</h5>
                 <ul>
@@ -118,7 +172,7 @@
         $('.day-off-checkbox').on('change', function() {
             var tr = $(this).closest('tr');
             var inputs = tr.find('input.form-control');
-            
+
             if ($(this).is(':checked')) {
                 inputs.attr('disabled', 'disabled');
             } else {
@@ -127,4 +181,4 @@
         });
     });
 </script>
-@endsection 
+@endsection

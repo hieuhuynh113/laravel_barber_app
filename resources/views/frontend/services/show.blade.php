@@ -106,7 +106,7 @@
                             <div class="card mb-3">
                                 <div class="card-body">
                                     <div class="d-flex mb-3">
-                                        <img src="{{ $review->user->avatar ? asset('storage/' . $review->user->avatar) : asset('images/default-avatar.jpg') }}" class="rounded-circle me-3" width="50" height="50" alt="{{ $review->user->name }}">
+                                        <img src="{{ get_user_avatar($review->user, 'small') }}" class="rounded-circle me-3" width="50" height="50" alt="{{ $review->user->name }}">
                                         <div>
                                             <h6 class="mb-0">{{ $review->user->name }}</h6>
                                             <div class="small text-muted">{{ $review->created_at->format('d/m/Y') }}</div>

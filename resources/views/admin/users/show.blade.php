@@ -76,13 +76,22 @@
 
                     <h4 class="mb-0">{{ $user->name }}</h4>
                     <p class="text-muted mb-3">
-                        @if($user->role == 'admin')
-                            <span class="badge bg-danger">Quản trị viên</span>
-                        @elseif($user->role == 'barber')
-                            <span class="badge bg-primary">Thợ cắt tóc</span>
-                        @else
-                            <span class="badge bg-info">Khách hàng</span>
-                        @endif
+                        @php
+                            $roleClass = '';
+                            $roleName = '';
+
+                            if ($user->role === 'admin') {
+                                $roleClass = 'bg-danger';
+                                $roleName = 'Quản trị viên';
+                            } elseif ($user->role === 'barber') {
+                                $roleClass = 'bg-primary';
+                                $roleName = 'Thợ cắt tóc';
+                            } elseif ($user->role === 'customer') {
+                                $roleClass = 'bg-info';
+                                $roleName = 'Khách hàng';
+                            }
+                        @endphp
+                        <span class="badge {{ $roleClass }}">{{ $roleName }}</span>
                     </p>
 
                     <div class="mb-2">
@@ -427,11 +436,7 @@
                                                 <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            @if($barber->user->avatar)
-                                                                <img src="{{ asset('storage/' . $barber->user->avatar) }}" alt="{{ $barber->user->name }}" class="rounded-circle me-2" width="40" height="40">
-                                                            @else
-                                                                <img src="{{ asset('images/default-avatar.jpg') }}" alt="{{ $barber->user->name }}" class="rounded-circle me-2" width="40" height="40">
-                                                            @endif
+                                                            <img src="{{ get_user_avatar($barber->user, 'small') }}" alt="{{ $barber->user->name }}" class="rounded-circle me-2" width="40" height="40">
                                                             <a href="{{ route('admin.barbers.show', $barber->user->id) }}">
                                                                 {{ $barber->user->name }}
                                                             </a>

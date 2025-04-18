@@ -2,6 +2,10 @@
 
 @section('title', 'Tạo hóa đơn mới')
 
+@section('styles')
+<link rel="stylesheet" href="{{ asset('css/invoice-form.css') }}">
+@endsection
+
 @section('content')
 <div class="container-fluid py-4">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -11,7 +15,7 @@
         </a>
     </div>
 
-    <form action="{{ route('admin.invoices.store') }}" method="POST" id="invoiceForm">
+    <form action="{{ route('admin.invoices.store') }}" method="POST" id="invoiceForm" class="invoice-form">
         @csrf
         <div class="row">
             <div class="col-md-8">
@@ -110,10 +114,10 @@
                                     <tr>
                                         <th>Loại</th>
                                         <th>Sản phẩm/Dịch vụ</th>
-                                        <th width="120px">Đơn giá (VNĐ)</th>
-                                        <th width="100px">Số lượng</th>
-                                        <th width="150px">Thành tiền (VNĐ)</th>
-                                        <th width="50px"></th>
+                                        <th>Đơn giá (VNĐ)</th>
+                                        <th>Số lượng</th>
+                                        <th>Thành tiền (VNĐ)</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody id="invoice-items">
@@ -151,7 +155,7 @@
                                         <td>
                                             <input type="number" class="form-control item-total" value="0" readonly>
                                         </td>
-                                        <td>
+                                        <td class="text-center">
                                             <button type="button" class="btn btn-danger btn-sm remove-item">
                                                 <i class="fas fa-times"></i>
                                             </button>
@@ -279,10 +283,10 @@
         $(document).on('change', '.item-type', function() {
             const row = $(this).closest('tr');
             const type = $(this).val();
-            
+
             row.find('.item-select').hide();
             row.find(`.item-select[data-type="${type}"]`).show();
-            
+
             // Reset price and quantity
             row.find('.item-price').val(0);
             row.find('.item-quantity').val(1);
@@ -293,11 +297,11 @@
         // Xử lý khi chọn sản phẩm/dịch vụ
         $(document).on('change', '.item-select', function() {
             if (!$(this).is(':visible')) return;
-            
+
             const row = $(this).closest('tr');
             const selectedOption = $(this).find('option:selected');
             const price = selectedOption.data('price') || 0;
-            
+
             row.find('.item-price').val(price);
             updateRowTotal(row);
             calculateTotals();
@@ -329,14 +333,14 @@
             $('.item-total').each(function() {
                 subtotal += parseFloat($(this).val()) || 0;
             });
-            
+
             const discountAmount = parseFloat($('#discount_amount').val()) || 0;
             const taxRate = parseFloat($('#tax_rate').val()) || 0;
-            
+
             const taxableAmount = Math.max(0, subtotal - discountAmount);
             const taxAmount = taxableAmount * (taxRate / 100);
             const totalAmount = taxableAmount + taxAmount;
-            
+
             $('#subtotal').val(subtotal);
             $('#tax_amount').val(taxAmount);
             $('#total_amount').val(totalAmount);
@@ -381,7 +385,7 @@
                     <td>
                         <input type="number" class="form-control item-total" value="0" readonly>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <button type="button" class="btn btn-danger btn-sm remove-item">
                             <i class="fas fa-times"></i>
                         </button>
@@ -405,4 +409,4 @@
         $('.item-type').trigger('change');
     });
 </script>
-@endsection 
+@endsection

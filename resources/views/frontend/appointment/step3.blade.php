@@ -78,11 +78,7 @@
                                             <h6 class="mb-1">Thợ cắt tóc</h6>
                                             @php $barber = session('appointment_barber'); @endphp
                                             <div class="d-flex align-items-center">
-                                                @if($barber->user->avatar)
-                                                    <img src="{{ asset('storage/' . $barber->user->avatar) }}" alt="{{ $barber->user->name }}" class="rounded-circle me-2" width="30" height="30">
-                                                @else
-                                                    <img src="{{ asset('images/default-avatar.jpg') }}" alt="{{ $barber->user->name }}" class="rounded-circle me-2" width="30" height="30">
-                                                @endif
+                                                <img src="{{ get_user_avatar($barber->user, 'small') }}" alt="{{ $barber->user->name }}" class="rounded-circle me-2" width="30" height="30">
                                                 <div>
                                                     <div>{{ $barber->user->name }}</div>
                                                     <small class="text-muted">{{ $barber->experience }} năm kinh nghiệm</small>
