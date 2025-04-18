@@ -1,0 +1,224 @@
+/* CSS cho trang tạo hóa đơn */
+.invoice-form .card {
+    border: none;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    border-radius: 0.35rem;
+}
+
+.invoice-form .card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+    padding: 1rem 1.25rem;
+}
+
+.invoice-form .card-body {
+    padding: 1.25rem;
+}
+
+/* Bảng sản phẩm/dịch vụ */
+#items-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+#items-table th,
+#items-table td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border: 1px solid #e3e6f0;
+}
+
+#items-table th {
+    background-color: #f8f9fc;
+    font-weight: 600;
+    text-align: center;
+    color: #4e73df;
+    white-space: nowrap;
+    padding: 0.75rem 0.5rem;
+    overflow: visible;
+}
+
+/* Định nghĩa chiều rộng cột */
+#items-table th:nth-child(1) { /* Loại */
+    width: 15%;
+    min-width: 120px;
+}
+
+#items-table th:nth-child(2) { /* Sản phẩm/Dịch vụ */
+    width: 26%;
+    min-width: 180px;
+}
+
+#items-table th:nth-child(3) { /* Đơn giá */
+    width: 17%;
+    min-width: 130px;
+}
+
+#items-table th:nth-child(4) { /* Số lượng */
+    width: 15%;
+}
+
+#items-table th:nth-child(5) { /* Thành tiền */
+    width: 20%;
+    min-width: 190px;
+}
+
+#items-table th:nth-child(6) { /* Nút xóa */
+    width: 8%;
+    min-width: 50px;
+}
+
+/* Đảm bảo các input trong bảng có kích thước đồng nhất */
+#items-table .form-control,
+#items-table .form-select {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border: 1px solid #d1d3e2;
+    border-radius: 0.25rem;
+}
+
+/* Cải thiện hiển thị dropdown ở cột Loại */
+#items-table td:first-child .form-select {
+    padding-right: 2rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Nút xóa item */
+#items-table .remove-item {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    margin: 0 auto; /* Đặt nút ở giữa */
+}
+
+/* Hiệu ứng hover cho các dòng */
+#items-table tbody tr:hover {
+    background-color: rgba(78, 115, 223, 0.05);
+}
+
+/* Đảm bảo responsive */
+@media (max-width: 768px) {
+    #items-table {
+        min-width: 800px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    /* Đảm bảo nút xóa hiển thị đầy đủ trên thiết bị di động */
+    #items-table .remove-item {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    #items-table td:last-child {
+        padding: 0.5rem;
+        width: 50px;
+        min-width: 50px;
+    }
+
+    /* Đảm bảo tiêu đề cột hiển thị đầy đủ */
+    #items-table th {
+        font-size: 0.85rem;
+        padding: 0.75rem 0.25rem;
+        letter-spacing: -0.3px;
+    }
+
+    #items-table th:nth-child(1) { /* Loại */
+        min-width: 130px;
+    }
+
+    #items-table th:nth-child(3) { /* Đơn giá */
+        min-width: 140px;
+    }
+
+    #items-table th:nth-child(5) { /* Thành tiền */
+        min-width: 200px;
+        font-size: 0.8rem;
+        letter-spacing: -0.4px;
+        padding: 0.75rem 0.2rem;
+    }
+
+    /* Cải thiện hiển thị dropdown trên thiết bị di động */
+    #items-table td:first-child .form-select {
+        padding-right: 2.5rem;
+    }
+}
+
+/* Nút thêm sản phẩm/dịch vụ */
+#addItem {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Đảm bảo các input số có text align right */
+.item-price,
+.item-quantity,
+.item-total {
+    text-align: right;
+}
+
+/* Đảm bảo các input readonly có background khác biệt */
+input[readonly] {
+    background-color: #f8f9fc;
+}
+
+/* Đảm bảo cột cuối cùng (nút xóa) luôn hiển thị đầy đủ */
+#items-table td:last-child {
+    padding: 0.5rem;
+    text-align: center;
+    vertical-align: middle;
+    width: 50px;
+    min-width: 50px;
+}
+
+/* Tăng kích thước icon trong nút xóa */
+#items-table .remove-item i {
+    font-size: 0.875rem;
+}
+
+/* Đảm bảo tiêu đề cột hiển thị đầy đủ */
+#items-table th {
+    position: relative;
+    z-index: 1;
+    text-overflow: ellipsis;
+    overflow: visible;
+    white-space: nowrap;
+    padding: 0.75rem 0.5rem;
+    letter-spacing: -0.2px; /* Giảm khoảng cách giữa các ký tự */
+}
+
+/* Đảm bảo các cột có độ rộng phù hợp */
+#items-table th:nth-child(4) { /* Số lượng */
+    min-width: 100px;
+}
+
+/* Đảm bảo cột Thành tiền hiển thị đầy đủ */
+#items-table th:nth-child(5) {
+    letter-spacing: -0.3px;
+    font-size: 0.95rem;
+    padding-right: 0.25rem;
+    padding-left: 0.25rem;
+}
+
+/* Cải thiện UX/UI cho dropdown */
+.form-select {
+    background-position: right 0.5rem center;
+    background-size: 16px 12px;
+    appearance: none;
+}
+
+/* Đảm bảo text trong dropdown không bị đè lên icon */
+#items-table td .form-select option {
+    padding: 0.5rem;
+}

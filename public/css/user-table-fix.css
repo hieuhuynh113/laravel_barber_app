@@ -1,0 +1,151 @@
+/* User table layout fixes */
+.table th.id-cell, .table td.id-cell {
+    width: 50px;
+    min-width: 50px;
+    max-width: 50px;
+    text-align: center;
+}
+
+.table th.avatar-cell, .table td.avatar-cell {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    text-align: center;
+    white-space: normal;
+    word-break: break-word;
+    overflow: hidden;
+}
+
+.table th.name-cell, .table td.name-cell {
+    min-width: 150px;
+    max-width: 200px;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.table th.email-cell, .table td.email-cell {
+    min-width: 200px;
+    max-width: 250px;
+    white-space: normal;
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.table th.role-cell, .table td.role-cell {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: center;
+}
+
+.table td.role-cell .badge {
+    width: 100px;
+    display: inline-block;
+    text-align: center;
+    position: static !important;
+}
+
+.table th.status-cell, .table td.status-cell {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    text-align: center;
+}
+
+.table td.status-cell .badge {
+    width: 80px;
+    display: inline-block;
+    text-align: center;
+}
+
+.table th.date-cell, .table td.date-cell {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.table th.actions-cell, .table td.actions-cell {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: center;
+}
+
+/* Ensure all badges display properly */
+.badge {
+    position: static !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Fix table header overflow */
+.table th {
+    white-space: normal;
+    word-break: break-word;
+    overflow: hidden;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+/* Ensure table layout is fixed */
+#usersTable {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* Action buttons styling */
+.table td.actions-cell .btn {
+    margin: 2px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    line-height: 32px;
+    text-align: center;
+}
+
+/* View button - Info */
+.table td.actions-cell .btn-info {
+    background-color: #36b9cc;
+    border-color: #36b9cc;
+}
+
+.table td.actions-cell .btn-info:hover {
+    background-color: #2a96a5;
+    border-color: #258391;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Edit button - Primary */
+.table td.actions-cell .btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+
+.table td.actions-cell .btn-primary:hover {
+    background-color: #2e59d9;
+    border-color: #2653d4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Delete button - Danger */
+.table td.actions-cell .btn-danger {
+    background-color: #e74a3b;
+    border-color: #e74a3b;
+}
+
+.table td.actions-cell .btn-danger:hover {
+    background-color: #be2617;
+    border-color: #bd2130;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
