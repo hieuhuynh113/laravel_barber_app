@@ -27,6 +27,9 @@
     <!-- Admin Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/admin-custom.css') }}">
 
+    <!-- User Table Fix CSS -->
+    <link rel="stylesheet" href="{{ asset('css/user-table-fix.css') }}">
+
     <style>
         /* Notification Styles */
         .notification-item {
@@ -40,7 +43,7 @@
         .notification-dropdown .dropdown-item:active {
             background-color: transparent;
         }
-        .badge.bg-danger {
+        .nav-item .badge.bg-danger {
             position: absolute;
             top: 0;
             right: 0;
@@ -59,12 +62,23 @@
             </div>
 
             <ul class="list-unstyled components">
+                <!-- Nhóm 1: Tổng quan và Thông báo -->
                 <li class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                     <a href="{{ route('admin.dashboard') }}">
                         <i class="fas fa-tachometer-alt me-2"></i> Tổng quan
                     </a>
                 </li>
 
+                <li class="{{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.notifications.index') }}">
+                        <i class="fas fa-bell me-2"></i> Thông báo
+                        @if(Auth::user()->unreadNotifications->count() > 0)
+                            <span class="badge bg-danger rounded-pill ms-2">{{ Auth::user()->unreadNotifications->count() }}</span>
+                        @endif
+                    </a>
+                </li>
+
+                <!-- Nhóm 2: Quản lý kinh doanh chính -->
                 <li class="{{ request()->routeIs('admin.appointments.*') ? 'active' : '' }}">
                     <a href="#appointmentSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="fas fa-calendar-alt me-2"></i> Quản lý lịch hẹn
@@ -79,6 +93,48 @@
                     </ul>
                 </li>
 
+                <li class="{{ request()->routeIs('admin.invoices.*') || request()->routeIs('admin.payment-receipts.*') ? 'active' : '' }}">
+                    <a href="#invoiceSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> Thanh toán & Hóa đơn
+                    </a>
+                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.invoices.*') || request()->routeIs('admin.payment-receipts.*') ? 'show' : '' }}" id="invoiceSubmenu">
+                        <li>
+                            <a href="{{ route('admin.invoices.index') }}">Danh sách hóa đơn</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.invoices.create') }}">Tạo hóa đơn</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.payment-receipts.index') }}">Biên lai chuyển khoản
+                                @php
+                                    $pendingReceipts = \App\Models\PaymentReceipt::where('status', 'pending')->count();
+                                @endphp
+                                @if($pendingReceipts > 0)
+                                    <span class="badge bg-danger rounded-pill ms-2">{{ $pendingReceipts }}</span>
+                                @endif
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.invoices.statistics') }}">Thống kê doanh thu</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="{{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">
+                    <a href="#reviewSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-star me-2"></i> Đánh giá
+                    </a>
+                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.reviews.*') ? 'show' : '' }}" id="reviewSubmenu">
+                        <li>
+                            <a href="{{ route('admin.reviews.index') }}">Danh sách đánh giá</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.reviews.statistics') }}">Thống kê đánh giá</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Nhóm 3: Quản lý nhân sự -->
                 <li class="{{ request()->routeIs('admin.barbers.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.barbers.index') }}">
                         <i class="fas fa-cut me-2"></i> Thợ cắt tóc
@@ -94,6 +150,13 @@
                 <li class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.users.index') }}">
                         <i class="fas fa-users me-2"></i> Người dùng
+                    </a>
+                </li>
+
+                <!-- Nhóm 4: Quản lý nội dung -->
+                <li class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.categories.index') }}">
+                        <i class="fas fa-tags me-2"></i> Quản lý danh mục
                     </a>
                 </li>
 
@@ -125,39 +188,6 @@
                     </ul>
                 </li>
 
-                <li class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
-                    <a href="{{ route('admin.categories.index') }}">
-                        <i class="fas fa-tags me-2"></i> Quản lý danh mục
-                    </a>
-                </li>
-
-                <li class="{{ request()->routeIs('admin.invoices.*') || request()->routeIs('admin.payment-receipts.*') ? 'active' : '' }}">
-                    <a href="#invoiceSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                        <i class="fas fa-file-invoice-dollar me-2"></i> Thanh toán & Hóa đơn
-                    </a>
-                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.invoices.*') || request()->routeIs('admin.payment-receipts.*') ? 'show' : '' }}" id="invoiceSubmenu">
-                        <li>
-                            <a href="{{ route('admin.invoices.index') }}">Danh sách hóa đơn</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.invoices.create') }}">Tạo hóa đơn</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.payment-receipts.index') }}">Biên lai chuyển khoản
-                                @php
-                                    $pendingReceipts = \App\Models\PaymentReceipt::where('status', 'pending')->count();
-                                @endphp
-                                @if($pendingReceipts > 0)
-                                    <span class="badge bg-danger rounded-pill ms-2">{{ $pendingReceipts }}</span>
-                                @endif
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.invoices.statistics') }}">Thống kê doanh thu</a>
-                        </li>
-                    </ul>
-                </li>
-
                 <li class="{{ request()->routeIs('admin.news.*') ? 'active' : '' }}">
                     <a href="#newsSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="fas fa-newspaper me-2"></i> Tin tức
@@ -172,38 +202,10 @@
                     </ul>
                 </li>
 
+                <!-- Nhóm 5: Tương tác khách hàng -->
                 <li class="{{ request()->routeIs('admin.contacts.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.contacts.index') }}">
                         <i class="fas fa-envelope me-2"></i> Liên hệ
-                    </a>
-                </li>
-
-                <li class="{{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
-                    <a href="{{ route('admin.notifications.index') }}">
-                        <i class="fas fa-bell me-2"></i> Thông báo
-                        @if(Auth::user()->unreadNotifications->count() > 0)
-                            <span class="badge bg-danger rounded-pill ms-2">{{ Auth::user()->unreadNotifications->count() }}</span>
-                        @endif
-                    </a>
-                </li>
-
-                <li class="{{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">
-                    <a href="#reviewSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                        <i class="fas fa-star me-2"></i> Đánh giá
-                    </a>
-                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.reviews.*') ? 'show' : '' }}" id="reviewSubmenu">
-                        <li>
-                            <a href="{{ route('admin.reviews.index') }}">Danh sách đánh giá</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.reviews.statistics') }}">Thống kê đánh giá</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
-                    <a href="{{ route('admin.settings.index') }}">
-                        <i class="fas fa-cog me-2"></i> Cài đặt
                     </a>
                 </li>
             </ul>
@@ -341,6 +343,7 @@
         $(document).ready(function () {
             $('#sidebarCollapse').on('click', function () {
                 $('#sidebar').toggleClass('active');
+                $('#content').toggleClass('sidebar-active');
 
                 // Thay đổi text của nút
                 if ($('#sidebar').hasClass('active')) {
