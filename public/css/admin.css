@@ -13,8 +13,11 @@ body {
 #sidebar {
     min-width: 250px;
     max-width: 250px;
-    min-height: 100vh;
+    height: 100vh; /* Chiều cao bằng chiều cao của viewport */
+    position: fixed; /* Giữ cố định khi cuộn */
+    overflow-y: auto; /* Cho phép cuộn nội dung bên trong sidebar */
     transition: all 0.3s;
+    z-index: 1000; /* Đảm bảo sidebar hiển thị trên các phần tử khác */
 }
 
 #sidebar.active {
@@ -26,10 +29,7 @@ body {
     background: #343a40;
 }
 
-#sidebar ul.components {
-    padding: 20px 0;
-    border-bottom: 1px solid #47748b;
-}
+/* #sidebar ul.components styles removed */
 
 #sidebar ul p {
     color: #fff;
@@ -61,10 +61,11 @@ ul ul a {
 }
 
 #content {
-    width: 100%;
+    width: calc(100% - 250px); /* Trừ đi chiều rộng của sidebar */
     padding: 0;
     min-height: 100vh;
     transition: all 0.3s;
+    margin-left: 250px; /* Thêm margin bằng với chiều rộng của sidebar */
 }
 
 .card {
@@ -115,6 +116,14 @@ ul ul a {
     }
     #sidebar.active {
         margin-left: 0;
+    }
+    #content {
+        width: 100%;
+        margin-left: 0;
+    }
+    #content.sidebar-active {
+        width: calc(100% - 250px);
+        margin-left: 250px;
     }
     #sidebarCollapse span {
         display: none;
@@ -179,4 +188,4 @@ ul ul a {
 .img-thumbnail {
     max-width: 200px;
     height: auto;
-} 
+}
