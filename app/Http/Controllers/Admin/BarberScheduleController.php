@@ -106,6 +106,11 @@ class BarberScheduleController extends Controller
         $schedule->max_appointments = $request->max_appointments;
         $schedule->save();
 
+        // Cập nhật các time slots cho ngày này nếu không phải là ngày nghỉ
+        if (!$schedule->is_day_off) {
+            $this->updateTimeSlotsForDay($schedule->barber_id, $schedule->day_of_week, $schedule->max_appointments);
+        }
+
         return redirect()->route('admin.schedules.index', ['barber_id' => $request->barber_id])
             ->with('success', 'Lịch làm việc đã được tạo thành công.');
     }
@@ -142,11 +147,21 @@ class BarberScheduleController extends Controller
         ]);
 
         $schedule = BarberSchedule::findOrFail($id);
+
+        // Lưu giá trị cũ để kiểm tra thay đổi
+        $oldMaxAppointments = $schedule->max_appointments;
+        $oldIsDayOff = $schedule->is_day_off;
+
         $schedule->start_time = $request->start_time;
         $schedule->end_time = $request->end_time;
         $schedule->is_day_off = $request->has('is_day_off');
         $schedule->max_appointments = $request->max_appointments;
         $schedule->save();
+
+        // Cập nhật các time slots nếu max_appointments thay đổi hoặc trạng thái ngày nghỉ thay đổi
+        if (!$schedule->is_day_off && ($oldMaxAppointments != $schedule->max_appointments || $oldIsDayOff != $schedule->is_day_off)) {
+            $this->updateTimeSlotsForDay($schedule->barber_id, $schedule->day_of_week, $schedule->max_appointments);
+        }
 
         return redirect()->route('admin.schedules.index', ['barber_id' => $schedule->barber_id])
             ->with('success', 'Lịch làm việc đã được cập nhật thành công.');
@@ -205,6 +220,9 @@ class BarberScheduleController extends Controller
             $defaultEndTime = '17:00';
             $defaultMaxAppointments = 3;
 
+            // Lưu giá trị max_appointments cũ để kiểm tra xem có thay đổi không
+            $oldMaxAppointments = $schedule->exists ? $schedule->max_appointments : null;
+
             if (!$isDayOff) {
                 // Nếu là ngày làm việc, cập nhật thông tin thời gian
                 $schedule->start_time = $data['start_time'] ?? $defaultStartTime;
@@ -222,9 +240,39 @@ class BarberScheduleController extends Controller
             }
 
             $schedule->save();
+
+            // Cập nhật các time slots nếu max_appointments thay đổi
+            if (!$isDayOff && $oldMaxAppointments !== null && $oldMaxAppointments != $schedule->max_appointments) {
+                $this->updateTimeSlotsForDay($barberId, $day, $schedule->max_appointments);
+            }
         }
 
         return redirect()->route('admin.schedules.index', ['barber_id' => $barberId])
             ->with('success', 'Lịch làm việc đã được cập nhật thành công.');
+    }
+
+    /**
+     * Cập nhật các time slots cho một ngày trong tuần cụ thể
+     */
+    private function updateTimeSlotsForDay($barberId, $dayOfWeek, $maxBookings)
+    {
+        // Lấy tất cả các ngày trong tương lai có cùng thứ trong tuần
+        $today = \Carbon\Carbon::today();
+        $futureDates = [];
+
+        // Lấy các ngày trong 3 tháng tới
+        for ($i = 0; $i < 90; $i++) {
+            $date = $today->copy()->addDays($i);
+            if ($date->dayOfWeek == $dayOfWeek) {
+                $futureDates[] = $date->format('Y-m-d');
+            }
+        }
+
+        // Cập nhật tất cả các time slots cho các ngày này
+        foreach ($futureDates as $date) {
+            \App\Models\TimeSlot::where('barber_id', $barberId)
+                ->where('date', $date)
+                ->update(['max_bookings' => $maxBookings]);
+        }
     }
 }

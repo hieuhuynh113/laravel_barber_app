@@ -111,6 +111,9 @@ class AppointmentController extends Controller
 
         // Lấy hoặc tạo các time slot trong cơ sở dữ liệu
         foreach ($slots as &$slot) {
+            // Lấy giá trị max_appointments từ lịch làm việc của thợ cắt tóc
+            $maxBookings = $schedule->max_appointments ?? 2;
+
             // Tìm hoặc tạo time slot trong database
             $timeSlot = TimeSlot::firstOrCreate(
                 [
@@ -120,9 +123,15 @@ class AppointmentController extends Controller
                 ],
                 [
                     'booked_count' => 0,
-                    'max_bookings' => 2, // Mặc định mỗi mốc thời gian có thể phục vụ 2 khách
+                    'max_bookings' => $maxBookings, // Sử dụng giá trị từ lịch làm việc
                 ]
             );
+
+            // Cập nhật max_bookings nếu khác với giá trị trong lịch làm việc
+            if ($timeSlot->max_bookings != $maxBookings) {
+                $timeSlot->max_bookings = $maxBookings;
+                $timeSlot->save();
+            }
 
             // Thêm thông tin về số lượng đã đặt và còn trống
             $slot['booked_count'] = $timeSlot->booked_count;

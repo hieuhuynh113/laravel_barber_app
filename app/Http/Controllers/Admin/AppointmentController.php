@@ -59,16 +59,60 @@ class AppointmentController extends Controller
             'status' => 'required|in:pending,confirmed,completed,canceled',
         ]);
 
+        // Kiểm tra xem time slot có còn chỗ trống không
+        $timeSlot = \App\Models\TimeSlot::where('barber_id', $request->barber_id)
+            ->where('date', $request->appointment_date)
+            ->where('time_slot', $request->appointment_time)
+            ->first();
+
+        // Nếu không tìm thấy time slot, tạo mới
+        if (!$timeSlot) {
+            // Lấy lịch làm việc của thợ cắt tóc
+            $dayOfWeek = \Carbon\Carbon::parse($request->appointment_date)->dayOfWeek;
+            $schedule = \App\Models\BarberSchedule::where('barber_id', $request->barber_id)
+                ->where('day_of_week', $dayOfWeek)
+                ->first();
+
+            if (!$schedule || $schedule->is_day_off) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Không thể đặt lịch vào ngày nghỉ của thợ cắt tóc.');
+            }
+
+            $maxBookings = $schedule ? $schedule->max_appointments : 2;
+
+            $timeSlot = \App\Models\TimeSlot::create([
+                'barber_id' => $request->barber_id,
+                'date' => $request->appointment_date,
+                'time_slot' => $request->appointment_time,
+                'booked_count' => 0,
+                'max_bookings' => $maxBookings,
+            ]);
+        }
+
+        // Kiểm tra xem time slot có còn chỗ trống không
+        if (!$timeSlot->isAvailable() && $request->status != 'canceled') {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Khung giờ này đã đầy. Vui lòng chọn khung giờ khác.');
+        }
+
         $appointment = Appointment::create([
             'user_id' => $request->user_id,
             'barber_id' => $request->barber_id,
             'appointment_date' => $request->appointment_date,
             'appointment_time' => $request->appointment_time,
+            'time_slot' => $request->appointment_time, // Thêm time_slot
             'note' => $request->note,
             'status' => $request->status,
         ]);
 
         $appointment->services()->attach($request->service_ids);
+
+        // Tăng số lượng đặt chỗ trong time slot nếu lịch hẹn không bị hủy
+        if ($request->status != 'canceled') {
+            $timeSlot->incrementBookedCount();
+        }
 
         return redirect()->route('admin.appointments.index')
             ->with('success', 'Lịch hẹn đã được tạo thành công.');
@@ -104,16 +148,93 @@ class AppointmentController extends Controller
             'status' => 'required|in:pending,confirmed,completed,canceled',
         ]);
 
+        // Lưu thông tin cũ để cập nhật time slot
+        $oldDate = $appointment->appointment_date;
+        $oldTime = $appointment->time_slot;
+        $oldBarberId = $appointment->barber_id;
+        $oldStatus = $appointment->status;
+
+        // Cập nhật lịch hẹn
         $appointment->update([
             'user_id' => $request->user_id,
             'barber_id' => $request->barber_id,
             'appointment_date' => $request->appointment_date,
             'appointment_time' => $request->appointment_time,
+            'time_slot' => $request->appointment_time, // Cập nhật time_slot
             'note' => $request->note,
             'status' => $request->status,
         ]);
 
         $appointment->services()->sync($request->service_ids);
+
+        // Nếu lịch hẹn không bị hủy và thời gian hoặc thợ cắt tóc thay đổi
+        if ($oldStatus != 'canceled' && $appointment->status != 'canceled') {
+            // Giảm số lượng đặt chỗ trong time slot cũ
+            if ($oldTime) {
+                $oldTimeSlot = \App\Models\TimeSlot::where('barber_id', $oldBarberId)
+                    ->where('date', $oldDate)
+                    ->where('time_slot', $oldTime)
+                    ->first();
+
+                if ($oldTimeSlot) {
+                    $oldTimeSlot->decrementBookedCount();
+                }
+            }
+
+            // Tăng số lượng đặt chỗ trong time slot mới
+            if ($appointment->time_slot) {
+                $newTimeSlot = \App\Models\TimeSlot::where('barber_id', $appointment->barber_id)
+                    ->where('date', $appointment->appointment_date)
+                    ->where('time_slot', $appointment->time_slot)
+                    ->first();
+
+                // Nếu không tìm thấy time slot, tạo mới
+                if (!$newTimeSlot) {
+                    // Lấy lịch làm việc của thợ cắt tóc
+                    $dayOfWeek = \Carbon\Carbon::parse($appointment->appointment_date)->dayOfWeek;
+                    $schedule = \App\Models\BarberSchedule::where('barber_id', $appointment->barber_id)
+                        ->where('day_of_week', $dayOfWeek)
+                        ->first();
+
+                    $maxBookings = $schedule ? $schedule->max_appointments : 2;
+
+                    $newTimeSlot = \App\Models\TimeSlot::create([
+                        'barber_id' => $appointment->barber_id,
+                        'date' => $appointment->appointment_date,
+                        'time_slot' => $appointment->time_slot,
+                        'booked_count' => 0,
+                        'max_bookings' => $maxBookings,
+                    ]);
+                }
+
+                if ($newTimeSlot->isAvailable()) {
+                    $newTimeSlot->incrementBookedCount();
+                } else {
+                    // Nếu time slot mới đã đầy, khôi phục time slot cũ
+                    if ($oldTime) {
+                        $oldTimeSlot = \App\Models\TimeSlot::where('barber_id', $oldBarberId)
+                            ->where('date', $oldDate)
+                            ->where('time_slot', $oldTime)
+                            ->first();
+
+                        if ($oldTimeSlot) {
+                            $oldTimeSlot->incrementBookedCount();
+                        }
+                    }
+
+                    // Khôi phục thông tin cũ cho lịch hẹn
+                    $appointment->update([
+                        'appointment_date' => $oldDate,
+                        'appointment_time' => $oldTime,
+                        'time_slot' => $oldTime,
+                        'barber_id' => $oldBarberId,
+                    ]);
+
+                    return redirect()->route('admin.appointments.index')
+                        ->with('error', 'Không thể cập nhật lịch hẹn vì khung giờ mới đã đầy.');
+                }
+            }
+        }
 
         return redirect()->route('admin.appointments.index')
             ->with('success', 'Lịch hẹn đã được cập nhật thành công.');
@@ -121,6 +242,18 @@ class AppointmentController extends Controller
 
     public function destroy(Appointment $appointment)
     {
+        // Giảm số lượng đặt chỗ trong time slot nếu có
+        if ($appointment->time_slot) {
+            $timeSlot = \App\Models\TimeSlot::where('barber_id', $appointment->barber_id)
+                ->where('date', $appointment->appointment_date)
+                ->where('time_slot', $appointment->time_slot)
+                ->first();
+
+            if ($timeSlot) {
+                $timeSlot->decrementBookedCount();
+            }
+        }
+
         $appointment->services()->detach();
         $appointment->delete();
 
@@ -140,6 +273,34 @@ class AppointmentController extends Controller
         $appointment->update([
             'status' => $newStatus,
         ]);
+
+        // Nếu trạng thái thay đổi sang "canceled", giảm số lượng đặt chỗ trong time slot
+        if ($newStatus == 'canceled' && $oldStatus != 'canceled' && $appointment->time_slot) {
+            $timeSlot = \App\Models\TimeSlot::where('barber_id', $appointment->barber_id)
+                ->where('date', $appointment->appointment_date)
+                ->where('time_slot', $appointment->time_slot)
+                ->first();
+
+            if ($timeSlot) {
+                $timeSlot->decrementBookedCount();
+            }
+        }
+
+        // Nếu trạng thái thay đổi từ "canceled" sang trạng thái khác, tăng số lượng đặt chỗ
+        if ($oldStatus == 'canceled' && $newStatus != 'canceled' && $appointment->time_slot) {
+            $timeSlot = \App\Models\TimeSlot::where('barber_id', $appointment->barber_id)
+                ->where('date', $appointment->appointment_date)
+                ->where('time_slot', $appointment->time_slot)
+                ->first();
+
+            if ($timeSlot && $timeSlot->isAvailable()) {
+                $timeSlot->incrementBookedCount();
+            } else if ($timeSlot && !$timeSlot->isAvailable()) {
+                // Nếu time slot đã đầy, không thể khôi phục lịch hẹn
+                return redirect()->back()
+                    ->with('error', 'Không thể khôi phục lịch hẹn vì khung giờ này đã đầy.');
+            }
+        }
 
         // Nếu trạng thái thay đổi từ "confirmed" sang "completed"
         if ($oldStatus == 'confirmed' && $newStatus == 'completed') {
@@ -203,6 +364,10 @@ class AppointmentController extends Controller
                 'subtotal' => $price
             ]);
         }
+
+        // Lưu ý: Hóa đơn tạo từ lịch hẹn ban đầu chưa có sản phẩm
+        // Các sản phẩm có thể được thêm vào sau khi chỉnh sửa hóa đơn
+        // hoặc khi khách hàng mua thêm sản phẩm ngoài lịch hẹn
 
         return $invoice;
     }

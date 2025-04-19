@@ -113,6 +113,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::resource('schedules', \App\Http\Controllers\Admin\BarberScheduleController::class);
     Route::post('schedules/batch-update', [\App\Http\Controllers\Admin\BarberScheduleController::class, 'updateBatch'])->name('schedules.batch-update');
 
+    // Time Slot Routes
+    Route::get('time-slots', [\App\Http\Controllers\Admin\TimeSlotController::class, 'index'])->name('time-slots.index');
+    Route::put('time-slots/{id}', [\App\Http\Controllers\Admin\TimeSlotController::class, 'update'])->name('time-slots.update');
+    Route::post('time-slots/bulk-update', [\App\Http\Controllers\Admin\TimeSlotController::class, 'bulkUpdate'])->name('time-slots.bulk-update');
+    Route::post('time-slots/generate', [\App\Http\Controllers\Admin\TimeSlotController::class, 'generate'])->name('time-slots.generate');
+
     // Appointment Routes
     Route::resource('appointments', \App\Http\Controllers\Admin\AppointmentController::class);
     Route::post('appointments/{appointment}/update-status', [\App\Http\Controllers\Admin\AppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
