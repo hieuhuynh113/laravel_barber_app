@@ -69,19 +69,40 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
+            table-layout: auto;
         }
         .invoice-items th, .invoice-items td {
             padding: 12px 15px;
-            border-bottom: 1px solid #dee2e6;
-            text-align: left;
+            border: 1px solid #dee2e6;
+            text-align: center;
+            vertical-align: middle;
         }
         .invoice-items th {
             background-color: #f8f9fa;
             font-weight: bold;
-            color: #495057;
+            color: #4e73df;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
         }
-        .invoice-items tr:last-child td {
-            border-bottom: none;
+        /* Định dạng cột cụ thể */
+        .invoice-items th:nth-child(1) { width: 5%; } /* STT */
+        .invoice-items th:nth-child(2) { width: 40%; text-align: left; } /* Sản phẩm/Dịch vụ */
+        .invoice-items th:nth-child(3) { width: 20%; } /* Đơn giá */
+        .invoice-items th:nth-child(4) { width: 10%; } /* Số lượng */
+        .invoice-items th:nth-child(5) { width: 25%; } /* Thành tiền */
+
+        /* Căn trái cho cột tên sản phẩm/dịch vụ */
+        .invoice-items td:nth-child(2) {
+            text-align: left;
+        }
+
+        /* Căn phải cho cột giá và thành tiền */
+        .invoice-items td:nth-child(3),
+        .invoice-items td:nth-child(5) {
+            text-align: right;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 600;
         }
         .text-right {
             text-align: right;
@@ -194,26 +215,42 @@
             <thead>
                 <tr>
                     <th>STT</th>
-                    <th>Dịch vụ</th>
+                    <th>Dịch vụ/Sản phẩm</th>
                     <th>Đơn giá</th>
                     <th>Số lượng</th>
                     <th>Thành tiền</th>
                 </tr>
             </thead>
             <tbody>
-                @if($invoice->services->count() > 0)
-                    @foreach($invoice->services as $index => $service)
+                @php $index = 0; @endphp
+
+                @if($invoice->services && $invoice->services->count() > 0)
+                    @foreach($invoice->services as $service)
                         <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $service->name }}</td>
+                            <td>{{ ++$index }}</td>
+                            <td>{{ $service->name }} <small>(Dịch vụ)</small></td>
                             <td>{{ number_format($service->pivot->price) }} VNĐ</td>
                             <td>{{ $service->pivot->quantity }}</td>
                             <td>{{ number_format($service->pivot->price * $service->pivot->quantity) }} VNĐ</td>
                         </tr>
                     @endforeach
-                @else
+                @endif
+
+                @if($invoice->products && $invoice->products->count() > 0)
+                    @foreach($invoice->products as $product)
+                        <tr>
+                            <td>{{ ++$index }}</td>
+                            <td>{{ $product->name }} <small>(Sản phẩm)</small></td>
+                            <td>{{ number_format($product->pivot->price) }} VNĐ</td>
+                            <td>{{ $product->pivot->quantity }}</td>
+                            <td>{{ number_format($product->pivot->price * $product->pivot->quantity) }} VNĐ</td>
+                        </tr>
+                    @endforeach
+                @endif
+
+                @if((!$invoice->services || $invoice->services->count() == 0) && (!$invoice->products || $invoice->products->count() == 0))
                     <tr>
-                        <td colspan="5" class="text-center">Không có dịch vụ nào trong hóa đơn này</td>
+                        <td colspan="5" class="text-center">Không có dịch vụ hoặc sản phẩm nào trong hóa đơn này</td>
                     </tr>
                 @endif
             </tbody>

@@ -101,7 +101,7 @@
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered invoice-items-table">
                                 <thead>
                                     <tr>
                                         <th>STT</th>
@@ -112,22 +112,48 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if($invoice->services)
-                                        @foreach($invoice->services as $index => $service)
+                                    @php $index = 0; @endphp
+
+                                    {{-- Luôn hiển thị dịch vụ từ dữ liệu trực tiếp --}}
+                                    @if(isset($directServices) && $directServices && $directServices->count() > 0)
+                                        @foreach($directServices as $service)
                                             <tr>
-                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ ++$index }}</td>
                                                 <td>
                                                     {{ $service->name }}
                                                     <span class="badge bg-primary">Dịch vụ</span>
                                                 </td>
-                                                <td>{{ number_format($service->pivot->price) }} VNĐ</td>
-                                                <td>{{ $service->pivot->quantity }}</td>
-                                                <td>{{ number_format($service->pivot->price * $service->pivot->quantity) }} VNĐ</td>
+                                                <td>{{ number_format($service->price ?? $service->service_price) }} VNĐ</td>
+                                                <td>{{ $service->quantity }}</td>
+                                                <td>{{ number_format(($service->price ?? $service->service_price) * $service->quantity) }} VNĐ</td>
                                             </tr>
                                         @endforeach
-                                    @else
+                                    @endif
+
+                                    {{-- Luôn hiển thị sản phẩm từ dữ liệu trực tiếp --}}
+                                    @if(isset($directProducts) && $directProducts && $directProducts->count() > 0)
+                                        @foreach($directProducts as $product)
+                                            <tr>
+                                                <td>{{ ++$index }}</td>
+                                                <td>
+                                                    {{ $product->name }}
+                                                    <span class="badge bg-success">Sản phẩm</span>
+                                                </td>
+                                                <td>{{ number_format($product->price ?? $product->product_price) }} VNĐ</td>
+                                                <td>{{ $product->quantity }}</td>
+                                                <td>{{ number_format(($product->price ?? $product->product_price) * $product->quantity) }} VNĐ</td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+
+                                    @php
+                                        $hasServices = isset($directServices) && $directServices && $directServices->count() > 0;
+                                        $hasProducts = isset($directProducts) && $directProducts && $directProducts->count() > 0;
+                                    @endphp
+
+                                    @if(!$hasServices && !$hasProducts)
                                         <tr>
-                                            <td colspan="5" class="text-center">Không có dịch vụ nào trong hóa đơn này</td>
+                                            <td colspan="5" class="text-center">Không có dịch vụ hoặc sản phẩm nào trong hóa đơn này</td>
                                         </tr>
                                     @endif
                                 </tbody>
@@ -180,7 +206,6 @@
                             <label for="status" class="form-label">Cập nhật trạng thái</label>
                             <select class="form-select" id="status" name="status">
                                 <option value="pending" {{ $invoice->status == 'pending' ? 'selected' : '' }}>Chờ xác nhận</option>
-                                <option value="confirmed" {{ $invoice->status == 'confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
                                 <option value="completed" {{ $invoice->status == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
                                 <option value="canceled" {{ $invoice->status == 'canceled' ? 'selected' : '' }}>Đã hủy</option>
                             </select>
@@ -255,6 +280,7 @@
 @endsection
 
 @section('styles')
+<link rel="stylesheet" href="{{ asset('css/invoice-detail.css') }}">
 <style>
     .timeline {
         position: relative;

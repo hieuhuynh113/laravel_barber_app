@@ -1,0 +1,176 @@
+/* CSS cho trang chi tiết hóa đơn */
+
+/* Thêm hiệu ứng hover cho hàng */
+.invoice-items-table tbody tr:hover {
+    background-color: rgba(78, 115, 223, 0.05);
+    transition: background-color 0.2s ease;
+}
+
+/* Thêm màu nền xám nhạt cho hàng chẵn */
+.invoice-items-table tbody tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Cải thiện bố cục bảng */
+.table-responsive {
+    margin-bottom: 1rem;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 0.5rem rgba(0, 0, 0, 0.075);
+    border: 1px solid #e3e6f0;
+    /* Tránh thanh cuộn ngang trên desktop */
+    overflow-x: visible;
+}
+
+.invoice-items-table {
+    width: 100% !important;
+    margin-bottom: 0;
+    color: #212529;
+    border-collapse: collapse;
+    background-color: #fff;
+    table-layout: fixed; /* Sử dụng fixed để đảm bảo các cột có chiều rộng cố định */
+    max-width: 100%; /* Đảm bảo bảng không vượt quá container */
+}
+
+.invoice-items-table th,
+.invoice-items-table td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border: 1px solid #e3e6f0;
+    text-align: center; /* Căn giữa tất cả các ô */
+}
+
+.invoice-items-table th {
+    background-color: #f8f9fc;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: #4e73df;
+    border-bottom: 2px solid #e3e6f0;
+}
+
+/* Định dạng cột cụ thể */
+.invoice-items-table th:nth-child(1) { width: 8%; } /* STT */
+.invoice-items-table th:nth-child(2) { width: 35%; text-align: left; } /* Sản phẩm/Dịch vụ */
+.invoice-items-table th:nth-child(3) { width: 22%; } /* Đơn giá */
+.invoice-items-table th:nth-child(4) { width: 10%; } /* Số lượng */
+.invoice-items-table th:nth-child(5) { width: 25%; } /* Thành tiền */
+
+/* Đảm bảo nội dung trong các ô không bị tràn */
+.invoice-items-table td {
+    white-space: normal; /* Cho phép xuống dòng */
+    word-break: break-word; /* Ngắt từ khi cần thiết */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Căn trái cho cột tên sản phẩm/dịch vụ */
+.invoice-items-table td:nth-child(2) {
+    text-align: left;
+}
+
+/* Định dạng badge */
+.badge {
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 600;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+    margin-left: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bg-primary {
+    background-color: #4e73df !important;
+    border: 1px solid #3a5fd4;
+}
+
+.bg-success {
+    background-color: #1cc88a !important;
+    border: 1px solid #18aa74;
+}
+
+/* Định dạng footer của bảng */
+.invoice-items-table tfoot th {
+    text-align: right;
+    font-weight: 600;
+    background-color: #f8f9fc;
+    border-top: 2px solid #e3e6f0;
+}
+
+.invoice-items-table tfoot td {
+    font-weight: 600;
+    text-align: right;
+    background-color: #f8f9fc;
+}
+
+.invoice-items-table tfoot tr:last-child {
+    background-color: rgba(78, 115, 223, 0.05);
+}
+
+.invoice-items-table tfoot tr:last-child th,
+.invoice-items-table tfoot tr:last-child td {
+    font-weight: 700;
+    color: #4e73df;
+}
+
+.font-weight-bold {
+    font-weight: 700 !important;
+}
+
+/* Định dạng số tiền */
+.invoice-items-table td:nth-child(3),
+.invoice-items-table td:nth-child(5),
+.invoice-items-table tfoot td {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    /* Cho phép cuộn ngang trên tablet và mobile */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .invoice-items-table {
+        min-width: 800px; /* Đảm bảo bảng có chiều rộng tối thiểu */
+    }
+
+    .invoice-items-table th,
+    .invoice-items-table td {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .badge {
+        font-size: 0.7em;
+        padding: 0.25em 0.5em;
+    }
+}
+
+/* Mobile styles */
+@media (max-width: 576px) {
+    .invoice-items-table {
+        min-width: 650px; /* Chiều rộng tối thiểu nhỏ hơn cho mobile */
+    }
+
+    /* Giảm padding trên mobile */
+    .invoice-items-table th,
+    .invoice-items-table td {
+        padding: 0.4rem;
+        font-size: 0.8rem;
+    }
+
+    /* Điều chỉnh chiều rộng cột trên mobile */
+    .invoice-items-table th:nth-child(1) { width: 8%; } /* STT */
+    .invoice-items-table th:nth-child(2) { width: 32%; } /* Sản phẩm/Dịch vụ */
+    .invoice-items-table th:nth-child(3) { width: 25%; } /* Đơn giá */
+    .invoice-items-table th:nth-child(4) { width: 10%; } /* Số lượng */
+    .invoice-items-table th:nth-child(5) { width: 25%; } /* Thành tiền */
+}
