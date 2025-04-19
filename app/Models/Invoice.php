@@ -26,6 +26,34 @@ class Invoice extends Model
         'notes',
     ];
 
+    /**
+     * Accessor để lấy giá trị discount_amount
+     */
+    public function getDiscountAmountAttribute()
+    {
+        return $this->discount;
+    }
+
+    /**
+     * Accessor để lấy giá trị tax_rate
+     */
+    public function getTaxRateAttribute()
+    {
+        // Nếu subtotal = 0, trả về 0 để tránh chia cho 0
+        if ($this->subtotal == 0) return 0;
+
+        // Tính toán tax_rate dựa trên tax và subtotal
+        return ($this->tax / $this->subtotal) * 100;
+    }
+
+    /**
+     * Accessor để lấy giá trị tax_amount
+     */
+    public function getTaxAmountAttribute()
+    {
+        return $this->tax;
+    }
+
     protected $casts = [
         'subtotal' => 'decimal:2',
         'discount' => 'decimal:2',
@@ -69,34 +97,64 @@ class Invoice extends Model
     }
 
     /**
+     * Mối quan hệ với Product (nhiều-nhiều)
+     */
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'invoice_product')
+                    ->withPivot('quantity', 'price', 'discount', 'subtotal')
+                    ->withTimestamps();
+    }
+
+    /**
      * Accessor để lấy các items của hóa đơn (dịch vụ và sản phẩm)
      * Được sử dụng trong view edit.blade.php
      */
     public function getItemsAttribute()
     {
+        $items = collect([]);
+
         // Lấy dịch vụ từ quan hệ services và chuyển đổi thành collection các item
         $services = $this->services;
 
-        // Nếu không có dịch vụ nào, trả về một collection rỗng
-        if ($services->isEmpty()) {
-            return collect([]);
+        // Chuyển đổi dịch vụ thành các item
+        if (!$services->isEmpty()) {
+            $serviceItems = $services->map(function ($service) {
+                $item = new \stdClass();
+                $item->id = $service->pivot->id;
+                $item->type = 'service';
+                $item->item_id = $service->id;
+                $item->name = $service->name;
+                $item->price = $service->pivot->price;
+                $item->quantity = $service->pivot->quantity;
+                $item->discount = $service->pivot->discount;
+                $item->subtotal = $service->pivot->subtotal;
+                return $item;
+            });
+
+            $items = $items->concat($serviceItems);
         }
 
-        // Chuyển đổi dịch vụ thành các item
-        $items = $services->map(function ($service) {
-            $item = new \stdClass();
-            $item->id = $service->pivot->id;
-            $item->type = 'service';
-            $item->item_id = $service->id;
-            $item->price = $service->pivot->price;
-            $item->quantity = $service->pivot->quantity;
-            $item->discount = $service->pivot->discount;
-            $item->subtotal = $service->pivot->subtotal;
-            return $item;
-        });
+        // Lấy sản phẩm từ quan hệ products và chuyển đổi thành collection các item
+        $products = $this->products;
 
-        // Hiện tại chưa có mối quan hệ với sản phẩm, nhưng nếu sau này có thêm,
-        // có thể mở rộng đoạn code này để thêm các sản phẩm vào collection items
+        // Chuyển đổi sản phẩm thành các item
+        if (!$products->isEmpty()) {
+            $productItems = $products->map(function ($product) {
+                $item = new \stdClass();
+                $item->id = $product->pivot->id;
+                $item->type = 'product';
+                $item->item_id = $product->id;
+                $item->name = $product->name;
+                $item->price = $product->pivot->price;
+                $item->quantity = $product->pivot->quantity;
+                $item->discount = $product->pivot->discount;
+                $item->subtotal = $product->pivot->subtotal;
+                return $item;
+            });
+
+            $items = $items->concat($productItems);
+        }
 
         return $items;
     }

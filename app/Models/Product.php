@@ -39,4 +39,14 @@ class Product extends Model
     {
         return $query->where('stock', '>', 0);
     }
+
+    /**
+     * Mối quan hệ với Invoice (nhiều-nhiều)
+     */
+    public function invoices()
+    {
+        return $this->belongsToMany(Invoice::class, 'invoice_product')
+                    ->withPivot('quantity', 'price', 'discount', 'subtotal')
+                    ->withTimestamps();
+    }
 }

@@ -28,6 +28,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `time_slots`;
 DROP TABLE IF EXISTS `email_verifications`;
 DROP TABLE IF EXISTS `reviews`;
+DROP TABLE IF EXISTS `invoice_product`;
 DROP TABLE IF EXISTS `invoice_service`;
 DROP TABLE IF EXISTS `appointment_services`;
 DROP TABLE IF EXISTS `invoices`;
@@ -280,6 +281,27 @@ CREATE TABLE `invoice_service` (
   KEY `invoice_service_service_id_foreign` (`service_id`),
   CONSTRAINT `invoice_service_invoice_id_foreign` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE,
   CONSTRAINT `invoice_service_service_id_foreign` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tạo bảng invoice_product
+-- Bảng trung gian liên kết giữa hóa đơn và sản phẩm
+-- Mỗi hóa đơn có thể bao gồm nhiều sản phẩm
+-- Lưu trữ thông tin như số lượng, giá, giảm giá và thành tiền của từng sản phẩm trong hóa đơn
+CREATE TABLE `invoice_product` (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `invoice_id` bigint(20) UNSIGNED NOT NULL,
+  `product_id` bigint(20) UNSIGNED NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `price` decimal(10,2) NOT NULL,
+  `discount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `subtotal` decimal(10,2) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `invoice_product_invoice_id_foreign` (`invoice_id`),
+  KEY `invoice_product_product_id_foreign` (`product_id`),
+  CONSTRAINT `invoice_product_invoice_id_foreign` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `invoice_product_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tạo bảng news

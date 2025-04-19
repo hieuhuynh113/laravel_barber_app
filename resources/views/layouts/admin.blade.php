@@ -141,10 +141,18 @@
                     </a>
                 </li>
 
-                <li class="{{ request()->routeIs('admin.schedules.*') ? 'active' : '' }}">
-                    <a href="{{ route('admin.schedules.index') }}">
-                        <i class="fas fa-calendar-alt me-2"></i> Quản lý lịch làm việc
+                <li class="{{ request()->routeIs('admin.schedules.*') || request()->routeIs('admin.time-slots.*') ? 'active' : '' }}">
+                    <a href="#scheduleSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-calendar-alt me-2"></i> Quản lý lịch
                     </a>
+                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.schedules.*') || request()->routeIs('admin.time-slots.*') ? 'show' : '' }}" id="scheduleSubmenu">
+                        <li>
+                            <a href="{{ route('admin.schedules.index') }}">Lịch làm việc</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.time-slots.index') }}">Khung giờ đặt lịch</a>
+                        </li>
+                    </ul>
                 </li>
 
                 <li class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">

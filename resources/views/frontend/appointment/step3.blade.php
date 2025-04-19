@@ -124,7 +124,14 @@
                                                     <input type="radio" name="time_slot" id="slot-{{ $slot['time'] }}" value="{{ $slot['formatted'] }}" class="time-slot-input" {{ old('time_slot') == $slot['formatted'] ? 'checked' : '' }}>
                                                     <label for="slot-{{ $slot['time'] }}" class="time-slot-label">
                                                         {{ $slot['formatted'] }}
-                                                        <span class="badge bg-success ms-2">{{ $slot['available_spots'] }}/{{ $slot['max_bookings'] }} chỗ trống</span>
+                                                        @if($slot['available_spots'] > 0)
+                                                            @php
+                                                                $badgeClass = $slot['available_spots'] > ($slot['max_bookings'] / 2) ? 'bg-success' : 'bg-warning';
+                                                            @endphp
+                                                            <span class="badge {{ $badgeClass }} ms-2">Còn {{ $slot['available_spots'] }} chỗ</span>
+                                                        @else
+                                                            <span class="badge bg-danger ms-2">Đã đầy</span>
+                                                        @endif
                                                     </label>
                                                 </div>
                                             @endforeach
@@ -255,6 +262,29 @@
         color: #0d6efd;
     }
 
+    /* Badge styling */
+    .time-slot-label .badge {
+        min-width: 80px;
+        padding: 5px 8px;
+        font-weight: 500;
+        font-size: 0.75rem;
+        border-radius: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .time-slot-label .badge.bg-success {
+        background-color: #28a745 !important;
+    }
+
+    .time-slot-label .badge.bg-warning {
+        background-color: #ffc107 !important;
+        color: #212529;
+    }
+
+    .time-slot-label .badge.bg-danger {
+        background-color: #dc3545 !important;
+    }
+
     .time-slot-input:disabled + .time-slot-label {
         background-color: #e9ecef;
         color: #adb5bd;
@@ -310,7 +340,7 @@
                                     <input type="radio" name="time_slot" id="slot-${slot.time}" value="${slot.formatted}" class="time-slot-input">
                                     <label for="slot-${slot.time}" class="time-slot-label">
                                         ${slot.formatted}
-                                        <span class="badge bg-success ms-2">${slot.available_spots}/${slot.max_bookings} chỗ trống</span>
+                                        ${getBadgeHtml(slot.available_spots, slot.max_bookings)}
                                     </label>
                                 </div>
                             `;
@@ -328,6 +358,16 @@
                     $('#continueBtn').prop('disabled', true);
                 }
             });
+        }
+
+        // Hàm tạo HTML cho badge hiển thị số chỗ trống
+        function getBadgeHtml(availableSpots, maxBookings) {
+            if (availableSpots <= 0) {
+                return '<span class="badge bg-danger ms-2">Đã đầy</span>';
+            }
+
+            const badgeClass = availableSpots > (maxBookings / 2) ? 'bg-success' : 'bg-warning';
+            return `<span class="badge ${badgeClass} ms-2">Còn ${availableSpots} chỗ</span>`;
         }
 
         // Validate form trước khi submit
