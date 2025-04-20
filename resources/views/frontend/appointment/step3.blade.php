@@ -317,6 +317,9 @@
             }
         });
 
+        // Load time slots cho ngày mặc định khi trang được tải
+        loadTimeSlots("{{ old('date', $currentDate) }}");
+
         // Load time slots khi chọn ngày
         function loadTimeSlots(date) {
             $.ajax({
@@ -331,10 +334,59 @@
                     $('#timeSlots').html('<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Đang tải...</span></div></div>');
                 },
                 success: function(response) {
+                    console.log('Server response:', response);
                     let html = '';
 
-                    if (response.timeSlots.length > 0) {
-                        response.timeSlots.forEach(function(slot) {
+                    // Lấy thời gian hiện tại của client
+                    const clientNow = new Date();
+                    const hours = clientNow.getHours().toString().padStart(2, '0');
+                    const minutes = clientNow.getMinutes().toString().padStart(2, '0');
+                    const clientTimeStr = `${hours}:${minutes}`;
+
+                    // Kiểm tra xem có phải ngày hôm nay không
+                    const today = new Date();
+                    const selectedDate = new Date(date);
+                    const isToday = today.getFullYear() === selectedDate.getFullYear() &&
+                                    today.getMonth() === selectedDate.getMonth() &&
+                                    today.getDate() === selectedDate.getDate();
+
+                    console.log('Client time:', clientTimeStr);
+                    console.log('Is today (client-side):', isToday);
+
+                    // Hiển thị thông tin thời gian hiện tại
+                    if (isToday) {
+                        html += `<div class="alert alert-info mb-3">
+                            <i class="fas fa-info-circle"></i> Thời gian hiện tại: <strong>${clientTimeStr}</strong>.
+                            Chỉ hiển thị các khung giờ trong tương lai.
+                        </div>`;
+                    }
+
+                    // Lọc các khung giờ đã qua nếu là ngày hôm nay
+                    let filteredSlots = response.timeSlots;
+                    if (isToday) {
+                        filteredSlots = response.timeSlots.filter(function(slot) {
+                            // Chuyển đổi thời gian của slot thành đối tượng Date
+                            const [slotHours, slotMinutes] = slot.formatted.split(':').map(Number);
+
+                            // So sánh với thời gian hiện tại + 30 phút
+                            const slotTime = new Date();
+                            slotTime.setHours(slotHours, slotMinutes, 0);
+
+                            const minAllowedTime = new Date();
+                            minAllowedTime.setMinutes(minAllowedTime.getMinutes() + 30);
+
+                            console.log(`Slot time: ${slot.formatted}, Current time + 30m: ${minAllowedTime.getHours()}:${minAllowedTime.getMinutes()}`);
+
+                            // Chỉ giữ lại các khung giờ trong tương lai
+                            return slotTime > minAllowedTime;
+                        });
+
+                        console.log('Filtered slots:', filteredSlots.length);
+                    }
+
+                    if (filteredSlots.length > 0) {
+                        html += '<div class="time-slots-container">';
+                        filteredSlots.forEach(function(slot) {
                             html += `
                                 <div class="time-slot">
                                     <input type="radio" name="time_slot" id="slot-${slot.time}" value="${slot.formatted}" class="time-slot-input">
@@ -345,15 +397,21 @@
                                 </div>
                             `;
                         });
+                        html += '</div>';
                         $('#continueBtn').prop('disabled', false);
                     } else {
-                        html = '<div class="alert alert-info">Không có giờ trống cho ngày này. Vui lòng chọn ngày khác.</div>';
+                        if (isToday) {
+                            html += '<div class="alert alert-warning">Không còn khung giờ trống cho hôm nay. Vui lòng chọn ngày khác.</div>';
+                        } else {
+                            html += '<div class="alert alert-info">Không có giờ trống cho ngày này. Vui lòng chọn ngày khác.</div>';
+                        }
                         $('#continueBtn').prop('disabled', true);
                     }
 
                     $('#timeSlots').html(html);
                 },
-                error: function() {
+                error: function(xhr, status, error) {
+                    console.error('Error loading time slots:', error);
                     $('#timeSlots').html('<div class="alert alert-danger">Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.</div>');
                     $('#continueBtn').prop('disabled', true);
                 }

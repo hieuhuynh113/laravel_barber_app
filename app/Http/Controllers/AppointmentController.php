@@ -70,13 +70,17 @@ class AppointmentController extends Controller
         }
 
         $barber = session('appointment_barber');
-        $currentDate = Carbon::now()->format('Y-m-d');
-        $timeSlots = $this->getAvailableTimeSlots($barber->id, $currentDate);
+        $currentDate = Carbon::now('Asia/Ho_Chi_Minh')->format('Y-m-d');
+        $timeSlots = $this->getTimeSlots($barber->id, $currentDate);
 
         return view('frontend.appointment.step3', compact('currentDate', 'timeSlots'));
     }
 
-    private function getAvailableTimeSlots($barberId, $date)
+    /**
+     * Lấy tất cả các khung giờ khả dụng của ngày đó
+     * Việc lọc theo thời gian hiện tại sẽ được thực hiện ở phía client
+     */
+    private function getTimeSlots($barberId, $date)
     {
         // Lấy lịch làm việc của thợ
         $barber = Barber::with(['schedules' => function($query) use ($date) {
@@ -98,6 +102,7 @@ class AppointmentController extends Controller
         $slots = [];
         $currentTime = clone $startTime;
 
+        // Tạo tất cả các khung giờ
         while ($currentTime < $endTime) {
             $formattedTime = $currentTime->format('H:i');
 
@@ -160,11 +165,31 @@ class AppointmentController extends Controller
         $barberId = $request->barber_id;
         $date = $request->date;
 
-        $timeSlots = $this->getAvailableTimeSlots($barberId, $date);
+        // Sử dụng múi giờ của Việt Nam
+        $vietnamTimezone = 'Asia/Ho_Chi_Minh';
+        $now = Carbon::now($vietnamTimezone);
+
+        \Log::info('Vietnam time: ' . $now->format('Y-m-d H:i:s'));
+        \Log::info('Selected date: ' . $date);
+
+        // Kiểm tra xem có phải ngày hiện tại không
+        $selectedDate = Carbon::parse($date, $vietnamTimezone)->startOfDay();
+        $currentDate = $now->copy()->startOfDay();
+        $isToday = $selectedDate->equalTo($currentDate);
+
+        \Log::info('Is today: ' . ($isToday ? 'Yes' : 'No'));
+
+        // Lấy tất cả các khung giờ của ngày đó
+        // Nếu là ngày hiện tại, chúng ta sẽ lọc các khung giờ đã qua ở phía client
+        $timeSlots = $this->getTimeSlots($barberId, $date);
 
         return response()->json([
             'timeSlots' => $timeSlots,
             'date' => $date,
+            'current_time' => $now->format('H:i'),
+            'is_today' => $isToday,
+            'vietnam_time' => $now->format('Y-m-d H:i:s'),
+            'timezone' => $vietnamTimezone,
         ]);
     }
 
@@ -190,11 +215,9 @@ class AppointmentController extends Controller
             return back()->withErrors(['time_slot' => 'Giờ này đã hết chỗ. Vui lòng chọn giờ khác.']);
         }
 
-        // Tăng số lượng đặt chỗ cho giờ này
-        $timeSlot->incrementBookedCount();
-
-        // Lưu thời gian đã chọn vào session
+        // Lưu thông tin time slot vào session để sử dụng sau này
         session([
+            'appointment_time_slot_id' => $timeSlot->id,
             'appointment_date' => $request->date,
             'appointment_start_time' => $startTime,
             'appointment_end_time' => $endTime,
@@ -258,12 +281,21 @@ class AppointmentController extends Controller
             return redirect()->route('appointment.step6');
         }
 
-        // Nếu chọn chuyển khoản, tạo lịch hẹn ngay và chuyển đến trang xác nhận thanh toán
-        // Tạo lịch hẹn
-        $appointment = $this->createAppointment();
+        try {
+            // Nếu chọn chuyển khoản, tạo lịch hẹn ngay và chuyển đến trang xác nhận thanh toán
+            // Tạo lịch hẹn
+            $appointment = $this->createAppointment();
 
-        // Chuyển đến trang xác nhận thanh toán
-        return redirect()->route('appointment.payment.confirmation', $appointment->id);
+            // Chuyển đến trang xác nhận thanh toán
+            return redirect()->route('appointment.payment.confirmation', $appointment->id);
+        } catch (\Exception $e) {
+            // Ghi log lỗi
+            \Log::error("Lỗi khi tạo lịch hẹn: " . $e->getMessage());
+
+            // Thông báo lỗi cho người dùng
+            return redirect()->route('appointment.step3')
+                ->with('error', $e->getMessage());
+        }
     }
 
     public function step6()
@@ -277,12 +309,44 @@ class AppointmentController extends Controller
             $appointment = \App\Models\Appointment::with(['services', 'barber.user'])->find(session('appointment_id'));
 
             if ($appointment) {
+                // Xóa các session liên quan đến đặt lịch sau khi hiển thị trang xác nhận
+                $this->clearAppointmentSessions();
+
                 return view('frontend.appointment.step6', compact('appointment'));
             }
         }
 
         // Nếu chưa tạo lịch hẹn, chuyển hướng đến trang lưu lịch hẹn
         return redirect()->route('appointment.complete');
+    }
+
+    /**
+     * Xóa các session liên quan đến quá trình đặt lịch
+     */
+    private function clearAppointmentSessions()
+    {
+        // Danh sách các session cần xóa
+        $sessionKeys = [
+            'appointment_services',
+            'appointment_barber',
+            'appointment_date',
+            'appointment_start_time',
+            'appointment_end_time',
+            'appointment_time_slot',
+            'appointment_time_slot_id',
+            'appointment_customer_name',
+            'appointment_customer_email',
+            'appointment_customer_phone',
+            'appointment_notes',
+            'appointment_payment_method',
+            'appointment_created',
+            'appointment_id'
+        ];
+
+        // Xóa từng session
+        foreach ($sessionKeys as $key) {
+            session()->forget($key);
+        }
     }
 
     /**
@@ -298,11 +362,22 @@ class AppointmentController extends Controller
         $date = session('appointment_date');
         $startTime = session('appointment_start_time');
         $endTime = session('appointment_end_time');
+        $timeSlotStr = session('appointment_time_slot');
+        $timeSlotId = session('appointment_time_slot_id');
         $customerName = session('appointment_customer_name');
         $customerEmail = session('appointment_customer_email');
         $customerPhone = session('appointment_customer_phone');
         $notes = session('appointment_notes');
         $paymentMethod = session('appointment_payment_method');
+
+        // Kiểm tra lại xem time slot còn trống không
+        $timeSlot = \App\Models\TimeSlot::find($timeSlotId);
+        if (!$timeSlot || !$timeSlot->isAvailable()) {
+            throw new \Exception('Giờ này đã hết chỗ. Vui lòng chọn giờ khác.');
+        }
+
+        // Tăng số lượng đặt chỗ cho time slot
+        $timeSlot->incrementBookedCount();
 
         // Tạo mã đặt chỗ
         $bookingCode = 'BK-' . strtoupper(\Illuminate\Support\Str::random(8));
@@ -314,7 +389,7 @@ class AppointmentController extends Controller
         $appointment->appointment_date = $date;
         $appointment->start_time = $startTime;
         $appointment->end_time = $endTime;
-        $appointment->time_slot = $startTime; // Lưu giờ cụ thể thay vì khoảng thời gian
+        $appointment->time_slot = $timeSlotStr; // Lưu giờ cụ thể thay vì khoảng thời gian
         $appointment->status = 'pending';
         $appointment->booking_code = $bookingCode;
         $appointment->customer_name = $customerName;
@@ -356,11 +431,20 @@ class AppointmentController extends Controller
             return redirect()->route('appointment.step6');
         }
 
-        // Tạo lịch hẹn
-        $appointment = $this->createAppointment();
+        try {
+            // Tạo lịch hẹn
+            $appointment = $this->createAppointment();
 
-        // Trả về trang xác nhận
-        return redirect()->route('appointment.step6');
+            // Trả về trang xác nhận
+            return redirect()->route('appointment.step6');
+        } catch (\Exception $e) {
+            // Ghi log lỗi
+            \Log::error("Lỗi khi tạo lịch hẹn: " . $e->getMessage());
+
+            // Thông báo lỗi cho người dùng
+            return redirect()->route('appointment.step3')
+                ->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -377,6 +461,9 @@ class AppointmentController extends Controller
         if (Auth::check() && Auth::id() != $appointment->user_id && !Auth::user()->isAdmin() && !Auth::user()->isBarber()) {
             abort(403, 'Bạn không có quyền truy cập lịch hẹn này');
         }
+
+        // Xóa các session liên quan đến đặt lịch sau khi hiển thị trang xác nhận
+        $this->clearAppointmentSessions();
 
         return view('frontend.appointment.payment_confirmation', compact('appointment'));
     }
