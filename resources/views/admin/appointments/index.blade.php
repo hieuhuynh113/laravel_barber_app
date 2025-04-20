@@ -53,6 +53,8 @@
         max-width: 140px !important;
         white-space: nowrap;
         text-align: center;
+        position: relative;
+        overflow: visible !important;
     }
 
     .action-buttons {
@@ -101,18 +103,26 @@
         color: white;
     }
 
-    /* Status dropdown styling */
-    .status-dropdown {
+    /* Status menu styling */
+    .status-menu {
+        position: absolute; /* Sử dụng absolute để định vị trí tương đối với nút */
         min-width: 180px;
+        width: 180px;
         padding: 0.5rem 0;
-        margin: 0.125rem 0 0;
+        margin: 0;
         border: 1px solid rgba(0, 0, 0, 0.15);
         border-radius: 0.25rem;
+        background-color: #fff;
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
-        z-index: 1000;
+        z-index: 99999; /* Tăng z-index lên cao hơn */
+        display: none;
+        max-height: 200px; /* Giới hạn chiều cao tối đa */
+        overflow-y: auto !important; /* Thêm thanh cuộn dọc khi cần */
+        overflow-x: hidden !important;
+        left: 0; /* Đặt vị trí mặc định */
     }
 
-    .status-dropdown .dropdown-item {
+    .status-menu-item {
         padding: 0.5rem 1rem;
         clear: both;
         font-weight: 400;
@@ -123,22 +133,26 @@
         border: 0;
         display: flex;
         align-items: center;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+        overflow: visible !important;
     }
 
-    .status-dropdown .dropdown-item i {
+    .status-menu-item i {
         margin-right: 8px;
         width: 16px;
         text-align: center;
     }
 
-    .status-dropdown .dropdown-item.active {
+    .status-menu-item.active {
         color: #212529;
         text-decoration: none;
         background-color: rgba(0, 0, 0, 0.075);
         font-weight: 600;
     }
 
-    .status-dropdown .dropdown-item:hover {
+    .status-menu-item:hover {
         background-color: rgba(0, 0, 0, 0.05);
     }
 
@@ -172,6 +186,11 @@
         padding: 0.75rem;
         vertical-align: middle;
         overflow: hidden;
+    }
+
+    /* Đảm bảo cell chứa dropdown menu không bị overflow hidden */
+    .table td.actions-cell {
+        overflow: visible !important;
     }
 
     /* Customer name styles */
@@ -346,6 +365,7 @@
         /* Optimize table for small screens */
         .table-responsive {
             overflow-x: auto;
+            overflow-y: visible !important;
         }
 
         .table {
@@ -441,7 +461,7 @@
             <h6 class="m-0 font-weight-bold text-primary">Danh sách lịch hẹn</h6>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
+            <div class="table-responsive" style="overflow-y: visible !important; position: relative;">
                 <table class="table table-bordered table-hover table-striped" width="100%" cellspacing="0">
                     <thead>
                         <tr>
@@ -553,8 +573,8 @@
                                             </a>
 
                                             <!-- Nút trạng thái hiện tại và thay đổi trạng thái -->
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-sm status-btn {{ $appointment->status == 'pending' ? 'btn-warning' : ($appointment->status == 'confirmed' ? 'btn-primary' : ($appointment->status == 'completed' ? 'btn-success' : 'btn-danger')) }}" data-bs-toggle="dropdown" aria-expanded="false" title="Thay đổi trạng thái">
+                                            <div class="status-container" style="position: relative; z-index: 1000;">
+                                                <button type="button" class="btn btn-sm status-btn status-toggle-btn {{ $appointment->status == 'pending' ? 'btn-warning' : ($appointment->status == 'confirmed' ? 'btn-primary' : ($appointment->status == 'completed' ? 'btn-success' : 'btn-danger')) }}" data-appointment-id="{{ $appointment->id }}" title="Thay đổi trạng thái">
                                                     @if($appointment->status == 'pending')
                                                         <i class="fas fa-clock"></i>
                                                     @elseif($appointment->status == 'confirmed')
@@ -565,44 +585,6 @@
                                                         <i class="fas fa-times"></i>
                                                     @endif
                                                 </button>
-                                                <ul class="dropdown-menu status-dropdown">
-                                                    <li>
-                                                        <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST">
-                                                            @csrf
-                                                            <input type="hidden" name="status" value="pending">
-                                                            <button type="submit" class="dropdown-item {{ $appointment->status == 'pending' ? 'active' : '' }}">
-                                                                <i class="fas fa-clock text-warning"></i> Chờ xác nhận
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                    <li>
-                                                        <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST">
-                                                            @csrf
-                                                            <input type="hidden" name="status" value="confirmed">
-                                                            <button type="submit" class="dropdown-item {{ $appointment->status == 'confirmed' ? 'active' : '' }}">
-                                                                <i class="fas fa-check text-primary"></i> Xác nhận
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                    <li>
-                                                        <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST">
-                                                            @csrf
-                                                            <input type="hidden" name="status" value="completed">
-                                                            <button type="submit" class="dropdown-item {{ $appointment->status == 'completed' ? 'active' : '' }}">
-                                                                <i class="fas fa-check-double text-success"></i> Hoàn thành
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                    <li>
-                                                        <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST">
-                                                            @csrf
-                                                            <input type="hidden" name="status" value="canceled">
-                                                            <button type="submit" class="dropdown-item {{ $appointment->status == 'canceled' ? 'active' : '' }}">
-                                                                <i class="fas fa-times text-danger"></i> Hủy
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                </ul>
                                             </div>
 
                                             <!-- Nút xóa -->
@@ -615,24 +597,100 @@
                                                 </button>
                                             </form>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" class="text-center">Không có lịch hẹn nào</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center">Không có lịch hẹn nào</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
-            <div class="mt-3">
-                {{ $appointments->appends(request()->query())->links() }}
+                <div class="mt-3">
+                    {{ $appointments->appends(request()->query())->links() }}
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Status Menus (outside of table to avoid overflow issues) -->
+    @foreach($appointments as $appointment)
+        <div class="status-menu" id="status-menu-{{ $appointment->id }}">
+            <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST" id="status-form-pending-{{ $appointment->id }}">
+                @csrf
+                <input type="hidden" name="status" value="pending">
+                <button type="button" class="status-menu-item {{ $appointment->status == 'pending' ? 'active' : '' }}" data-form="status-form-pending-{{ $appointment->id }}">
+                    <i class="fas fa-clock text-warning"></i> Chờ xác nhận
+                </button>
+            </form>
+
+            <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST" id="status-form-confirmed-{{ $appointment->id }}">
+                @csrf
+                <input type="hidden" name="status" value="confirmed">
+                <button type="button" class="status-menu-item {{ $appointment->status == 'confirmed' ? 'active' : '' }}" data-form="status-form-confirmed-{{ $appointment->id }}">
+                    <i class="fas fa-check text-primary"></i> Xác nhận
+                </button>
+            </form>
+
+            <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST" id="status-form-completed-{{ $appointment->id }}">
+                @csrf
+                <input type="hidden" name="status" value="completed">
+                <button type="button" class="status-menu-item {{ $appointment->status == 'completed' ? 'active' : '' }}" onclick="showCompletionModal({{ $appointment->id }})">
+                    <i class="fas fa-check-double text-success"></i> Hoàn thành
+                </button>
+            </form>
+
+            <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST" id="status-form-canceled-{{ $appointment->id }}">
+                @csrf
+                <input type="hidden" name="status" value="canceled">
+                <button type="button" class="status-menu-item {{ $appointment->status == 'canceled' ? 'active' : '' }}" data-form="status-form-canceled-{{ $appointment->id }}">
+                    <i class="fas fa-times text-danger"></i> Hủy
+                </button>
+            </form>
+        </div>
+    @endforeach
+    <!-- Modal xác nhận hoàn thành và trạng thái thanh toán -->
+    <div class="modal fade" id="completionModal" tabindex="-1" aria-labelledby="completionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="completionModalLabel">Xác nhận hoàn thành lịch hẹn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="completionForm" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <p>Bạn đang chuyển trạng thái lịch hẹn sang "Hoàn thành". Hệ thống sẽ tạo hóa đơn tự động.</p>
+                        <p>Vui lòng chọn trạng thái thanh toán:</p>
+
+                        <input type="hidden" name="status" value="completed">
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="payment_status" id="payment-pending" value="pending" checked>
+                            <label class="form-check-label" for="payment-pending">
+                                Chưa thanh toán
+                            </label>
+                            <small class="text-muted d-block">Hóa đơn sẽ được tạo với trạng thái "Chưa thanh toán" và có thể chỉnh sửa sau.</small>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="payment_status" id="payment-paid" value="paid">
+                            <label class="form-check-label" for="payment-paid">
+                                Đã thanh toán
+                            </label>
+                            <small class="text-muted d-block">Hóa đơn sẽ được tạo với trạng thái "Đã thanh toán".</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-success">Xác nhận</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -672,24 +730,70 @@
             }
         });
 
-        // Đảm bảo dropdown menu đóng khi click vào các nút trong menu
-        $(document).on('click', '.status-dropdown .dropdown-item', function() {
-            // Đóng dropdown sau khi click vào nút
-            setTimeout(function() {
-                $('.dropdown-menu.show').removeClass('show');
-            }, 100);
+        // Xử lý hiển thị và ẩn menu trạng thái
+        $('.status-toggle-btn').on('click', function(e) {
+            e.stopPropagation(); // Ngăn chặn sự kiện lan truyền
+
+            var appointmentId = $(this).data('appointment-id');
+            var $menu = $('#status-menu-' + appointmentId);
+            var $button = $(this);
+
+            // Đóng tất cả các menu đang mở
+            $('.status-menu').not($menu).hide();
+
+            // Lấy vị trí của nút
+            var buttonPosition = $button.offset();
+            var buttonHeight = $button.outerHeight();
+            var buttonWidth = $button.outerWidth();
+
+            // Đặt vị trí cho menu luôn hiển thị ngay dưới nút
+            $menu.css({
+                'top': (buttonPosition.top + buttonHeight) + 'px',
+                'left': (buttonPosition.left - 75) + 'px'
+            });
+
+            // Hiển thị hoặc ẩn menu hiện tại
+            $menu.toggle();
         });
 
-        // Ngăn chặn sự kiện click trong dropdown menu để không đóng menu khi click vào form
-        $(document).on('click', '.status-dropdown form', function(e) {
-            e.stopPropagation();
+        // Xử lý submit form khi click vào menu item (trừ nút hoàn thành đã có modal riêng)
+        $(document).on('click', '.status-menu-item:not([data-bs-toggle="modal"])', function(e) {
+            e.preventDefault();
+            var formId = $(this).data('form');
+            $('#' + formId).submit();
         });
 
-        // Đóng dropdown khi click ra ngoài
+        // Hàm hiển thị modal hoàn thành lịch hẹn
+        window.showCompletionModal = function(appointmentId) {
+            // Đặt action cho form
+            var formAction = $('#status-form-completed-' + appointmentId).attr('action');
+            $('#completionForm').attr('action', formAction);
+
+            // Hiển thị modal
+            var modal = new bootstrap.Modal(document.getElementById('completionModal'));
+            modal.show();
+
+            // Đóng menu dropdown
+            $('.status-menu').hide();
+        };
+
+        // Đảm bảo modal được hiển thị đúng vị trí
+        $('#completionModal').on('shown.bs.modal', function () {
+            // Đảm bảo modal hiển thị đúng vị trí
+            $(this).css('display', 'block');
+            $(this).find('.modal-dialog').css('margin', '10vh auto');
+        });
+
+        // Đóng menu khi click ra ngoài
         $(document).on('click', function(e) {
-            if (!$(e.target).closest('.btn-group').length) {
-                $('.status-dropdown.show').removeClass('show');
+            if (!$(e.target).closest('.status-container').length) {
+                $('.status-menu').hide();
             }
+        });
+
+        // Ngăn chặn sự kiện click trong menu để không đóng menu khi click vào form
+        $(document).on('click', '.status-menu form', function(e) {
+            e.stopPropagation();
         });
 
         // Xử lý hiển thị tất cả dịch vụ khi nhấn vào nút "Xem thêm"

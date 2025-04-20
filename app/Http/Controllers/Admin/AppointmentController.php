@@ -265,6 +265,7 @@ class AppointmentController extends Controller
     {
         $request->validate([
             'status' => 'required|in:pending,confirmed,completed,canceled',
+            'payment_status' => 'nullable|in:pending,paid',
         ]);
 
         $oldStatus = $appointment->status;
@@ -303,9 +304,23 @@ class AppointmentController extends Controller
         }
 
         // Nếu trạng thái thay đổi từ "confirmed" sang "completed"
-        if ($oldStatus == 'confirmed' && $newStatus == 'completed') {
+        if ($oldStatus != 'completed' && $newStatus == 'completed') {
+            // Cập nhật trạng thái thanh toán nếu được cung cấp
+            if ($request->has('payment_status')) {
+                $appointment->update([
+                    'payment_status' => $request->payment_status
+                ]);
+            }
+
             // Tạo hóa đơn mới
-            $this->createInvoiceFromAppointment($appointment);
+            $invoice = $this->createInvoiceFromAppointment($appointment);
+
+            // Nếu đã chọn trạng thái thanh toán là "đã thanh toán", cập nhật hóa đơn
+            if ($request->payment_status == 'paid') {
+                $invoice->update([
+                    'payment_status' => 'paid'
+                ]);
+            }
 
             return redirect()->back()
                 ->with('success', 'Trạng thái lịch hẹn đã được cập nhật thành công và hóa đơn đã được tạo.');
@@ -317,6 +332,7 @@ class AppointmentController extends Controller
 
     /**
      * Tạo hóa đơn từ lịch hẹn
+     * @return \App\Models\Invoice
      */
     private function createInvoiceFromAppointment(Appointment $appointment)
     {
@@ -347,7 +363,7 @@ class AppointmentController extends Controller
             'total' => $subtotal,
             'total_amount' => $subtotal,
             'payment_method' => $appointment->payment_method ?? 'cash',
-            'payment_status' => 'paid', // Đã thanh toán
+            'payment_status' => 'pending', // Chưa thanh toán
             'status' => 'completed', // Hoàn thành
             'notes' => 'Tự động tạo từ lịch hẹn #' . $appointment->id,
         ]);

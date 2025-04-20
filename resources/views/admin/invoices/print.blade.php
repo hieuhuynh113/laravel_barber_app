@@ -188,6 +188,14 @@
                     <div class="invoice-title">HÓA ĐƠN</div>
                     <div class="invoice-subtitle">Mã hóa đơn: {{ $invoice->invoice_code }}</div>
                     <div class="invoice-subtitle">Ngày: {{ \Carbon\Carbon::parse($invoice->created_at)->format('d/m/Y') }}</div>
+                    <div class="invoice-subtitle">
+                        Trạng thái thanh toán:
+                        @if($invoice->payment_status == 'paid')
+                            <span style="color: #1cc88a; font-weight: bold;">Đã thanh toán</span>
+                        @else
+                            <span style="color: #f6c23e; font-weight: bold;">Chưa thanh toán</span>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -203,6 +211,17 @@
                 <div class="col-6">
                     <h5>Thông tin dịch vụ</h5>
                     <p><strong>Thợ cắt tóc:</strong> {{ $invoice->barber->user->name ?? $invoice->appointment->barber->user->name ?? 'Không xác định' }}</p>
+                    <p><strong>Phương thức thanh toán:</strong>
+                        @if($invoice->payment_method == 'cash')
+                            Tiền mặt
+                        @elseif($invoice->payment_method == 'card')
+                            Thẻ
+                        @elseif($invoice->payment_method == 'bank_transfer')
+                            Chuyển khoản
+                        @else
+                            {{ $invoice->payment_method }}
+                        @endif
+                    </p>
                     @if($invoice->appointment)
                     <p><strong>Ngày hẹn:</strong> {{ \Carbon\Carbon::parse($invoice->appointment->appointment_date)->format('d/m/Y') }}</p>
                     <p><strong>Giờ hẹn:</strong> {{ $invoice->appointment->appointment_time }}</p>

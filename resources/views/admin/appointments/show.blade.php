@@ -146,13 +146,9 @@
                                 </button>
                             </form>
 
-                            <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="status" value="completed">
-                                <button type="submit" class="list-group-item list-group-item-action {{ $appointment->status == 'completed' ? 'active' : '' }}">
-                                    <i class="fas fa-check-double me-2"></i> Hoàn thành
-                                </button>
-                            </form>
+                            <button type="button" class="list-group-item list-group-item-action {{ $appointment->status == 'completed' ? 'active' : '' }}" onclick="showCompletionModal()">
+                                <i class="fas fa-check-double me-2"></i> Hoàn thành
+                            </button>
 
                             <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST">
                                 @csrf
@@ -302,4 +298,56 @@
         </div>
     </div>
 </div>
+
+<!-- Modal xác nhận hoàn thành và trạng thái thanh toán -->
+<div class="modal fade" id="completionModal" tabindex="-1" aria-labelledby="completionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="completionModalLabel">Xác nhận hoàn thành lịch hẹn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('admin.appointments.updateStatus', $appointment->id) }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <p>Bạn đang chuyển trạng thái lịch hẹn sang "Hoàn thành". Hệ thống sẽ tạo hóa đơn tự động.</p>
+                    <p>Vui lòng chọn trạng thái thanh toán:</p>
+
+                    <input type="hidden" name="status" value="completed">
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="payment_status" id="payment-pending" value="pending" checked>
+                        <label class="form-check-label" for="payment-pending">
+                            Chưa thanh toán
+                        </label>
+                        <small class="text-muted d-block">Hóa đơn sẽ được tạo với trạng thái "Chưa thanh toán" và có thể chỉnh sửa sau.</small>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="payment_status" id="payment-paid" value="paid">
+                        <label class="form-check-label" for="payment-paid">
+                            Đã thanh toán
+                        </label>
+                        <small class="text-muted d-block">Hóa đơn sẽ được tạo với trạng thái "Đã thanh toán".</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success">Xác nhận</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@endsection
+
+@section('scripts')
+<script>
+    // Hàm hiển thị modal hoàn thành lịch hẹn
+    function showCompletionModal() {
+        var modal = new bootstrap.Modal(document.getElementById('completionModal'));
+        modal.show();
+    }
+</script>
 @endsection

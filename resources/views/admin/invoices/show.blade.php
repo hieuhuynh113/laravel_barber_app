@@ -7,9 +7,15 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Chi tiết hóa đơn: #{{ $invoice->invoice_code }}</h1>
         <div>
-            <a href="{{ route('admin.invoices.edit', $invoice->id) }}" class="btn btn-primary">
-                <i class="fas fa-edit"></i> Chỉnh sửa
-            </a>
+            @if($invoice->payment_status == 'paid')
+                <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Hóa đơn đã thanh toán không thể chỉnh sửa">
+                    <i class="fas fa-edit"></i> Chỉnh sửa
+                </button>
+            @else
+                <a href="{{ route('admin.invoices.edit', $invoice->id) }}" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Chỉnh sửa
+                </a>
+            @endif
             <a href="{{ route('admin.invoices.print', $invoice->id) }}" class="btn btn-info" target="_blank">
                 <i class="fas fa-print"></i> In hóa đơn
             </a>
@@ -70,6 +76,12 @@
                                     @elseif($invoice->status == 'canceled')
                                         <span class="badge bg-danger">Đã hủy</span>
                                     @endif
+
+                                    @if($invoice->status == 'canceled')
+                                        <div class="alert alert-danger mt-2 mb-0 py-2">
+                                            <i class="fas fa-exclamation-circle"></i> Hóa đơn này đã bị hủy.
+                                        </div>
+                                    @endif
                                 </p>
                             </div>
                             <div class="col-md-6">
@@ -79,7 +91,7 @@
                                         <span class="badge bg-secondary">Tiền mặt</span>
                                     @elseif($invoice->payment_method == 'card')
                                         <span class="badge bg-info">Thẻ</span>
-                                    @elseif($invoice->payment_method == 'transfer')
+                                    @elseif($invoice->payment_method == 'bank_transfer')
                                         <span class="badge bg-primary">Chuyển khoản</span>
                                     @else
                                         <span class="badge bg-secondary">{{ $invoice->payment_method }}</span>
@@ -87,7 +99,7 @@
                                 </p>
                                 <p class="mb-0">
                                     <strong>Thanh toán:</strong>
-                                    @if($invoice->payment_status)
+                                    @if($invoice->payment_status == 'paid')
                                         <span class="badge bg-success">Đã thanh toán</span>
                                     @else
                                         <span class="badge bg-warning">Chưa thanh toán</span>
@@ -204,25 +216,37 @@
                         @method('PATCH')
                         <div class="mb-3">
                             <label for="status" class="form-label">Cập nhật trạng thái</label>
-                            <select class="form-select" id="status" name="status">
+                            <select class="form-select" id="status" name="status" {{ ($invoice->payment_status == 'paid' && $invoice->status == 'completed') || $invoice->status == 'canceled' ? 'disabled' : '' }}>
                                 <option value="pending" {{ $invoice->status == 'pending' ? 'selected' : '' }}>Chờ xác nhận</option>
                                 <option value="completed" {{ $invoice->status == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
                                 <option value="canceled" {{ $invoice->status == 'canceled' ? 'selected' : '' }}>Đã hủy</option>
                             </select>
+                            @if($invoice->status == 'canceled')
+                                <small class="text-danger d-block mt-1"><i class="fas fa-exclamation-circle"></i> Hóa đơn đã hủy không thể thay đổi trạng thái</small>
+                            @endif
                         </div>
 
                         <div class="mb-3">
                             <label for="payment_status" class="form-label">Tình trạng thanh toán</label>
-                            <select class="form-select" id="payment_status" name="payment_status">
+                            <select class="form-select" id="payment_status" name="payment_status" {{ $invoice->status == 'canceled' ? 'disabled' : '' }}>
                                 <option value="pending" {{ $invoice->payment_status == 'pending' ? 'selected' : '' }}>Chưa thanh toán</option>
                                 <option value="paid" {{ $invoice->payment_status == 'paid' ? 'selected' : '' }}>Đã thanh toán</option>
                             </select>
+                            @if($invoice->payment_status == 'paid')
+                                <small class="text-warning"><i class="fas fa-exclamation-triangle"></i> Lưu ý: Sau khi đã thanh toán, bạn vẫn có thể thay đổi trạng thái thanh toán, nhưng điều này không được khuyến khích.</small>
+                            @endif
+                            @if($invoice->status == 'canceled')
+                                <small class="text-danger d-block mt-1"><i class="fas fa-exclamation-circle"></i> Hóa đơn đã hủy không thể thay đổi trạng thái thanh toán</small>
+                            @endif
                         </div>
 
                         <div class="mb-3">
-                            <button type="submit" class="btn btn-primary w-100">
+                            <button type="submit" class="btn btn-primary w-100" {{ $invoice->status == 'canceled' ? 'disabled' : '' }}>
                                 <i class="fas fa-save"></i> Cập nhật
                             </button>
+                            @if($invoice->status == 'canceled')
+                                <small class="text-danger d-block mt-1"><i class="fas fa-exclamation-circle"></i> Hóa đơn đã hủy không thể cập nhật</small>
+                            @endif
                         </div>
                     </form>
 
@@ -240,13 +264,29 @@
                         </a>
                     </div>
 
+                    @if($invoice->payment_status == 'paid' && $invoice->status != 'canceled')
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#cancelInvoiceModal">
+                                <i class="fas fa-ban"></i> Hủy hóa đơn
+                            </button>
+                        </div>
+                    @endif
+
                     <div class="mb-3">
                         <form action="{{ route('admin.invoices.destroy', $invoice->id) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Bạn có chắc chắn muốn xóa hóa đơn này?')">
+                            <button type="submit" class="btn btn-danger w-100"
+                                {{ $invoice->payment_status == 'paid' || $invoice->status == 'canceled' ? 'disabled' : '' }}
+                                onclick="return confirm('Bạn có chắc chắn muốn xóa hóa đơn này?')">
                                 <i class="fas fa-trash"></i> Xóa hóa đơn
                             </button>
+                            @if($invoice->payment_status == 'paid')
+                                <small class="text-danger d-block mt-1"><i class="fas fa-exclamation-circle"></i> Hóa đơn đã thanh toán không thể xóa</small>
+                            @endif
+                            @if($invoice->status == 'canceled')
+                                <small class="text-danger d-block mt-1"><i class="fas fa-exclamation-circle"></i> Hóa đơn đã hủy không thể xóa</small>
+                            @endif
                         </form>
                     </div>
                 </div>
@@ -306,4 +346,53 @@
         border-left: 3px solid #4e73df;
     }
 </style>
+@endsection
+
+<!-- Modal Hủy Hóa Đơn -->
+<div class="modal fade" id="cancelInvoiceModal" tabindex="-1" aria-labelledby="cancelInvoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title" id="cancelInvoiceModalLabel">Hủy hóa đơn #{{ $invoice->invoice_code }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('admin.invoices.cancel', $invoice->id) }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> <strong>Cảnh báo:</strong> Hủy hóa đơn là hành động không thể hoàn tác. Hóa đơn sẽ được đánh dấu là đã hủy và sẽ không thể chỉnh sửa hoặc xóa.
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="cancel_reason" class="form-label">Lý do hủy hóa đơn <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="cancel_reason" name="cancel_reason" rows="4" required></textarea>
+                        <small class="text-muted">Vui lòng nhập lý do hủy hóa đơn (tối đa 500 ký tự)</small>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> <strong>Lưu ý:</strong>
+                        <ul class="mb-0">
+                            <li>Số lượng sản phẩm sẽ được hoàn trả vào kho (nếu có)</li>
+                            <li>Lý do hủy sẽ được ghi lại trong ghi chú của hóa đơn</li>
+                            <li>Trạng thái lịch hẹn sẽ được cập nhật (nếu có)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                    <button type="submit" class="btn btn-warning">Xác nhận hủy hóa đơn</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section('scripts')
+<script>
+    // Kích hoạt tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
 @endsection

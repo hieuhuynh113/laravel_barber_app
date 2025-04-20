@@ -129,6 +129,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::get('invoices-statistics', [\App\Http\Controllers\Admin\InvoiceController::class, 'statistics'])->name('invoices.statistics');
     Route::patch('invoices/{invoice}/update-status', [\App\Http\Controllers\Admin\InvoiceController::class, 'updateStatus'])->name('invoices.update-status');
     Route::get('invoices/{invoice}/send-email', [\App\Http\Controllers\Admin\InvoiceController::class, 'sendEmail'])->name('invoices.send-email');
+    Route::post('invoices/{invoice}/cancel', [\App\Http\Controllers\Admin\InvoiceController::class, 'cancelInvoice'])->name('invoices.cancel');
 
     // Payment Receipt Routes
     Route::resource('payment-receipts', \App\Http\Controllers\Admin\PaymentReceiptController::class)->only(['index', 'show', 'destroy']);

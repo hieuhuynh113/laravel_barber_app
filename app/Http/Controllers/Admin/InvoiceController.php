@@ -412,6 +412,12 @@ class InvoiceController extends Controller
 
     public function edit(Invoice $invoice)
     {
+        // Kiểm tra xem hóa đơn đã thanh toán chưa
+        if ($invoice->payment_status == 'paid') {
+            return redirect()->route('admin.invoices.show', $invoice->id)
+                ->with('error', 'Hóa đơn đã thanh toán không thể chỉnh sửa. Bạn chỉ có thể xem chi tiết hóa đơn.');
+        }
+
         // Load các mối quan hệ cần thiết
         $invoice->load([
             'appointment.user',
@@ -441,6 +447,12 @@ class InvoiceController extends Controller
 
     public function update(Request $request, Invoice $invoice)
     {
+        // Kiểm tra xem hóa đơn đã thanh toán chưa
+        if ($invoice->payment_status == 'paid') {
+            return redirect()->route('admin.invoices.show', $invoice->id)
+                ->with('error', 'Hóa đơn đã thanh toán không thể chỉnh sửa. Bạn chỉ có thể xem chi tiết hóa đơn.');
+        }
+
         // Sử dụng transaction để đảm bảo tính toàn vẹn của dữ liệu
         return \DB::transaction(function() use ($request, $invoice) {
             // Debug: Ghi log request data và invoice trước khi cập nhật
@@ -720,6 +732,12 @@ class InvoiceController extends Controller
 
     public function destroy(Invoice $invoice)
     {
+        // Kiểm tra xem hóa đơn đã thanh toán chưa
+        if ($invoice->payment_status == 'paid') {
+            return redirect()->route('admin.invoices.show', $invoice->id)
+                ->with('error', 'Hóa đơn đã thanh toán không thể xóa. Bạn chỉ có thể xem chi tiết hóa đơn.');
+        }
+
         // Hoàn trả số lượng sản phẩm vào kho
         $invoice->load('products');
         foreach ($invoice->products as $product) {
@@ -892,5 +910,69 @@ class InvoiceController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi gửi email: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Hủy hóa đơn
+     */
+    public function cancelInvoice(Request $request, Invoice $invoice)
+    {
+        // Sử dụng transaction để đảm bảo tính toàn vẹn của dữ liệu
+        return \DB::transaction(function() use ($request, $invoice) {
+            $request->validate([
+                'cancel_reason' => 'required|string|max:500',
+            ], [
+                'cancel_reason.required' => 'Vui lòng nhập lý do hủy hóa đơn',
+                'cancel_reason.max' => 'Lý do hủy hóa đơn không được vượt quá 500 ký tự',
+            ]);
+
+            // Ghi log trước khi cập nhật
+            \Log::info('Invoice Before Cancel:', [
+                'id' => $invoice->id,
+                'status' => $invoice->status,
+                'payment_status' => $invoice->payment_status,
+                'cancel_reason' => $request->cancel_reason
+            ]);
+
+            // Cập nhật trạng thái hóa đơn thành 'canceled'
+            $invoice->update([
+                'status' => 'canceled',
+                'notes' => ($invoice->notes ? $invoice->notes . "\n\n" : '') . "Hủy hóa đơn: " . $request->cancel_reason . "\nNgày hủy: " . now()->format('d/m/Y H:i:s'),
+            ]);
+
+            // Nếu hóa đơn có liên kết với lịch hẹn, cập nhật trạng thái lịch hẹn
+            if ($invoice->appointment) {
+                // Chỉ cập nhật trạng thái lịch hẹn nếu nó đã hoàn thành
+                if ($invoice->appointment->status == 'completed') {
+                    $invoice->appointment->update([
+                        'status' => 'confirmed', // Đưa về trạng thái đã xác nhận
+                    ]);
+                }
+            }
+
+            // Hoàn trả số lượng sản phẩm vào kho (nếu có)
+            $invoice->load('products');
+            foreach ($invoice->products as $product) {
+                $product->stock += $product->pivot->quantity;
+                $product->save();
+
+                // Ghi log hoàn trả sản phẩm
+                \Log::info("Product {$product->name} returned to stock:", [
+                    'id' => $product->id,
+                    'quantity' => $product->pivot->quantity,
+                    'new_stock' => $product->stock
+                ]);
+            }
+
+            // Ghi log sau khi cập nhật
+            \Log::info('Invoice After Cancel:', [
+                'id' => $invoice->id,
+                'status' => $invoice->status,
+                'payment_status' => $invoice->payment_status
+            ]);
+
+            return redirect()->route('admin.invoices.show', $invoice->id)
+                ->with('success', 'Hóa đơn đã được hủy thành công.');
+        });
     }
 }

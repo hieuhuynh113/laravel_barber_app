@@ -139,6 +139,16 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
+                        <label for="payment_status_filter">Trạng thái thanh toán</label>
+                        <select class="form-select" id="payment_status_filter" onchange="filterByPaymentStatus(this.value)">
+                            <option value="">Tất cả</option>
+                            <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Đã thanh toán</option>
+                            <option value="pending" {{ request('payment_status') == 'pending' ? 'selected' : '' }}>Chưa thanh toán</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
                         <label for="date_filter">Ngày</label>
                         <input type="date" class="form-control" id="date_filter" value="{{ request('date') }}" onchange="filterByDate(this.value)">
                     </div>
@@ -154,7 +164,8 @@
                             <th style="width: 140px" class="date-column">Ngày tạo</th>
                             <th style="width: 120px">Tổng tiền</th>
                             <th style="width: 120px">Trạng thái</th>
-                            <th style="width: 170px" class="payment-method-header">Phương thức<br>thanh toán</th>
+                            <th style="width: 120px">Trạng thái<br>thanh toán</th>
+                            <th style="width: 150px" class="payment-method-header">Phương thức<br>thanh toán</th>
                             <th style="width: 120px">Thao tác</th>
                         </tr>
                     </thead>
@@ -183,6 +194,14 @@
                                         <span class="badge bg-success">Hoàn thành</span>
                                     @elseif($invoice->status == 'canceled')
                                         <span class="badge bg-danger">Đã hủy</span>
+                                        <i class="fas fa-ban text-danger ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Hóa đơn này đã bị hủy"></i>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($invoice->payment_status == 'paid')
+                                        <span class="badge bg-success">Đã thanh toán</span>
+                                    @else
+                                        <span class="badge bg-warning">Chưa thanh toán</span>
                                     @endif
                                 </td>
                                 <td class="text-center payment-method-cell">
@@ -190,7 +209,7 @@
                                         <span class="badge bg-secondary">Tiền mặt</span>
                                     @elseif($invoice->payment_method == 'card')
                                         <span class="badge bg-info">Thẻ</span>
-                                    @elseif($invoice->payment_method == 'transfer')
+                                    @elseif($invoice->payment_method == 'bank_transfer')
                                         <span class="badge bg-primary">Chuyển khoản</span>
                                     @else
                                         <span class="badge bg-secondary">{{ $invoice->payment_method }}</span>
@@ -201,13 +220,23 @@
                                         <a href="{{ route('admin.invoices.show', $invoice->id) }}" class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.invoices.edit', $invoice->id) }}" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                                        @if($invoice->status == 'canceled')
+                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Hóa đơn đã hủy không thể chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        @elseif($invoice->payment_status == 'paid')
+                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Hóa đơn đã thanh toán không thể chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        @else
+                                            <a href="{{ route('admin.invoices.edit', $invoice->id) }}" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        @endif
                                         <form action="{{ route('admin.invoices.destroy', $invoice->id) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa hóa đơn này?')">
+                                            <button type="submit" class="btn btn-danger btn-sm" {{ $invoice->payment_status == 'paid' || $invoice->status == 'canceled' ? 'disabled' : '' }} onclick="return confirm('Bạn có chắc chắn muốn xóa hóa đơn này?')">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -216,7 +245,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center">Không có hóa đơn nào.</td>
+                                <td colspan="8" class="text-center">Không có hóa đơn nào.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -243,6 +272,16 @@
         window.location.href = '{{ route("admin.invoices.index") }}?' + urlParams.toString();
     }
 
+    function filterByPaymentStatus(paymentStatus) {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (paymentStatus) {
+            urlParams.set('payment_status', paymentStatus);
+        } else {
+            urlParams.delete('payment_status');
+        }
+        window.location.href = '{{ route("admin.invoices.index") }}?' + urlParams.toString();
+    }
+
     function filterByDate(date) {
         const urlParams = new URLSearchParams(window.location.search);
         if (date) {
@@ -252,5 +291,13 @@
         }
         window.location.href = '{{ route("admin.invoices.index") }}?' + urlParams.toString();
     }
+
+    // Kích hoạt tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
 </script>
 @endsection
