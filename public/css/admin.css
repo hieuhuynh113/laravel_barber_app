@@ -189,3 +189,197 @@ ul ul a {
     max-width: 200px;
     height: auto;
 }
+
+/* Notification styles */
+.notification-item {
+    border-bottom: 1px solid #e3e6f0;
+    padding: 15px;
+    transition: all 0.3s;
+}
+
+.notification-item:hover {
+    background-color: #f8f9fc;
+}
+
+.notification-item.unread {
+    background-color: #eef5ff;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-time {
+    font-size: 0.8rem;
+    color: #858796;
+}
+
+.notification-content {
+    margin-top: 5px;
+}
+
+.notification-actions {
+    margin-top: 10px;
+}
+
+.star-rating {
+    color: #f6c23e;
+}
+
+.low-rating {
+    color: #e74a3b;
+    font-weight: bold;
+}
+
+.notification-icon {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.icon-review {
+    background-color: #fff3cd;
+    color: #f6c23e;
+}
+
+.icon-appointment {
+    background-color: #d1e7dd;
+    color: #198754;
+}
+
+.icon-payment {
+    background-color: #e2d4f0;
+    color: #6f42c1;
+}
+
+.icon-contact {
+    background-color: #cfe2ff;
+    color: #0d6efd;
+}
+
+.notification-badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    margin-left: 0.5rem;
+}
+
+.notification-dropdown {
+    padding: 0;
+    border-radius: 8px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    width: 350px !important;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.notification-dropdown .dropdown-item {
+    white-space: normal;
+    padding: 12px 15px;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.notification-dropdown .dropdown-item:last-child {
+    border-bottom: none;
+}
+
+/* Notification tabs */
+.notification-tabs {
+    display: flex;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e3e6f0;
+    padding: 0;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+}
+
+.notification-tabs::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+
+.notification-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 10px;
+    font-size: 0.85rem;
+    color: #495057;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+    min-width: 80px;
+}
+
+.notification-tab:hover {
+    color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+    text-decoration: none;
+}
+
+.notification-tab.active {
+    color: #0d6efd;
+    font-weight: 600;
+    border-bottom: 3px solid #0d6efd;
+    background-color: rgba(13, 110, 253, 0.08);
+}
+
+.notification-tab i {
+    font-size: 1rem;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+/* Empty state */
+.notification-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #6c757d;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin: 15px;
+}
+
+.notification-empty i {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: #d1d3e2;
+    opacity: 0.7;
+}
+
+.notification-empty p {
+    margin-bottom: 0;
+    font-size: 0.95rem;
+}
+
+/* Notification content area */
+.notification-content-area {
+    min-height: 150px;
+    position: relative;
+}
+
+/* Notification filter empty state */
+.notification-empty-filtered {
+    display: none;
+}
+
+/* Notification badge in header */
+.nav-item .badge.bg-danger {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 0.6rem;
+}
+
+/* Prevent background color change on dropdown item click */
+.notification-dropdown .dropdown-item:active {
+    background-color: transparent;
+}
+
+/* Ensure dropdown stays open when clicking inside */
+.notification-dropdown.show {
+    display: block !important;
+}

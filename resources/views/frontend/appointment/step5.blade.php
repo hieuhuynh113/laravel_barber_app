@@ -8,7 +8,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header text-white" style="background-color: #9E8A78;">
                         <h4 class="mb-0">Đặt lịch hẹn</h4>
                     </div>
                     <div class="card-body">

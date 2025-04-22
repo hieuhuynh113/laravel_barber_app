@@ -30,6 +30,19 @@ class ProfileController extends Controller
         return view('frontend.profile.appointments', compact('appointments', 'user'));
     }
 
+    /**
+     * Hiển thị chi tiết lịch hẹn
+     */
+    public function appointmentDetail($id)
+    {
+        $user = Auth::user();
+        $appointment = Appointment::with(['services', 'barber.user'])
+            ->where('user_id', $user->id)
+            ->findOrFail($id);
+
+        return view('frontend.profile.appointment_detail', compact('appointment', 'user'));
+    }
+
     public function edit()
     {
         $user = Auth::user();

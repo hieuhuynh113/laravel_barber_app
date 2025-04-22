@@ -8,7 +8,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header text-white" style="background-color: #9E8A78;">
                         <h4 class="mb-0">Đặt lịch hẹn</h4>
                     </div>
                     <div class="card-body">
@@ -60,101 +60,12 @@
                                     <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
                                 </span>
                             </div>
-                            <h3 class="text-success mb-3">Đặt lịch thành công!</h3>
+                            <h3 class="text-success mb-3">Đã nhận yêu cầu đặt lịch!</h3>
                             <p class="lead">Cảm ơn bạn đã đặt lịch tại Barber Shop của chúng tôi.</p>
-                            <p>Mã đặt lịch của bạn: <strong>{{ $appointment->booking_code }}</strong></p>
-                            <p>Chúng tôi đã gửi email xác nhận đến <strong>{{ $appointment->email }}</strong></p>
+                            <p>Chúng tôi đã nhận được yêu cầu đặt lịch của bạn và đang xử lý.</p>
+                            <p>Bạn sẽ nhận được email xác nhận kèm theo mã đặt chỗ sau khi lịch hẹn được xác nhận.</p>
+                            <p>Chúng tôi đã gửi email thông báo đến <strong>{{ $appointment->email }}</strong></p>
                             <hr class="my-4">
-                        </div>
-
-                        <div class="appointment-details mb-4">
-                            <h5 class="card-title">Chi tiết cuộc hẹn</h5>
-                            <div class="row mt-3">
-                                <div class="col-md-6">
-                                    <div class="card bg-light mb-3">
-                                        <div class="card-body">
-                                            <h6 class="card-title">Thông tin cá nhân</h6>
-                                            <p class="mb-1"><strong>Họ tên:</strong> {{ $appointment->customer_name }}</p>
-                                            <p class="mb-1"><strong>Email:</strong> {{ $appointment->email }}</p>
-                                            <p class="mb-1"><strong>Số điện thoại:</strong> {{ $appointment->phone }}</p>
-                                            @if($appointment->address)
-                                                <p class="mb-1"><strong>Địa chỉ:</strong> {{ $appointment->address }}</p>
-                                            @endif
-                                            @if($appointment->notes)
-                                                <p class="mb-0"><strong>Ghi chú:</strong> {{ $appointment->notes }}</p>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="card bg-light mb-3">
-                                        <div class="card-body">
-                                            <h6 class="card-title">Chi tiết lịch hẹn</h6>
-                                            <p class="mb-1">
-                                                <strong>Ngày:</strong> {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d/m/Y') }}
-                                            </p>
-                                            <p class="mb-1"><strong>Giờ:</strong> {{ $appointment->start_time }} - {{ $appointment->end_time }}</p>
-                                            <p class="mb-1">
-                                                <strong>Thợ cắt tóc:</strong> {{ $appointment->barber->user->name }}
-                                            </p>
-                                            <p class="mb-1">
-                                                <strong>Trạng thái:</strong>
-                                                <span class="badge bg-warning">Chờ xác nhận</span>
-                                            </p>
-                                            <p class="mb-0">
-                                                <strong>Phương thức thanh toán:</strong>
-                                                @if($appointment->payment_method == 'cash')
-                                                    <span>Tiền mặt tại cửa hàng</span>
-                                                @elseif($appointment->payment_method == 'momo')
-                                                    <span>MoMo</span>
-                                                @elseif($appointment->payment_method == 'vnpay')
-                                                    <span>VNPay</span>
-                                                @else
-                                                    <span>Chuyển khoản ngân hàng</span>
-                                                @endif
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <h6 class="card-title">Dịch vụ đã chọn</h6>
-                                    <div class="table-responsive">
-                                        <table class="table table-sm">
-                                            <thead>
-                                                <tr>
-                                                    <th>Dịch vụ</th>
-                                                    <th>Thời gian</th>
-                                                    <th class="text-end">Giá</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @php $totalPrice = 0; $totalDuration = 0; @endphp
-                                                @foreach($appointment->services as $service)
-                                                    <tr>
-                                                        <td>{{ $service->name }}</td>
-                                                        <td>{{ $service->duration }} phút</td>
-                                                        <td class="text-end">{{ number_format($service->price) }} VNĐ</td>
-                                                    </tr>
-                                                    @php
-                                                        $totalPrice += $service->price;
-                                                        $totalDuration += $service->duration;
-                                                    @endphp
-                                                @endforeach
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>Tổng</th>
-                                                    <th>{{ $totalDuration }} phút</th>
-                                                    <th class="text-end">{{ number_format($totalPrice) }} VNĐ</th>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="additional-info mb-4">
@@ -248,17 +159,17 @@
         height: 40px;
         border-radius: 50%;
         background-color: #e9ecef;
-        color: #6c757d;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 8px;
+        margin: 0 auto 10px;
+        color: #6c757d;
         font-weight: bold;
     }
 
-    .step.active .step-circle {
-        background-color: #0d6efd;
-        color: white;
+    .step-text {
+        font-size: 0.8rem;
+        color: #6c757d;
     }
 
     .step.completed .step-circle {
@@ -266,29 +177,15 @@
         color: white;
     }
 
-    .step-text {
-        font-size: 0.875rem;
-        color: #6c757d;
+    .step.active .step-circle {
+        background-color: #007bff;
+        color: white;
     }
 
+    .step.completed .step-text,
     .step.active .step-text {
-        color: #0d6efd;
-        font-weight: bold;
-    }
-
-    .step.completed .step-text {
-        color: #28a745;
-    }
-
-    .success-icon {
-        display: inline-block;
-        animation: bounce 1s ease infinite;
-    }
-
-    @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-        40% {transform: translateY(-20px);}
-        60% {transform: translateY(-10px);}
+        color: #343a40;
+        font-weight: 500;
     }
 </style>
 @endsection

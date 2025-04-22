@@ -30,8 +30,7 @@ class CategoryController extends Controller
 
         // Tìm kiếm nếu có
         if ($search) {
-            $query->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+            $query->where('name', 'like', "%{$search}%");
         }
 
         $categories = $query->latest()->paginate(10)->withQueryString();
@@ -48,29 +47,63 @@ class CategoryController extends Controller
 
     public function create(Request $request)
     {
-        $type = $request->input('type', 'service');
+        // Thứ tự ưu tiên: session > request > mặc định
+        $type = 'service'; // Mặc định
+
+        // Kiểm tra nếu có trong request
+        if ($request->has('type')) {
+            $type = $request->input('type');
+        }
+
+        // Kiểm tra nếu có trong session (uu tiên cao nhất)
+        if (session()->has('type')) {
+            $type = session('type');
+            session()->forget('type'); // Xóa khỏi session sau khi sử dụng
+        }
+
         return view('admin.categories.create', compact('type'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) use ($request) {
+                    // Kiểm tra trùng lặp tên danh mục trong cùng một loại
+                    $exists = Category::where('name', $value)
+                        ->where('type', $request->type)
+                        ->exists();
+
+                    if ($exists) {
+                        $fail('Tên danh mục đã tồn tại trong loại này.');
+                    }
+                },
+            ],
             'type' => 'required|in:service,product,news',
-            'description' => 'nullable|string',
             'status' => 'required|boolean',
         ]);
 
-        Category::create([
+        $slug = $request->slug ? Str::slug($request->slug) : Str::slug($request->name);
+
+        $category = Category::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->name),
+            'slug' => $slug,
             'type' => $request->type,
-            'description' => $request->description,
             'status' => $request->status,
         ]);
 
+        if ($request->action === 'save_and_new') {
+            // Khi lưu và tạo mới, giữ nguyên loại danh mục đã chọn
+            return redirect()->route('admin.categories.create')
+                ->with('type', $request->type) // Truyền loại danh mục qua session
+                ->with('success', 'Danh mục "' . $category->name . '" đã được tạo thành công!');
+        }
+
         return redirect()->route('admin.categories.index', ['type' => $request->type])
-            ->with('success', 'Danh mục đã được tạo thành công.');
+            ->with('success', 'Danh mục "' . $category->name . '" đã được tạo thành công!');
     }
 
     public function edit(Category $category)
@@ -81,20 +114,35 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) use ($request, $category) {
+                    // Kiểm tra trùng lặp tên danh mục trong cùng một loại, ngoại trừ danh mục hiện tại
+                    $exists = Category::where('name', $value)
+                        ->where('type', $category->type)
+                        ->where('id', '!=', $category->id)
+                        ->exists();
+
+                    if ($exists) {
+                        $fail('Tên danh mục đã tồn tại trong loại này.');
+                    }
+                },
+            ],
             'status' => 'required|boolean',
         ]);
 
+        $slug = $request->slug ? Str::slug($request->slug) : Str::slug($request->name);
+
         $category->update([
             'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'description' => $request->description,
+            'slug' => $slug,
             'status' => $request->status,
         ]);
 
         return redirect()->route('admin.categories.index', ['type' => $category->type])
-            ->with('success', 'Danh mục đã được cập nhật thành công.');
+            ->with('success', 'Danh mục "' . $category->name . '" đã được cập nhật thành công!');
     }
 
     public function destroy(Category $category)

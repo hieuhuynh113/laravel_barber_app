@@ -8,6 +8,8 @@ use App\Models\Service;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class AppointmentController extends Controller
 {
@@ -274,6 +276,17 @@ class AppointmentController extends Controller
         $appointment->update([
             'status' => $newStatus,
         ]);
+
+        // Nếu trạng thái thay đổi từ "pending" sang "confirmed", gửi email xác nhận
+        if ($oldStatus == 'pending' && $newStatus == 'confirmed') {
+            try {
+                Mail::to($appointment->email)
+                    ->send(new \App\Mail\AppointmentConfirmed($appointment));
+                Log::info("Email xác nhận lịch hẹn đã được gửi đến {$appointment->email} cho lịch hẹn {$appointment->booking_code}");
+            } catch (\Exception $e) {
+                Log::error("Không thể gửi email xác nhận lịch hẹn: " . $e->getMessage());
+            }
+        }
 
         // Nếu trạng thái thay đổi sang "canceled", giảm số lượng đặt chỗ trong time slot
         if ($newStatus == 'canceled' && $oldStatus != 'canceled' && $appointment->time_slot) {

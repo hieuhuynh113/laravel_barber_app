@@ -18,7 +18,7 @@
         <div class="card-body">
             <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                
+
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="name" class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
@@ -42,7 +42,7 @@
                         @enderror
                     </div>
                 </div>
-                
+
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="price" class="form-label">Giá (VNĐ) <span class="text-danger">*</span></label>
@@ -68,7 +68,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="description" class="form-label">Mô tả ngắn</label>
                     <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="3">{{ old('description') }}</textarea>
@@ -76,7 +76,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="content" class="form-label">Nội dung chi tiết</label>
                     <textarea class="form-control @error('content') is-invalid @enderror" id="content" name="content" rows="5">{{ old('content') }}</textarea>
@@ -84,7 +84,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="image" class="form-label">Hình ảnh chính</label>
                     <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image">
@@ -93,15 +93,8 @@
                     @enderror
                 </div>
 
-                <div class="mb-3">
-                    <label for="images" class="form-label">Hình ảnh phụ (có thể chọn nhiều)</label>
-                    <input type="file" class="form-control @error('images') is-invalid @enderror" id="images" name="images[]" multiple>
-                    @error('images')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                    <small class="text-muted">Ảnh sẽ được hiển thị trong thư viện ảnh sản phẩm</small>
-                </div>
-                
+
+
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="status" class="form-label">Trạng thái</label>
@@ -124,7 +117,7 @@
                         @enderror
                     </div>
                 </div>
-                
+
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Lưu sản phẩm
@@ -157,4 +150,4 @@
         }
     });
 </script>
-@endsection 
+@endsection

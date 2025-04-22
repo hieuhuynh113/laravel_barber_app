@@ -247,8 +247,8 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 mb-4 mb-lg-0">
-                <h2 class="h1 mb-3">Đặt lịch hẹn ngay hôm nay</h2>
-                <p class="lead mb-4">Trải nghiệm dịch vụ cắt tóc chuyên nghiệp tại Barber Shop. Dễ dàng đặt lịch hẹn trực tuyến.</p>
+                <h2 class="h1 mb-3">Đặt lịch ngay hôm nay</h2>
+                <p class="lead mb-4">Trải nghiệm dịch vụ cắt tóc chuyên nghiệp tại Barber Shop. Dễ dàng đặt lịch ngay trực tuyến.</p>
                 <ul class="list-unstyled mb-0">
                     <li class="mb-2"><i class="fas fa-check-circle me-2"></i> Thợ cắt tóc chuyên nghiệp</li>
                     <li class="mb-2"><i class="fas fa-check-circle me-2"></i> Không gian thoải mái, sang trọng</li>

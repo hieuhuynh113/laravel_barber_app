@@ -28,7 +28,7 @@
                     @else
                         <img src="{{ asset('images/default-category.jpg') }}" alt="{{ $category->name }}" class="img-fluid rounded">
                     @endif
-                    
+
                     <h4 class="mt-3">{{ $category->name }}</h4>
                     <p class="text-muted">
                         <span class="badge bg-{{ $category->status ? 'success' : 'danger' }}">
@@ -38,7 +38,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-lg-8">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -87,14 +87,7 @@
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-sm-3">
-                            <strong>Mô tả:</strong>
-                        </div>
-                        <div class="col-sm-9">
-                            {{ $category->description ?? 'Không có mô tả' }}
-                        </div>
-                    </div>
+
 
                     <div class="row mb-3">
                         <div class="col-sm-3">
@@ -201,4 +194,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

@@ -68,7 +68,7 @@
                         </li>
                     </ul>
                     <div class="d-flex align-items-center">
-                        <a href="{{ route('appointment.step1') }}" class="btn btn-primary me-3 appointment-btn">Đặt lịch hẹn</a>
+                        <a href="{{ route('appointment.step1') }}" class="btn btn-primary me-3 appointment-btn">Đặt lịch ngay</a>
 
                         @guest
                             <a href="{{ route('login') }}" class="btn btn-outline-light me-2">Đăng nhập</a>
@@ -150,8 +150,8 @@
                         <li>Chủ nhật: 9:00 - 18:00</li>
                     </ul>
                     <div class="mt-4">
-                        <h6>Đặt lịch ngay</h6>
-                        <a href="{{ route('appointment.step1') }}" class="btn btn-primary mt-2 appointment-btn">Đặt lịch hẹn</a>
+                        <h6>Đặt lịch cắt tóc</h6>
+                        <a href="{{ route('appointment.step1') }}" class="btn btn-primary mt-2 appointment-btn">Đặt lịch ngay</a>
                     </div>
                 </div>
                 <div class="col-lg-4">

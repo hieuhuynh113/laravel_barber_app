@@ -12,6 +12,13 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\InvoiceMail;
+use App\Models\User as AppUser;
+use App\Models\Staff;
+use App\Models\Customer;
+use App\Models\InvoiceDetail;
+use Illuminate\Support\Facades\Log;
 
 class InvoiceController extends Controller
 {
@@ -102,7 +109,7 @@ class InvoiceController extends Controller
             ->whereDoesntHave('invoice')
             ->get();
 
-        $users = User::where('role', 'customer')->get();
+        $users = AppUser::where('role', 'customer')->get();
         $barbers = Barber::with('user')->get();
         $services = Service::where('status', 1)->get();
         $products = Product::where('status', 1)->get();
@@ -251,7 +258,7 @@ class InvoiceController extends Controller
     public function show(Invoice $invoice)
     {
         // Debug: Ghi log invoice data trước khi load
-        \Log::info('Invoice before load:', [
+        \Illuminate\Support\Facades\Log::info('Invoice before load:', [
             'id' => $invoice->id,
             'total' => $invoice->total,
             'services_count' => $invoice->services()->count(),
@@ -261,11 +268,11 @@ class InvoiceController extends Controller
         ]);
 
         // Xóa cache để đảm bảo dữ liệu mới nhất
-        \DB::statement('SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO"');
+        \Illuminate\Support\Facades\DB::statement('SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO"');
 
         // Tải lại invoice từ cơ sở dữ liệu để đảm bảo dữ liệu mới nhất
         // Sử dụng query builder để tránh cache
-        $invoiceData = \DB::table('invoices')
+        $invoiceData = \Illuminate\Support\Facades\DB::table('invoices')
             ->where('id', $invoice->id)
             ->first();
 
@@ -279,7 +286,7 @@ class InvoiceController extends Controller
 
         // Tải lại các mối quan hệ một cách rõ ràng
         // Sử dụng query builder với DISTINCT để tránh trùng lập
-        $services = \DB::table('invoice_service')
+        $services = \Illuminate\Support\Facades\DB::table('invoice_service')
             ->where('invoice_id', $invoice->id)
             ->join('services', 'invoice_service.service_id', '=', 'services.id')
             ->select(
@@ -294,7 +301,7 @@ class InvoiceController extends Controller
             ->distinct()
             ->get();
 
-        $products = \DB::table('invoice_product')
+        $products = \Illuminate\Support\Facades\DB::table('invoice_product')
             ->where('invoice_id', $invoice->id)
             ->join('products', 'invoice_product.product_id', '=', 'products.id')
             ->select(
@@ -311,21 +318,21 @@ class InvoiceController extends Controller
 
         // Xóa cache của các mối quan hệ
         try {
-            \DB::statement('ANALYZE TABLE invoice_service');
-            \DB::statement('ANALYZE TABLE invoice_product');
-            \DB::statement('ANALYZE TABLE services');
-            \DB::statement('ANALYZE TABLE products');
+            \Illuminate\Support\Facades\DB::statement('ANALYZE TABLE invoice_service');
+            \Illuminate\Support\Facades\DB::statement('ANALYZE TABLE invoice_product');
+            \Illuminate\Support\Facades\DB::statement('ANALYZE TABLE services');
+            \Illuminate\Support\Facades\DB::statement('ANALYZE TABLE products');
         } catch (\Exception $e) {
-            \Log::warning('Could not analyze tables: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::warning('Could not analyze tables: ' . $e->getMessage());
         }
 
         // Debug: Ghi log dữ liệu tải trực tiếp
-        \Log::info('Services loaded directly:', [
+        \Illuminate\Support\Facades\Log::info('Services loaded directly:', [
             'count' => $services->count(),
             'data' => $services
         ]);
 
-        \Log::info('Products loaded directly:', [
+        \Illuminate\Support\Facades\Log::info('Products loaded directly:', [
             'count' => $products->count(),
             'data' => $products
         ]);
@@ -342,7 +349,7 @@ class InvoiceController extends Controller
         $directServicesCount = $services->count();
         $directProductsCount = $products->count();
 
-        \Log::info('Comparison:', [
+        \Illuminate\Support\Facades\Log::info('Comparison:', [
             'model_services_count' => $modelServicesCount,
             'direct_services_count' => $directServicesCount,
             'model_products_count' => $modelProductsCount,
@@ -350,7 +357,7 @@ class InvoiceController extends Controller
         ]);
 
         // Debug: Ghi log invoice data sau khi load
-        \Log::info('Invoice after load:', [
+        \Illuminate\Support\Facades\Log::info('Invoice after load:', [
             'id' => $invoice->id,
             'total' => $invoice->total,
             'services_count' => $invoice->services->count(),
@@ -365,7 +372,7 @@ class InvoiceController extends Controller
 
         // Nếu có sự khác biệt giữa dữ liệu trực tiếp và dữ liệu từ model, ghi log cảnh báo
         if ($modelServicesCount != $directServicesCount || $modelProductsCount != $directProductsCount) {
-            \Log::warning('Mismatch in relationship counts, using direct data:', [
+            \Illuminate\Support\Facades\Log::warning('Mismatch in relationship counts, using direct data:', [
                 'model_services_count' => $modelServicesCount,
                 'direct_services_count' => $directServicesCount,
                 'model_products_count' => $modelProductsCount,
@@ -375,7 +382,7 @@ class InvoiceController extends Controller
 
         // Nếu không có dịch vụ nào trong cơ sở dữ liệu nhưng có dịch vụ trong lịch hẹn, thêm dịch vụ từ lịch hẹn
         if ($directServicesCount == 0 && $invoice->appointment && $invoice->appointment->services->count() > 0) {
-            \Log::info('No services found in invoice, adding from appointment');
+            \Illuminate\Support\Facades\Log::info('No services found in invoice, adding from appointment');
 
             // Tạo một collection mới để chứa dịch vụ từ lịch hẹn
             $appointmentServices = collect();
@@ -393,7 +400,7 @@ class InvoiceController extends Controller
 
             // Sử dụng dịch vụ từ lịch hẹn
             $directServices = $appointmentServices;
-            \Log::info('Services added from appointment:', [
+            \Illuminate\Support\Facades\Log::info('Services added from appointment:', [
                 'count' => $directServices->count(),
                 'data' => $directServices
             ]);
@@ -429,7 +436,7 @@ class InvoiceController extends Controller
             'barber'
         ]);
 
-        $users = User::where('role', 'customer')->get();
+        $users = AppUser::where('role', 'customer')->get();
         $barbers = Barber::with('user')->get();
         $services = Service::where('status', 1)->get();
         $products = Product::where('status', 1)->get();
@@ -454,10 +461,10 @@ class InvoiceController extends Controller
         }
 
         // Sử dụng transaction để đảm bảo tính toàn vẹn của dữ liệu
-        return \DB::transaction(function() use ($request, $invoice) {
+        return \Illuminate\Support\Facades\DB::transaction(function() use ($request, $invoice) {
             // Debug: Ghi log request data và invoice trước khi cập nhật
-            \Log::info('Invoice Update Request Data:', $request->all());
-            \Log::info('Invoice Before Update:', [
+            \Illuminate\Support\Facades\Log::info('Invoice Update Request Data:', $request->all());
+            \Illuminate\Support\Facades\Log::info('Invoice Before Update:', [
                 'id' => $invoice->id,
                 'total' => $invoice->total,
                 'services' => $invoice->services()->pluck('service_id')->toArray(),
@@ -502,7 +509,7 @@ class InvoiceController extends Controller
             ];
 
             // Debug: Ghi log dữ liệu cập nhật
-            \Log::info('Invoice Update Data:', $updateData);
+            \Illuminate\Support\Facades\Log::info('Invoice Update Data:', $updateData);
 
             // Cập nhật hóa đơn
             $invoice->update($updateData);
@@ -533,13 +540,13 @@ class InvoiceController extends Controller
             if ($hasServiceData) {
                 // Xóa tất cả các dịch vụ hiện tại
                 $invoice->services()->detach();
-                \Log::info('All services detached from invoice');
+                \Illuminate\Support\Facades\Log::info('All services detached from invoice');
 
                 // Cập nhật dịch vụ trong hóa đơn (nếu có)
                 // Debug: Ghi log service data
-                \Log::info('Service IDs', ['data' => $request->service_ids ?? []]);
-                \Log::info('Service Prices', ['data' => $request->service_prices ?? []]);
-                \Log::info('Service Quantities', ['data' => $request->service_quantities ?? []]);
+                \Illuminate\Support\Facades\Log::info('Service IDs', ['data' => $request->service_ids ?? []]);
+                \Illuminate\Support\Facades\Log::info('Service Prices', ['data' => $request->service_prices ?? []]);
+                \Illuminate\Support\Facades\Log::info('Service Quantities', ['data' => $request->service_quantities ?? []]);
 
                 $serviceData = [];
                 // Kiểm tra xem service_ids có tồn tại không trước khi sử dụng foreach
@@ -562,7 +569,7 @@ class InvoiceController extends Controller
                         ];
 
                         // Debug: Ghi log chi tiết dịch vụ
-                        \Log::info("Service {$service->name} added:", [
+                        \Illuminate\Support\Facades\Log::info("Service {$service->name} added:", [
                             'id' => $serviceId,
                             'quantity' => $quantity,
                             'price' => $price,
@@ -573,12 +580,12 @@ class InvoiceController extends Controller
 
                 if (!empty($serviceData)) {
                     $invoice->services()->attach($serviceData);
-                    \Log::info('Services attached:', $serviceData);
+                    \Illuminate\Support\Facades\Log::info('Services attached:', $serviceData);
                 }
             }
 
             // Debug: Ghi log sau khi cập nhật dịch vụ
-            \Log::info('Services after update:', [
+            \Illuminate\Support\Facades\Log::info('Services after update:', [
                 'count' => $invoice->services()->count(),
                 'ids' => $invoice->services()->pluck('service_id')->toArray()
             ]);
@@ -610,7 +617,7 @@ class InvoiceController extends Controller
                     $product->save();
 
                     // Debug: Ghi log hoàn trả sản phẩm
-                    \Log::info("Product {$product->name} returned to stock:", [
+                    \Illuminate\Support\Facades\Log::info("Product {$product->name} returned to stock:", [
                         'id' => $product->id,
                         'quantity' => $product->pivot->quantity,
                         'new_stock' => $product->stock
@@ -619,19 +626,19 @@ class InvoiceController extends Controller
 
                 // Xóa tất cả các sản phẩm hiện tại
                 $invoice->products()->detach();
-                \Log::info('All products detached from invoice');
+                \Illuminate\Support\Facades\Log::info('All products detached from invoice');
 
                 // Cập nhật sản phẩm trong hóa đơn (nếu có)
                 $productData = [];
 
                 // Nếu không có dữ liệu sản phẩm mới, đảm bảo rằng không có sản phẩm nào được thêm lại
                 if (!$hasProductData) {
-                    \Log::info('Product section submitted but no products selected, keeping products detached');
+                    \Illuminate\Support\Facades\Log::info('Product section submitted but no products selected, keeping products detached');
                 }
                 // Debug: Ghi log product data
-                \Log::info('Product IDs', ['data' => $request->product_ids ?? []]);
-                \Log::info('Product Prices', ['data' => $request->product_prices ?? []]);
-                \Log::info('Product Quantities', ['data' => $request->product_quantities ?? []]);
+                \Illuminate\Support\Facades\Log::info('Product IDs', ['data' => $request->product_ids ?? []]);
+                \Illuminate\Support\Facades\Log::info('Product Prices', ['data' => $request->product_prices ?? []]);
+                \Illuminate\Support\Facades\Log::info('Product Quantities', ['data' => $request->product_quantities ?? []]);
 
                 // Kiểm tra xem product_ids có tồn tại không trước khi sử dụng foreach
                 if ($request->has('product_ids') && is_array($request->product_ids)) {
@@ -651,14 +658,14 @@ class InvoiceController extends Controller
                             $product->save();
 
                             // Debug: Ghi log giảm sản phẩm
-                            \Log::info("Product {$product->name} deducted from stock:", [
+                            \Illuminate\Support\Facades\Log::info("Product {$product->name} deducted from stock:", [
                                 'id' => $product->id,
                                 'quantity' => $quantity,
                                 'new_stock' => $product->stock
                             ]);
                         } else {
                             // Nếu không đủ số lượng, ghi log
-                            \Log::warning("Not enough stock for product {$product->name}:", [
+                            \Illuminate\Support\Facades\Log::warning("Not enough stock for product {$product->name}:", [
                                 'id' => $product->id,
                                 'requested' => $quantity,
                                 'available' => $product->stock
@@ -673,7 +680,7 @@ class InvoiceController extends Controller
                         ];
 
                         // Debug: Ghi log chi tiết sản phẩm
-                        \Log::info("Product {$product->name} added:", [
+                        \Illuminate\Support\Facades\Log::info("Product {$product->name} added:", [
                             'id' => $productId,
                             'quantity' => $quantity,
                             'price' => $price,
@@ -684,12 +691,12 @@ class InvoiceController extends Controller
 
                 if (!empty($productData)) {
                     $invoice->products()->attach($productData);
-                    \Log::info('Products attached:', $productData);
+                    \Illuminate\Support\Facades\Log::info('Products attached:', $productData);
                 }
             }
 
             // Debug: Ghi log sau khi cập nhật sản phẩm
-            \Log::info('Products after update:', [
+            \Illuminate\Support\Facades\Log::info('Products after update:', [
                 'count' => $invoice->products()->count(),
                 'ids' => $invoice->products()->pluck('product_id')->toArray()
             ]);
@@ -698,7 +705,7 @@ class InvoiceController extends Controller
             $invoice->refresh();
 
             // Debug: Ghi log invoice sau khi cập nhật
-            \Log::info('Invoice After Update:', [
+            \Illuminate\Support\Facades\Log::info('Invoice After Update:', [
                 'id' => $invoice->id,
                 'total' => $invoice->total,
                 'services' => $invoice->services()->pluck('service_id')->toArray(),
@@ -707,10 +714,10 @@ class InvoiceController extends Controller
 
             // Tải lại invoice từ cơ sở dữ liệu để đảm bảo dữ liệu mới nhất
             // Xóa cache để đảm bảo dữ liệu mới nhất
-            \DB::statement('SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO"');
+            \Illuminate\Support\Facades\DB::statement('SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO"');
 
             // Sử dụng query builder để tránh cache
-            $invoiceData = \DB::table('invoices')
+            $invoiceData = \Illuminate\Support\Facades\DB::table('invoices')
                 ->where('id', $invoice->id)
                 ->first();
 
@@ -784,8 +791,8 @@ class InvoiceController extends Controller
     {
         // Thống kê doanh thu theo tháng trong năm hiện tại
         $currentYear = Carbon::now()->year;
-        $monthlyRevenue = DB::table('invoices')
-            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('SUM(total) as total'))
+        $monthlyRevenue = \Illuminate\Support\Facades\DB::table('invoices')
+            ->select(\Illuminate\Support\Facades\DB::raw('MONTH(created_at) as month'), \Illuminate\Support\Facades\DB::raw('SUM(total) as total'))
             ->whereYear('created_at', $currentYear)
             ->where('payment_status', 'paid')
             ->groupBy('month')
@@ -793,33 +800,33 @@ class InvoiceController extends Controller
             ->get();
 
         // Thống kê doanh thu theo phương thức thanh toán
-        $paymentMethodStats = DB::table('invoices')
-            ->select('payment_method', DB::raw('COUNT(*) as count'), DB::raw('SUM(total) as total'))
+        $paymentMethodStats = \Illuminate\Support\Facades\DB::table('invoices')
+            ->select('payment_method', \Illuminate\Support\Facades\DB::raw('COUNT(*) as count'), \Illuminate\Support\Facades\DB::raw('SUM(total) as total'))
             ->where('payment_status', 'paid')
             ->groupBy('payment_method')
             ->get();
 
         // Thống kê doanh thu theo trạng thái
-        $statusStats = DB::table('invoices')
-            ->select('payment_status as status', DB::raw('COUNT(*) as count'), DB::raw('SUM(total) as total'))
+        $statusStats = \Illuminate\Support\Facades\DB::table('invoices')
+            ->select('payment_status as status', \Illuminate\Support\Facades\DB::raw('COUNT(*) as count'), \Illuminate\Support\Facades\DB::raw('SUM(total) as total'))
             ->groupBy('payment_status')
             ->get();
 
         // Thống kê doanh thu theo dịch vụ
-        $serviceStats = DB::table('invoice_service')
+        $serviceStats = \Illuminate\Support\Facades\DB::table('invoice_service')
             ->join('services', 'invoice_service.service_id', '=', 'services.id')
             ->join('invoices', 'invoice_service.invoice_id', '=', 'invoices.id')
-            ->select('services.name', DB::raw('COUNT(*) as count'), DB::raw('SUM(invoice_service.subtotal) as total'), DB::raw("'service' as type"))
+            ->select('services.name', \Illuminate\Support\Facades\DB::raw('COUNT(*) as count'), \Illuminate\Support\Facades\DB::raw('SUM(invoice_service.subtotal) as total'), \Illuminate\Support\Facades\DB::raw("'service' as type"))
             ->where('invoices.payment_status', 'paid')
             ->groupBy('services.name')
             ->orderBy('total', 'desc')
             ->limit(10);
 
         // Thống kê doanh thu theo sản phẩm
-        $productStats = DB::table('invoice_product')
+        $productStats = \Illuminate\Support\Facades\DB::table('invoice_product')
             ->join('products', 'invoice_product.product_id', '=', 'products.id')
             ->join('invoices', 'invoice_product.invoice_id', '=', 'invoices.id')
-            ->select('products.name', DB::raw('COUNT(*) as count'), DB::raw('SUM(invoice_product.subtotal) as total'), DB::raw("'product' as type"))
+            ->select('products.name', \Illuminate\Support\Facades\DB::raw('COUNT(*) as count'), \Illuminate\Support\Facades\DB::raw('SUM(invoice_product.subtotal) as total'), \Illuminate\Support\Facades\DB::raw("'product' as type"))
             ->where('invoices.payment_status', 'paid')
             ->groupBy('products.name')
             ->orderBy('total', 'desc')
@@ -829,10 +836,10 @@ class InvoiceController extends Controller
         $itemStats = $serviceStats->union($productStats)->orderBy('total', 'desc')->limit(10)->get();
 
         // Thống kê doanh thu theo thợ cắt tóc
-        $barberStats = DB::table('invoices')
+        $barberStats = \Illuminate\Support\Facades\DB::table('invoices')
             ->join('barbers', 'invoices.barber_id', '=', 'barbers.id')
             ->join('users', 'barbers.user_id', '=', 'users.id')
-            ->select('users.name', DB::raw('COUNT(*) as count'), DB::raw('SUM(invoices.total) as total'))
+            ->select('users.name', \Illuminate\Support\Facades\DB::raw('COUNT(*) as count'), \Illuminate\Support\Facades\DB::raw('SUM(invoices.total) as total'))
             ->where('invoices.payment_status', 'paid')
             ->groupBy('users.name')
             ->orderBy('total', 'desc')
@@ -853,14 +860,14 @@ class InvoiceController extends Controller
     public function updateStatus(Request $request, Invoice $invoice)
     {
         // Sử dụng transaction để đảm bảo tính toàn vẹn của dữ liệu
-        return \DB::transaction(function() use ($request, $invoice) {
+        return \Illuminate\Support\Facades\DB::transaction(function() use ($request, $invoice) {
             $request->validate([
                 'status' => 'required|in:pending,completed,canceled',
                 'payment_status' => 'required|in:pending,paid',
             ]);
 
             // Debug: Ghi log trước khi cập nhật
-            \Log::info('Invoice Status Before Update:', [
+            \Illuminate\Support\Facades\Log::info('Invoice Status Before Update:', [
                 'id' => $invoice->id,
                 'status' => $invoice->status,
                 'payment_status' => $invoice->payment_status
@@ -879,7 +886,7 @@ class InvoiceController extends Controller
             }
 
             // Debug: Ghi log sau khi cập nhật
-            \Log::info('Invoice Status After Update:', [
+            \Illuminate\Support\Facades\Log::info('Invoice Status After Update:', [
                 'id' => $invoice->id,
                 'status' => $invoice->status,
                 'payment_status' => $invoice->payment_status
@@ -902,12 +909,21 @@ class InvoiceController extends Controller
         }
 
         try {
-            // Gửi email hóa đơn (chưa triển khai chi tiết)
-            // Mail::to($user->email)->send(new InvoiceMail($invoice));
+            // Gửi email hóa đơn
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(new InvoiceMail($invoice));
 
-            // Tạm thời chỉ hiển thị thông báo thành công
+            // Cập nhật trạng thái đã gửi email
+            $invoice->update([
+                'email_sent' => true,
+                'email_sent_at' => now()
+            ]);
+
             return redirect()->back()->with('success', 'Hóa đơn đã được gửi đến email ' . $user->email);
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Lỗi gửi email hóa đơn: ' . $e->getMessage(), [
+                'invoice_id' => $invoice->id,
+                'user_email' => $user->email
+            ]);
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi gửi email: ' . $e->getMessage());
         }
     }
@@ -918,7 +934,7 @@ class InvoiceController extends Controller
     public function cancelInvoice(Request $request, Invoice $invoice)
     {
         // Sử dụng transaction để đảm bảo tính toàn vẹn của dữ liệu
-        return \DB::transaction(function() use ($request, $invoice) {
+        return \Illuminate\Support\Facades\DB::transaction(function() use ($request, $invoice) {
             $request->validate([
                 'cancel_reason' => 'required|string|max:500',
             ], [
@@ -927,7 +943,7 @@ class InvoiceController extends Controller
             ]);
 
             // Ghi log trước khi cập nhật
-            \Log::info('Invoice Before Cancel:', [
+            \Illuminate\Support\Facades\Log::info('Invoice Before Cancel:', [
                 'id' => $invoice->id,
                 'status' => $invoice->status,
                 'payment_status' => $invoice->payment_status,
@@ -957,7 +973,7 @@ class InvoiceController extends Controller
                 $product->save();
 
                 // Ghi log hoàn trả sản phẩm
-                \Log::info("Product {$product->name} returned to stock:", [
+                \Illuminate\Support\Facades\Log::info("Product {$product->name} returned to stock:", [
                     'id' => $product->id,
                     'quantity' => $product->pivot->quantity,
                     'new_stock' => $product->stock
@@ -965,7 +981,7 @@ class InvoiceController extends Controller
             }
 
             // Ghi log sau khi cập nhật
-            \Log::info('Invoice After Cancel:', [
+            \Illuminate\Support\Facades\Log::info('Invoice After Cancel:', [
                 'id' => $invoice->id,
                 'status' => $invoice->status,
                 'payment_status' => $invoice->payment_status

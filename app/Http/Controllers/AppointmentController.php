@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Notification;
+use App\Models\User;
+use App\Notifications\NewAppointmentNotification;
 
 class AppointmentController extends Controller
 {
@@ -405,12 +408,21 @@ class AppointmentController extends Controller
             $appointment->services()->attach($service->id, ['price' => $service->price]);
         }
 
-        // Gửi email xác nhận
+        // Gửi email thông báo đã nhận yêu cầu đặt lịch
         try {
-            Mail::to($customerEmail)->send(new \App\Mail\AppointmentConfirmation($appointment));
-            \Log::info("Email xác nhận đã được gửi đến {$customerEmail} cho lịch hẹn {$bookingCode}");
+            Mail::to($customerEmail)->send(new \App\Mail\AppointmentReceived($appointment));
+            \Log::info("Email thông báo đã nhận yêu cầu đặt lịch đã được gửi đến {$customerEmail} cho lịch hẹn {$bookingCode}");
         } catch (\Exception $e) {
-            \Log::error("Không thể gửi email xác nhận: " . $e->getMessage());
+            \Log::error("Không thể gửi email thông báo đã nhận yêu cầu đặt lịch: " . $e->getMessage());
+        }
+
+        // Gửi thông báo cho admin về lịch hẹn mới
+        try {
+            $admins = User::where('role', 'admin')->get();
+            Notification::send($admins, new NewAppointmentNotification($appointment));
+            \Log::info("Thông báo lịch hẹn mới đã được gửi đến admin cho lịch hẹn {$bookingCode}");
+        } catch (\Exception $e) {
+            \Log::error("Không thể gửi thông báo lịch hẹn mới: " . $e->getMessage());
         }
 
         // Đánh dấu lịch hẹn đã được tạo
@@ -507,8 +519,12 @@ class AppointmentController extends Controller
             try {
                 Mail::to(config('mail.admin_email', 'admin@example.com'))
                     ->send(new \App\Mail\NewPaymentReceipt($appointment, $receipt));
+
+                // Gửi thông báo cho admin về biên lai thanh toán mới
+                $admins = User::where('role', 'admin')->get();
+                Notification::send($admins, new \App\Notifications\NewPaymentNotification($receipt));
             } catch (\Exception $e) {
-                \Log::error("Không thể gửi email thông báo biên lai: " . $e->getMessage());
+                \Log::error("Không thể gửi email/thông báo biên lai: " . $e->getMessage());
             }
 
             return redirect()->route('profile.appointments')

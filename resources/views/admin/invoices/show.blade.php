@@ -109,6 +109,15 @@
                                     <strong>Ngày thanh toán:</strong>
                                     {{ $invoice->payment_date ? $invoice->payment_date->format('d/m/Y H:i:s') : 'Chưa thanh toán' }}
                                 </p>
+                                <p class="mb-0">
+                                    <strong>Trạng thái email:</strong>
+                                    @if($invoice->email_sent)
+                                        <span class="badge bg-success">Đã gửi</span>
+                                        <small class="text-muted">({{ $invoice->email_sent_at ? $invoice->email_sent_at->format('d/m/Y H:i:s') : '' }})</small>
+                                    @else
+                                        <span class="badge bg-secondary">Chưa gửi</span>
+                                    @endif
+                                </p>
                             </div>
                         </div>
 
@@ -260,8 +269,18 @@
 
                     <div class="mb-3">
                         <a href="{{ route('admin.invoices.send-email', $invoice->id) }}" class="btn btn-success w-100">
-                            <i class="fas fa-envelope"></i> Gửi email hóa đơn
+                            <i class="fas fa-envelope"></i> 
+                            @if($invoice->email_sent)
+                                Gửi lại email hóa đơn
+                            @else
+                                Gửi email hóa đơn
+                            @endif
                         </a>
+                        @if($invoice->email_sent)
+                            <small class="text-muted d-block mt-1">
+                                <i class="fas fa-info-circle"></i> Đã gửi email vào {{ $invoice->email_sent_at->format('d/m/Y H:i:s') }}
+                            </small>
+                        @endif
                     </div>
 
                     @if($invoice->payment_status == 'paid' && $invoice->status != 'canceled')

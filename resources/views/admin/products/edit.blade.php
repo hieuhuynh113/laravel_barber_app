@@ -19,7 +19,7 @@
             <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                
+
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="name" class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
@@ -43,7 +43,7 @@
                         @enderror
                     </div>
                 </div>
-                
+
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="price" class="form-label">Giá (VNĐ) <span class="text-danger">*</span></label>
@@ -69,7 +69,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="description" class="form-label">Mô tả ngắn</label>
                     <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="3">{{ old('description', $product->description) }}</textarea>
@@ -77,7 +77,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="content" class="form-label">Nội dung chi tiết</label>
                     <textarea class="form-control @error('content') is-invalid @enderror" id="content" name="content" rows="5">{{ old('content', $product->content) }}</textarea>
@@ -85,7 +85,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="image" class="form-label">Hình ảnh chính</label>
                     @if($product->image)
@@ -100,24 +100,8 @@
                     @enderror
                 </div>
 
-                <div class="mb-3">
-                    <label for="images" class="form-label">Hình ảnh phụ (có thể chọn nhiều)</label>
-                    @if($product->images && count(json_decode($product->images)) > 0)
-                        <div class="row mb-2">
-                            @foreach(json_decode($product->images) as $image)
-                                <div class="col-md-2 mb-2">
-                                    <img src="{{ asset('storage/' . $image) }}" class="img-thumbnail" style="height: 100px; object-fit: cover;">
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-                    <input type="file" class="form-control @error('images') is-invalid @enderror" id="images" name="images[]" multiple>
-                    <small class="text-muted">Để trống nếu không muốn thay đổi hình ảnh phụ</small>
-                    @error('images')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-                
+
+
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="status" class="form-label">Trạng thái</label>
@@ -140,7 +124,7 @@
                         @enderror
                     </div>
                 </div>
-                
+
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Cập nhật sản phẩm
@@ -173,4 +157,4 @@
         }
     });
 </script>
-@endsection 
+@endsection

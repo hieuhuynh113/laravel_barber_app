@@ -7,10 +7,10 @@
     <div class="col-md-3">
         <div class="card mb-4">
             <div class="card-body text-center">
-                <img src="{{ $user->avatar ? asset($user->avatar) : asset('images/avatar-placeholder.jpg') }}" alt="{{ $user->name }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                <img src="{{ get_user_avatar($user, 'large') }}" alt="{{ $user->name }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
                 <h5 class="card-title">{{ $user->name }}</h5>
                 <p class="text-muted">Thành viên từ {{ $user->created_at->format('d/m/Y') }}</p>
-                <a href="{{ route('profile.edit') }}" class="btn btn-primary mt-2">Chỉnh sửa hồ sơ</a>
+                <a href="{{ route('profile.edit') }}" class="btn mt-2" style="background-color: #9E8A78; color: white;">Chỉnh sửa hồ sơ</a>
             </div>
         </div>
         
@@ -29,7 +29,7 @@
     
     <div class="col-md-9">
         <div class="card">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header text-white" style="background-color: #9E8A78;">
                 <h5 class="card-title mb-0">Đánh giá của tôi</h5>
             </div>
             <div class="card-body">

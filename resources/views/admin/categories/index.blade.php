@@ -67,119 +67,7 @@
         color: #666;
     }
 
-    .col-description {
-        width: 25%;
-    }
 
-    /* Styles for description content */
-    .description-wrapper {
-        position: relative;
-        margin-left: 5px;
-        display: inline-block;
-        width: calc(100% - 25px);
-        vertical-align: top;
-    }
-
-    .description-content {
-        position: relative;
-        max-height: 40px;
-        overflow: hidden;
-        margin-bottom: 0;
-        line-height: 1.4;
-        font-size: 0.9rem;
-        color: #555;
-        text-align: justify;
-        transition: max-height 0.3s ease;
-    }
-
-    .description-content::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 20px;
-        background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
-        pointer-events: none;
-    }
-
-    .description-full {
-        max-height: 500px;
-    }
-
-    .description-full::after {
-        display: none;
-    }
-
-    .description-toggle {
-        display: inline-block;
-        margin-top: 5px;
-        color: #4e73df;
-        cursor: pointer;
-        font-size: 0.8rem;
-        font-weight: 500;
-        background-color: #f8f9fc;
-        padding: 2px 8px;
-        border-radius: 12px;
-        border: 1px solid #e3e6f0;
-        transition: all 0.2s ease;
-    }
-
-    .description-toggle:hover {
-        background-color: #eaecf4;
-        color: #2e59d9;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        text-decoration: none;
-    }
-
-    /* Tooltip styles */
-    .description-tooltip {
-        position: relative;
-        display: inline-block;
-        vertical-align: top;
-        margin-top: 2px;
-    }
-
-    .description-tooltip i {
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    .description-tooltip .tooltip-text {
-        visibility: hidden;
-        width: 300px;
-        background-color: #333;
-        color: #fff;
-        text-align: left;
-        border-radius: 6px;
-        padding: 10px;
-        position: absolute;
-        z-index: 1;
-        bottom: 125%;
-        left: 50%;
-        transform: translateX(-50%);
-        opacity: 0;
-        transition: opacity 0.3s;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        font-size: 0.85rem;
-        line-height: 1.5;
-    }
-
-    .description-tooltip .tooltip-text::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: #333 transparent transparent transparent;
-    }
-
-    .description-tooltip:hover .tooltip-text {
-        visibility: visible;
-        opacity: 1;
-    }
 
     .col-items {
         width: 80px;
@@ -294,22 +182,6 @@
 @section('scripts')
 <script>
     $(document).ready(function() {
-        // Xử lý nút xem thêm/thu gọn mô tả
-        $('.description-toggle').on('click', function() {
-            var $this = $(this);
-            var $content = $this.closest('.description-wrapper').find('.description-content');
-
-            if ($this.data('action') === 'expand') {
-                $content.addClass('description-full');
-                $this.text('Thu gọn');
-                $this.data('action', 'collapse');
-            } else {
-                $content.removeClass('description-full');
-                $this.text('Xem thêm');
-                $this.data('action', 'expand');
-            }
-        });
-
         // Khở tạo tooltip cho các nút
         $('[title]').tooltip({
             placement: 'top',
@@ -324,7 +196,7 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Quản lý danh mục</h1>
         <div>
-            <a href="{{ route('admin.categories.create', ['type' => $activeType !== 'all' ? $activeType : 'service']) }}" class="btn btn-primary">
+            <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus-circle"></i> Thêm danh mục mới
             </a>
         </div>
@@ -332,7 +204,14 @@
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
+            <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
@@ -353,7 +232,7 @@
                 <div class="col-md-6 mb-3 mb-md-0">
                     <label for="search" class="form-label">Tìm kiếm</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" id="search" name="search" placeholder="Tìm kiếm theo tên hoặc mô tả..." value="{{ $search }}">
+                        <input type="text" class="form-control" id="search" name="search" placeholder="Tìm kiếm theo tên..." value="{{ $search }}">
                         <button class="btn btn-primary" type="submit">
                             <i class="fas fa-search"></i>
                         </button>
@@ -430,7 +309,6 @@
                             <th class="col-name">Tên danh mục</th>
                             <th class="col-type">Loại</th>
                             <th class="col-slug">Slug</th>
-                            <th class="col-description">Mô tả</th>
                             <th class="col-items">Số mục</th>
                             <th class="col-status">Trạng thái</th>
                             <th class="col-actions">Thao tác</th>
@@ -455,22 +333,7 @@
                                     @endif
                                 </td>
                                 <td class="col-slug">{{ $category->slug }}</td>
-                                <td class="col-description">
-                                    @if($category->description)
-                                        <div class="description-tooltip">
-                                            <i class="fas fa-info-circle text-primary" title="Xem mô tả đầy đủ"></i>
-                                            <div class="tooltip-text">{{ $category->description }}</div>
-                                        </div>
-                                        <div class="description-wrapper">
-                                            <p class="description-content">{{ $category->description }}</p>
-                                            @if(strlen($category->description) > 100)
-                                                <span class="description-toggle" data-action="expand">Xem thêm</span>
-                                            @endif
-                                        </div>
-                                    @else
-                                        <span class="text-muted">Không có mô tả</span>
-                                    @endif
-                                </td>
+
                                 <td class="col-items text-center">
                                     @if($category->type == 'service')
                                         {{ $category->services->count() }}
@@ -502,7 +365,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-4">Không có danh mục nào.</td>
+                                <td colspan="7" class="text-center py-4">Không có danh mục nào.</td>
                             </tr>
                         @endforelse
                     </tbody>

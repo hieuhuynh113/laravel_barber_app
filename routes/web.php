@@ -82,21 +82,28 @@ Route::post('/register/verify/confirm', [\App\Http\Controllers\EmailVerification
 Route::post('/register/verify/resend', [\App\Http\Controllers\EmailVerificationController::class, 'resendOTP'])->name('verification.resend');
 
 // Profile Routes
-Route::middleware('auth')->prefix('profile')->name('profile.')->group(function () {
-    Route::get('/', [ProfileController::class, 'index'])->name('index');
-    Route::get('/appointments', [ProfileController::class, 'appointments'])->name('appointments');
-    Route::get('/reviews', [ProfileController::class, 'reviews'])->name('reviews');
-    Route::delete('/reviews/{id}', [ProfileController::class, 'deleteReview'])->name('reviews.delete');
-    Route::post('/reviews', [ProfileController::class, 'storeReview'])->name('reviews.store');
-    Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
-    Route::put('/update', [ProfileController::class, 'update'])->name('update');
-    Route::put('/change-password', [ProfileController::class, 'changePassword'])->name('change-password');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
+    Route::get('/profile/appointments', [ProfileController::class, 'appointments'])->name('profile.appointments');
+    Route::get('/profile/appointment/{id}', [ProfileController::class, 'appointmentDetail'])->name('profile.appointment.detail');
+    Route::get('/profile/reviews', [ProfileController::class, 'reviews'])->name('profile.reviews');
+    Route::post('/profile/reviews', [ProfileController::class, 'storeReview'])->name('profile.reviews.store');
+    Route::post('/appointment/cancel/{id}', [ProfileController::class, 'cancelAppointment'])->name('appointment.cancel');
 });
 
 // Admin Routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
+    
+    // Admin Profile Routes
+    Route::get('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile');
+    Route::get('/profile/edit', [\App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/update', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/change-password', [\App\Http\Controllers\Admin\ProfileController::class, 'changePassword'])->name('profile.change-password');
+    
     // Category Routes
     Route::resource('categories', CategoryController::class);
 

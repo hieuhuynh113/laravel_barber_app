@@ -84,12 +84,11 @@ CREATE TABLE `password_reset_tokens` (
 -- Tạo bảng categories
 -- Bảng này lưu trữ thông tin danh mục
 -- Sử dụng cho phân loại dịch vụ, sản phẩm và tin tức
--- Mỗi danh mục có tên, slug, mô tả, loại (service, product, news) và trạng thái
+-- Mỗi danh mục có tên, slug, loại (service, product, news) và trạng thái
 CREATE TABLE `categories` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `slug` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
   `type` enum('service','product','news') NOT NULL,
   `status` tinyint(4) NOT NULL DEFAULT 1,
   `created_at` timestamp NULL DEFAULT NULL,

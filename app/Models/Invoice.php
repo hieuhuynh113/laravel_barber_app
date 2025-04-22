@@ -24,6 +24,8 @@ class Invoice extends Model
         'payment_status',
         'status',
         'notes',
+        'email_sent',
+        'email_sent_at',
     ];
 
     /**
@@ -60,6 +62,8 @@ class Invoice extends Model
         'tax' => 'decimal:2',
         'total' => 'decimal:2',
         'total_amount' => 'decimal:2',
+        'email_sent' => 'boolean',
+        'email_sent_at' => 'datetime',
     ];
 
     /**

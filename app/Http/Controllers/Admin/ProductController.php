@@ -128,4 +128,9 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')
             ->with('success', 'Sản phẩm đã được xóa thành công.');
     }
+
+    public function show(Product $product)
+    {
+        return view('admin.products.show', compact('product'));
+    }
 }
