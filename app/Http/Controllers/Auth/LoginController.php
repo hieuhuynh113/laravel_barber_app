@@ -26,7 +26,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -38,7 +38,7 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
     }
-    
+
     /**
      * The user has been authenticated.
      *
@@ -53,7 +53,7 @@ class LoginController extends Controller
         } else if ($user->role === 'barber') {
             return redirect()->route('barber.dashboard');
         }
-        
+
         return redirect()->route('profile.index');
     }
 }
