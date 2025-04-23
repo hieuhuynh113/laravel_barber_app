@@ -38,14 +38,19 @@
 
                 <div class="mb-4">
                     <div class="stars">
+                        @php
+                            $avgRating = $service->reviews_avg_rating ?? 0;
+                        @endphp
                         @for($i = 1; $i <= 5; $i++)
-                            @if($i <= $service->rating)
+                            @if($i <= round($avgRating))
                                 <i class="fas fa-star text-warning"></i>
+                            @elseif($i - 0.5 <= $avgRating)
+                                <i class="fas fa-star-half-alt text-warning"></i>
                             @else
                                 <i class="far fa-star text-warning"></i>
                             @endif
                         @endfor
-                        <span class="ms-2">({{ $service->reviews_count }} đánh giá)</span>
+                        <span class="ms-2">{{ number_format($avgRating, 1) }} ({{ $service->reviews_count }} đánh giá)</span>
                     </div>
                 </div>
 
@@ -151,6 +156,50 @@
                     </div>
 
                     <div class="col-lg-4">
+                        <div class="card mb-4">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Đánh giá tổng thể</h5>
+                                <div class="display-4 fw-bold mb-2">{{ number_format($service->reviews_avg_rating ?? 0, 1) }}</div>
+                                <div class="stars mb-3">
+                                    @php
+                                        $avgRating = $service->reviews_avg_rating ?? 0;
+                                    @endphp
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($i <= round($avgRating))
+                                            <i class="fas fa-star text-warning"></i>
+                                        @elseif($i - 0.5 <= $avgRating)
+                                            <i class="fas fa-star-half-alt text-warning"></i>
+                                        @else
+                                            <i class="far fa-star text-warning"></i>
+                                        @endif
+                                    @endfor
+                                </div>
+                                <p class="text-muted">{{ $service->reviews_count }} đánh giá</p>
+
+                                <!-- Phân bố đánh giá theo số sao -->
+                                @if($service->reviews_count > 0)
+                                <div class="rating-distribution mt-3">
+                                    @foreach($ratingDistribution as $rating => $data)
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="rating-count me-2">{{ $rating }}</div>
+                                            <div class="star-rating me-2">
+                                                <i class="fas fa-star text-warning"></i>
+                                            </div>
+                                            <div class="flex-grow-1 mx-2">
+                                                <div class="progress rating-progress" style="height: 8px;">
+                                                    <div class="progress-bar bg-{{ $rating >= 4 ? 'success' : ($rating >= 3 ? 'info' : ($rating >= 2 ? 'warning' : 'danger')) }}"
+                                                        role="progressbar" style="width: {{ $data['percentage'] }}%"
+                                                        aria-valuenow="{{ $data['percentage'] }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                            <div class="rating-percentage small">{{ $data['percentage'] }}%</div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Đánh giá dịch vụ</h5>
@@ -244,6 +293,26 @@
                     <img src="{{ asset('storage/' . $relatedService->image) }}" class="card-img-top" alt="{{ $relatedService->name }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ $relatedService->name }}</h5>
+
+                        <!-- Đánh giá trung bình -->
+                        <div class="mb-2">
+                            @php
+                                $avgRating = $relatedService->reviews_avg_rating ?? 0;
+                            @endphp
+                            <div class="stars">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <= round($avgRating))
+                                        <i class="fas fa-star text-warning small"></i>
+                                    @elseif($i - 0.5 <= $avgRating)
+                                        <i class="fas fa-star-half-alt text-warning small"></i>
+                                    @else
+                                        <i class="far fa-star text-warning small"></i>
+                                    @endif
+                                @endfor
+                                <span class="ms-1 small text-muted">{{ number_format($avgRating, 1) }} ({{ $relatedService->reviews_count }})</span>
+                            </div>
+                        </div>
+
                         <p class="card-text">{{ Str::limit($relatedService->description, 80) }}</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="price text-primary fw-bold">{{ number_format($relatedService->price) }} VNĐ</span>

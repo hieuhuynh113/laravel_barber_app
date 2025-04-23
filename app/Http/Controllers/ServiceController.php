@@ -16,7 +16,9 @@ class ServiceController extends Controller
         $level = $request->input('level');
         $sort = $request->input('sort');
 
-        $query = Service::active()->with('category');
+        $query = Service::active()->with('category')
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating');
 
         // Apply category filter
         if ($categoryId) {
@@ -70,10 +72,17 @@ class ServiceController extends Controller
 
     public function show($slug)
     {
-        $service = Service::where('slug', $slug)->active()->firstOrFail();
+        $service = Service::where('slug', $slug)
+            ->active()
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->firstOrFail();
+
         $relatedServices = Service::where('category_id', $service->category_id)
             ->where('id', '!=', $service->id)
             ->active()
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
             ->limit(3)
             ->get();
 
@@ -84,10 +93,19 @@ class ServiceController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(5);
 
-        // Load the reviews count for the service
-        $service->loadCount('reviews');
+        // Tính toán phân bố đánh giá theo số sao
+        $ratingDistribution = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $count = Review::where('service_id', $service->id)
+                ->where('rating', $i)
+                ->count();
+            $ratingDistribution[$i] = [
+                'count' => $count,
+                'percentage' => $service->reviews_count > 0 ? round(($count / $service->reviews_count) * 100, 1) : 0
+            ];
+        }
 
-        return view('frontend.services.show', compact('service', 'relatedServices', 'reviews'));
+        return view('frontend.services.show', compact('service', 'relatedServices', 'reviews', 'ratingDistribution'));
     }
 
     // Phương thức storeReview đã được chuyển sang ProfileController

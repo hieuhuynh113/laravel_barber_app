@@ -199,6 +199,28 @@
                     <img src="{{ asset('storage/' . $barber->user->avatar) }}" alt="{{ $barber->user->name }}" class="barber-image">
                     <h4 class="barber-name">{{ $barber->user->name }}</h4>
                     <p class="barber-position">Thợ cắt tóc {{ $barber->experience > 0 ? '- ' . $barber->experience . ' năm kinh nghiệm' : '' }}</p>
+
+                    <!-- Đánh giá trung bình -->
+                    <div class="barber-rating mb-2">
+                        @php
+                            $avgRating = $barber->reviews_avg_rating ?? 0;
+                            $reviewsCount = $barber->reviews_count ?? 0;
+                        @endphp
+                        <div class="stars">
+                            @for($i = 1; $i <= 5; $i++)
+                                @if($i <= round($avgRating))
+                                    <i class="fas fa-star text-warning"></i>
+                                @elseif($i - 0.5 <= $avgRating)
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                @else
+                                    <i class="far fa-star text-warning"></i>
+                                @endif
+                            @endfor
+                            <span class="ms-1 text-muted">({{ number_format($avgRating, 1) }})</span>
+                        </div>
+                        <small class="text-muted">{{ $reviewsCount }} đánh giá</small>
+                    </div>
+
                     <p class="barber-description mb-3">{{ Str::limit($barber->description, 100) }}</p>
                     <div class="social-icons">
                         <a href="#"><i class="fab fa-facebook-f"></i></a>

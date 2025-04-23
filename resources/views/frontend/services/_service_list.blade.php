@@ -13,6 +13,23 @@
                     <span class="badge bg-light text-dark">{{ $service->category->name }}</span>
                 </div>
                 <h5 class="card-title">{{ $service->name }}</h5>
+                <div class="mb-2">
+                    @php
+                        $avgRating = $service->reviews_avg_rating ?? 0;
+                    @endphp
+                    <div class="stars">
+                        @for($i = 1; $i <= 5; $i++)
+                            @if($i <= round($avgRating))
+                                <i class="fas fa-star text-warning small"></i>
+                            @elseif($i - 0.5 <= $avgRating)
+                                <i class="fas fa-star-half-alt text-warning small"></i>
+                            @else
+                                <i class="far fa-star text-warning small"></i>
+                            @endif
+                        @endfor
+                        <span class="ms-1 small text-muted">{{ number_format($avgRating, 1) }} ({{ $service->reviews_count }})</span>
+                    </div>
+                </div>
                 <p class="card-text">{{ Str::limit($service->description, 100) }}</p>
             </div>
             <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
