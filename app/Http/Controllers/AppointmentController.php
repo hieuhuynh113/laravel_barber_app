@@ -19,6 +19,36 @@ use App\Notifications\NewAppointmentNotification;
 
 class AppointmentController extends Controller
 {
+    /**
+     * Kiểm tra các session cần thiết cho từng bước
+     *
+     * @param int $step Số bước hiện tại
+     * @return \Illuminate\Http\RedirectResponse|null Chuyển hướng nếu thiếu session, null nếu đủ session
+     */
+    private function checkRequiredSessions($step)
+    {
+        $requiredSessions = [
+            1 => [],
+            2 => ['appointment_services'],
+            3 => ['appointment_services', 'appointment_barber'],
+            4 => ['appointment_services', 'appointment_barber', 'appointment_date'],
+            5 => ['appointment_services', 'appointment_barber', 'appointment_date', 'appointment_customer_name'],
+            6 => ['appointment_services', 'appointment_barber', 'appointment_date', 'appointment_customer_name', 'appointment_payment_method'],
+        ];
+
+        if (!isset($requiredSessions[$step])) {
+            return null;
+        }
+
+        foreach ($requiredSessions[$step] as $sessionKey) {
+            if (!session($sessionKey)) {
+                return redirect()->route('appointment.step1');
+            }
+        }
+
+        return null;
+    }
+
     public function step1()
     {
         $services = Service::active()->with('category')->get();
@@ -43,8 +73,8 @@ class AppointmentController extends Controller
 
     public function step2()
     {
-        if (!session('appointment_services')) {
-            return redirect()->route('appointment.step1');
+        if ($redirect = $this->checkRequiredSessions(2)) {
+            return $redirect;
         }
 
         $barbers = Barber::active()->with('user')->get();
@@ -68,8 +98,8 @@ class AppointmentController extends Controller
 
     public function step3()
     {
-        if (!session('appointment_services') || !session('appointment_barber')) {
-            return redirect()->route('appointment.step1');
+        if ($redirect = $this->checkRequiredSessions(3)) {
+            return $redirect;
         }
 
         $barber = session('appointment_barber');
@@ -172,15 +202,10 @@ class AppointmentController extends Controller
         $vietnamTimezone = 'Asia/Ho_Chi_Minh';
         $now = Carbon::now($vietnamTimezone);
 
-        \Log::info('Vietnam time: ' . $now->format('Y-m-d H:i:s'));
-        \Log::info('Selected date: ' . $date);
-
         // Kiểm tra xem có phải ngày hiện tại không
         $selectedDate = Carbon::parse($date, $vietnamTimezone)->startOfDay();
         $currentDate = $now->copy()->startOfDay();
         $isToday = $selectedDate->equalTo($currentDate);
-
-        \Log::info('Is today: ' . ($isToday ? 'Yes' : 'No'));
 
         // Lấy tất cả các khung giờ của ngày đó
         // Nếu là ngày hiện tại, chúng ta sẽ lọc các khung giờ đã qua ở phía client
@@ -232,8 +257,8 @@ class AppointmentController extends Controller
 
     public function step4()
     {
-        if (!session('appointment_services') || !session('appointment_barber') || !session('appointment_date')) {
-            return redirect()->route('appointment.step1');
+        if ($redirect = $this->checkRequiredSessions(4)) {
+            return $redirect;
         }
 
         // Nếu đã đăng nhập, lấy thông tin người dùng
@@ -263,8 +288,8 @@ class AppointmentController extends Controller
 
     public function step5()
     {
-        if (!session('appointment_services') || !session('appointment_barber') || !session('appointment_date') || !session('appointment_customer_name')) {
-            return redirect()->route('appointment.step1');
+        if ($redirect = $this->checkRequiredSessions(5)) {
+            return $redirect;
         }
 
         return view('frontend.appointment.step5');
@@ -303,8 +328,8 @@ class AppointmentController extends Controller
 
     public function step6()
     {
-        if (!session('appointment_services') || !session('appointment_barber') || !session('appointment_date') || !session('appointment_customer_name') || !session('appointment_payment_method')) {
-            return redirect()->route('appointment.step1');
+        if ($redirect = $this->checkRequiredSessions(6)) {
+            return $redirect;
         }
 
         // Nếu lịch hẹn đã được tạo, lấy từ database
@@ -434,8 +459,8 @@ class AppointmentController extends Controller
 
     public function complete(Request $request)
     {
-        if (!session('appointment_services') || !session('appointment_barber') || !session('appointment_date') || !session('appointment_customer_name') || !session('appointment_payment_method')) {
-            return redirect()->route('appointment.step1');
+        if ($redirect = $this->checkRequiredSessions(6)) {
+            return $redirect;
         }
 
         // Nếu đã tạo lịch hẹn rồi, chuyển hướng đến trang xác nhận

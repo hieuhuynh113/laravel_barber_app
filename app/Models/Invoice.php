@@ -29,14 +29,6 @@ class Invoice extends Model
     ];
 
     /**
-     * Accessor để lấy giá trị discount_amount
-     */
-    public function getDiscountAmountAttribute()
-    {
-        return $this->discount;
-    }
-
-    /**
      * Accessor để lấy giá trị tax_rate
      */
     public function getTaxRateAttribute()
@@ -46,14 +38,6 @@ class Invoice extends Model
 
         // Tính toán tax_rate dựa trên tax và subtotal
         return ($this->tax / $this->subtotal) * 100;
-    }
-
-    /**
-     * Accessor để lấy giá trị tax_amount
-     */
-    public function getTaxAmountAttribute()
-    {
-        return $this->tax;
     }
 
     protected $casts = [
@@ -118,47 +102,31 @@ class Invoice extends Model
     {
         $items = collect([]);
 
-        // Lấy dịch vụ từ quan hệ services và chuyển đổi thành collection các item
-        $services = $this->services;
+        // Hàm chuyển đổi model thành item
+        $mapToItem = function ($model, $type) {
+            return (object) [
+                'id' => $model->pivot->id,
+                'type' => $type,
+                'item_id' => $model->id,
+                'name' => $model->name,
+                'price' => $model->pivot->price,
+                'quantity' => $model->pivot->quantity,
+                'discount' => $model->pivot->discount,
+                'subtotal' => $model->pivot->subtotal,
+            ];
+        };
 
-        // Chuyển đổi dịch vụ thành các item
-        if (!$services->isEmpty()) {
-            $serviceItems = $services->map(function ($service) {
-                $item = new \stdClass();
-                $item->id = $service->pivot->id;
-                $item->type = 'service';
-                $item->item_id = $service->id;
-                $item->name = $service->name;
-                $item->price = $service->pivot->price;
-                $item->quantity = $service->pivot->quantity;
-                $item->discount = $service->pivot->discount;
-                $item->subtotal = $service->pivot->subtotal;
-                return $item;
-            });
+        // Thêm các dịch vụ
+        $serviceItems = $this->services->map(function ($service) use ($mapToItem) {
+            return $mapToItem($service, 'service');
+        });
+        $items = $items->concat($serviceItems);
 
-            $items = $items->concat($serviceItems);
-        }
-
-        // Lấy sản phẩm từ quan hệ products và chuyển đổi thành collection các item
-        $products = $this->products;
-
-        // Chuyển đổi sản phẩm thành các item
-        if (!$products->isEmpty()) {
-            $productItems = $products->map(function ($product) {
-                $item = new \stdClass();
-                $item->id = $product->pivot->id;
-                $item->type = 'product';
-                $item->item_id = $product->id;
-                $item->name = $product->name;
-                $item->price = $product->pivot->price;
-                $item->quantity = $product->pivot->quantity;
-                $item->discount = $product->pivot->discount;
-                $item->subtotal = $product->pivot->subtotal;
-                return $item;
-            });
-
-            $items = $items->concat($productItems);
-        }
+        // Thêm các sản phẩm
+        $productItems = $this->products->map(function ($product) use ($mapToItem) {
+            return $mapToItem($product, 'product');
+        });
+        $items = $items->concat($productItems);
 
         return $items;
     }
@@ -166,12 +134,12 @@ class Invoice extends Model
     /**
      * Kiểm tra trạng thái thanh toán
      */
-    public function isPaid()
+    public function isPaymentPaid()
     {
         return $this->payment_status === 'paid';
     }
 
-    public function isPending()
+    public function isPaymentPending()
     {
         return $this->payment_status === 'pending';
     }
@@ -179,18 +147,46 @@ class Invoice extends Model
     /**
      * Kiểm tra trạng thái hóa đơn
      */
-    public function isCompleted()
+    public function isStatusCompleted()
     {
         return $this->status === 'completed';
     }
 
-    public function isPendingStatus()
+    public function isStatusPending()
     {
         return $this->status === 'pending';
     }
 
-    public function isCanceled()
+    public function isStatusCanceled()
     {
         return $this->status === 'canceled';
+    }
+
+    /**
+     * Các phương thức tương thích ngược (giữ lại để tránh lỗi với code hiện tại)
+     */
+    public function isPaid()
+    {
+        return $this->isPaymentPaid();
+    }
+
+    public function isPending()
+    {
+        return $this->isPaymentPending();
+    }
+
+    public function isCompleted()
+    {
+        return $this->isStatusCompleted();
+    }
+
+    public function isPendingStatus()
+    {
+        return $this->isStatusPending();
+    }
+
+    public function isCanceled()
+    {
+        return $this->isStatusCanceled();
     }
 }

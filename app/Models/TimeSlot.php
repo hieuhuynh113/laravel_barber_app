@@ -86,6 +86,8 @@ class TimeSlot extends Model
      */
     public function appointments()
     {
-        return $this->hasMany(Appointment::class);
+        return $this->hasMany(Appointment::class, 'time_slot', 'time_slot')
+            ->where('barber_id', $this->barber_id)
+            ->where('appointment_date', $this->date);
     }
 }

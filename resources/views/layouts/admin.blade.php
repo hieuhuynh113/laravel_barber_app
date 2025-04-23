@@ -20,14 +20,8 @@
 
     <!-- Admin CSS -->
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-
-    <!-- Admin Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/admin-custom.css') }}">
-
-    <!-- User Table Fix CSS -->
     <link rel="stylesheet" href="{{ asset('css/user-table-fix.css') }}">
 
     @yield('styles')
@@ -209,9 +203,6 @@
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="nav navbar-nav ms-auto">
-                            <!-- Thông báo đã được chuyển vào sidebar -->
-
-
                             <!-- User Dropdown -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -279,7 +270,10 @@
                 }
             });
 
-            // JavaScript cho dropdown thông báo đã được xóa vì thông báo đã được chuyển vào sidebar
+            // Auto-hide alerts after 5 seconds
+            setTimeout(function() {
+                $('.alert').alert('close');
+            }, 5000);
         });
     </script>
 
