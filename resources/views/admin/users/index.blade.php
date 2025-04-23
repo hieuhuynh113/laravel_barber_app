@@ -109,7 +109,7 @@
                 </table>
             </div>
             <div class="mt-4">
-                {{ $users->appends(request()->query())->links() }}
+                {{ $users->appends(request()->query())->links('admin.partials.pagination') }}
             </div>
         </div>
     </div>

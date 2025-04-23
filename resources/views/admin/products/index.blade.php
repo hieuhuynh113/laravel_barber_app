@@ -406,7 +406,7 @@
             </div>
 
             <div class="mt-3">
-                {{ $products->appends(request()->query())->links() }}
+                {{ $products->appends(request()->query())->links('admin.partials.pagination') }}
             </div>
         </div>
     </div>

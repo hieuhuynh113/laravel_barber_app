@@ -9,7 +9,7 @@
             <div class="col-lg-8">
                 <div class="card shadow">
                     <div class="card-header text-white" style="background-color: #9E8A78;">
-                        <h4 class="mb-0">Đặt lịch hẹn</h4>
+                        <h4 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Đặt lịch hẹn</h4>
                     </div>
                     <div class="card-body">
                         <!-- Thanh tiến trình đặt lịch -->
@@ -46,7 +46,7 @@
 
                         <!-- Hiển thị dịch vụ đã chọn -->
                         <div class="selected-services mb-4">
-                            <h6>Dịch vụ đã chọn:</h6>
+                            <h6 class="fw-bold"><i class="fas fa-check-circle text-success me-2"></i>Dịch vụ đã chọn:</h6>
                             <div class="row">
                                 @php $totalPrice = 0; $totalDuration = 0; @endphp
                                 @foreach(session('appointment_services', []) as $service)
@@ -54,33 +54,34 @@
                                         <div class="card bg-light">
                                             <div class="card-body py-2">
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <span>{{ $service->name }}</span>
-                                                    <span class="text-primary">{{ number_format($service->price) }} VNĐ</span>
+                                                    <span class="fw-medium">{{ $service->name }}</span>
+                                                    <span class="text-primary fw-bold">{{ number_format($service->price) }} VNĐ</span>
                                                 </div>
-                                                <small class="text-muted">{{ $service->duration }} phút</small>
+                                                <small class="text-muted"><i class="far fa-clock me-1"></i>{{ $service->duration }} phút</small>
                                             </div>
                                         </div>
                                     </div>
-                                    @php 
-                                        $totalPrice += $service->price; 
+                                    @php
+                                        $totalPrice += $service->price;
                                         $totalDuration += $service->duration;
                                     @endphp
                                 @endforeach
                             </div>
-                            <div class="d-flex justify-content-between mt-2">
-                                <span>Tổng cộng:</span>
+                            <div class="d-flex justify-content-between mt-3 p-3 bg-light rounded">
+                                <span class="fw-bold">Tổng cộng:</span>
                                 <div class="text-end">
                                     <div>
-                                        <strong class="text-primary">{{ number_format($totalPrice) }} VNĐ</strong>
+                                        <strong class="text-primary fs-5">{{ number_format($totalPrice) }} VNĐ</strong>
                                     </div>
-                                    <small class="text-muted">Thời gian dự kiến: {{ $totalDuration }} phút</small>
+                                    <small class="text-muted"><i class="far fa-clock me-1"></i>Thời gian dự kiến: {{ $totalDuration }} phút</small>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Form chọn thợ cắt tóc -->
-                        <h5 class="card-title mb-4">Bước 2: Chọn thợ cắt tóc</h5>
-                        
+                        <h5 class="card-title mb-4"><span class="badge me-2" style="background-color: #9E8A78;">Bước 2</span> Chọn thợ cắt tóc</h5>
+                        <p class="text-muted mb-4">Hãy chọn thợ cắt tóc phù hợp với nhu cầu của bạn. Mỗi thợ cắt tóc của chúng tôi đều có chuyên môn và kỹ năng riêng.</p>
+
                         @if ($errors->any())
                             <div class="alert alert-danger">
                                 <ul class="mb-0">
@@ -90,29 +91,39 @@
                                 </ul>
                             </div>
                         @endif
-                        
+
                         <form action="{{ route('appointment.post.step2') }}" method="POST">
                             @csrf
-                            
+
                             <div class="row">
                                 @forelse($barbers as $barber)
                                     <div class="col-md-6 mb-3">
-                                        <div class="card barber-card h-100 {{ old('barber_id') == $barber->id ? 'border-primary' : '' }}">
+                                        <div class="card barber-card h-100 {{ old('barber_id') == $barber->id ? 'selected' : '' }}">
+                                            <div class="barber-selected-status"><i class="fas fa-check-circle me-1"></i> Đã chọn</div>
                                             <div class="card-body text-center">
                                                 <div class="form-check">
                                                     <input class="form-check-input barber-radio visually-hidden" type="radio" name="barber_id" value="{{ $barber->id }}" id="barber-{{ $barber->id }}" {{ old('barber_id') == $barber->id ? 'checked' : '' }}>
                                                     <label class="form-check-label d-block" for="barber-{{ $barber->id }}">
-                                                        <div class="mb-3">
+                                                        <div class="barber-avatar-container mb-3">
                                                             @if($barber->user->avatar)
-                                                                <img src="{{ asset('storage/' . $barber->user->avatar) }}" alt="{{ $barber->user->name }}" class="rounded-circle barber-avatar" width="80" height="80">
+                                                                <img src="{{ asset('storage/' . $barber->user->avatar) }}" alt="{{ $barber->user->name }}" class="barber-avatar">
                                                             @else
-                                                                <img src="{{ asset('images/default-avatar.jpg') }}" alt="{{ $barber->user->name }}" class="rounded-circle barber-avatar" width="80" height="80">
+                                                                <img src="{{ asset('images/default-avatar.jpg') }}" alt="{{ $barber->user->name }}" class="barber-avatar">
                                                             @endif
                                                         </div>
-                                                        <h5 class="mb-1">{{ $barber->user->name }}</h5>
-                                                        <div class="text-muted">
-                                                            <p class="mb-1"><i class="fas fa-star text-warning me-1"></i> Thợ cắt tóc {{ $barber->experience }} năm kinh nghiệm</p>
-                                                            <p class="small mb-1">{{ $barber->specialty }}</p>
+                                                        <h5 class="mb-2">{{ $barber->user->name }}</h5>
+                                                        <div class="barber-rating mb-2">
+                                                            <span class="badge bg-warning text-dark"><i class="fas fa-star me-1"></i>{{ $barber->experience }} năm kinh nghiệm</span>
+                                                        </div>
+                                                        <div class="barber-specialty">
+                                                            <p class="mb-2">{{ $barber->specialty }}</p>
+                                                        </div>
+                                                        <div class="barber-skills mt-2">
+                                                            <div class="d-flex flex-wrap justify-content-center gap-1">
+                                                                @foreach(explode(',', $barber->skills ?? 'Cắt tóc nam,Uốn tóc,Nhuộm tóc') as $skill)
+                                                                    <span class="badge bg-light text-dark">{{ trim($skill) }}</span>
+                                                                @endforeach
+                                                            </div>
                                                         </div>
                                                     </label>
                                                 </div>
@@ -127,12 +138,16 @@
                                     </div>
                                 @endforelse
                             </div>
-                            
+
                             <div class="mt-4 d-flex justify-content-between">
                                 <a href="{{ route('appointment.step1') }}" class="btn btn-outline-secondary">
                                     <i class="fas fa-arrow-left"></i> Quay lại
                                 </a>
                                 <button type="submit" class="btn btn-primary">Tiếp tục <i class="fas fa-arrow-right"></i></button>
+                            </div>
+
+                            <div class="text-center mt-3">
+                                <small class="text-muted"><i class="fas fa-info-circle me-1"></i> Bạn có thể thay đổi lựa chọn thợ cắt tóc sau khi đặt lịch nếu cần.</small>
                             </div>
                         </form>
                     </div>
@@ -148,7 +163,7 @@
     .progress-steps {
         position: relative;
     }
-    
+
     .progress-steps:before {
         content: '';
         position: absolute;
@@ -159,14 +174,14 @@
         background-color: #e9ecef;
         z-index: 0;
     }
-    
+
     .step {
         text-align: center;
         z-index: 1;
         flex: 1;
         position: relative;
     }
-    
+
     .step-circle {
         width: 40px;
         height: 40px;
@@ -178,48 +193,146 @@
         justify-content: center;
         margin: 0 auto 8px;
         font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
     }
-    
+
     .step.active .step-circle {
-        background-color: #0d6efd;
+        background-color: #9E8A78;
         color: white;
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(158, 138, 120, 0.3);
     }
-    
+
     .step.completed .step-circle {
         background-color: #28a745;
         color: white;
     }
-    
+
     .step-text {
         font-size: 0.875rem;
         color: #6c757d;
     }
-    
+
     .step.active .step-text {
-        color: #0d6efd;
+        color: #9E8A78;
         font-weight: bold;
     }
-    
+
     .step.completed .step-text {
         color: #28a745;
     }
-    
+
     .barber-card {
         cursor: pointer;
         transition: all 0.3s;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     }
-    
+
     .barber-card:hover {
-        border-color: #0d6efd;
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
     }
-    
+
     .barber-card.selected {
-        border-color: #0d6efd;
-        background-color: rgba(13, 110, 253, 0.05);
+        border: 2px solid #9E8A78;
+        background-color: rgba(158, 138, 120, 0.05);
     }
-    
+
+    .barber-selected-status {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #9E8A78;
+        color: white;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s;
+        z-index: 2;
+    }
+
+    .barber-card.selected .barber-selected-status {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .barber-avatar-container {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid #f8f9fa;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
     .barber-avatar {
+        width: 100%;
+        height: 100%;
         object-fit: cover;
+    }
+
+    .barber-rating {
+        margin-top: 10px;
+    }
+
+    .barber-specialty {
+        color: #6c757d;
+        font-style: italic;
+    }
+
+    .barber-skills {
+        margin-top: 10px;
+    }
+
+    /* Hiệu ứng animation */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .pulse-animation {
+        animation: pulse 0.5s;
+    }
+
+    .hover-effect {
+        background-color: #f8f9fa;
+        transform: translateY(-3px);
+    }
+
+    /* Nút tiếp tục và quay lại */
+    .btn-primary {
+        background-color: #9E8A78;
+        border-color: #9E8A78;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #8a7868;
+        border-color: #8a7868;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-outline-secondary {
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .btn-outline-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 </style>
 @endsection
@@ -232,10 +345,28 @@
             $('.barber-card').removeClass('selected');
             $(this).addClass('selected');
             $(this).find('.barber-radio').prop('checked', true);
+
+            // Hiệu ứng khi chọn
+            $(this).addClass('pulse-animation');
+            setTimeout(function() {
+                $('.barber-card').removeClass('pulse-animation');
+            }, 500);
         });
-        
+
         // Khởi tạo class selected cho thợ cắt tóc đã chọn
         $('.barber-radio:checked').closest('.barber-card').addClass('selected');
+
+        // Hiệu ứng hover
+        $('.barber-card').hover(
+            function() {
+                if (!$(this).hasClass('selected')) {
+                    $(this).addClass('hover-effect');
+                }
+            },
+            function() {
+                $(this).removeClass('hover-effect');
+            }
+        );
     });
 </script>
-@endsection 
+@endsection

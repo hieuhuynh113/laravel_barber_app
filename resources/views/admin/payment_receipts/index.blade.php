@@ -164,7 +164,7 @@
             </div>
 
             <div class="mt-3">
-                {{ $receipts->links() }}
+                {{ $receipts->links('admin.partials.pagination') }}
             </div>
         </div>
     </div>

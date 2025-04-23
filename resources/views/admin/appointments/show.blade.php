@@ -87,20 +87,23 @@
                         <div class="col-12">
                             <h5 class="font-weight-bold">Dịch vụ đã chọn</h5>
                             <div class="table-responsive">
-                                <table class="table table-bordered">
+                                <table class="table table-bordered admin-service-table">
                                     <thead>
                                         <tr>
-                                            <th>Tên dịch vụ</th>
-                                            <th>Thời gian</th>
-                                            <th class="text-end">Giá</th>
+                                            <th width="75%">TÊN DỊCH VỤ</th>
+                                            <th width="10%">THỜI GIAN</th>
+                                            <th width="15%" class="text-end">GIÁ</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php $total = 0; @endphp
+                                        @php $total = 0; $totalDuration = 0; @endphp
                                         @foreach($appointment->services as $service)
-                                            @php $total += $service->price; @endphp
+                                            @php
+                                                $total += $service->price;
+                                                $totalDuration += $service->duration;
+                                            @endphp
                                             <tr>
-                                                <td>{{ $service->name }}</td>
+                                                <td class="service-name">{{ $service->name }}</td>
                                                 <td>{{ $service->duration }} phút</td>
                                                 <td class="text-end">{{ number_format($service->price) }} VNĐ</td>
                                             </tr>
@@ -108,12 +111,77 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th colspan="2" class="text-end">Tổng cộng:</th>
+                                            <th class="text-right">TỔNG CỘNG:</th>
+                                            <th class="text-center">{{ $totalDuration }} phút</th>
                                             <th class="text-end">{{ number_format($total) }} VNĐ</th>
                                         </tr>
                                     </tfoot>
                                 </table>
                             </div>
+
+                            <style>
+                                .admin-service-table {
+                                    width: 100%;
+                                    border-collapse: collapse;
+                                    table-layout: fixed;
+                                    margin-bottom: 0;
+                                }
+                                .table-responsive {
+                                    overflow-x: visible;
+                                    border: 1px solid #e3e6f0;
+                                    border-radius: 0.35rem;
+                                }
+                                .admin-service-table th {
+                                    font-size: 0.85rem;
+                                    font-weight: 600;
+                                    text-transform: uppercase;
+                                    color: #4e73df;
+                                    background-color: #f8f9fc;
+                                    border: 1px solid #e3e6f0;
+                                    padding: 0.75rem 0.5rem;
+                                }
+                                .admin-service-table td {
+                                    padding: 0.75rem 0.5rem;
+                                    vertical-align: middle;
+                                    border: 1px solid #e3e6f0;
+                                    word-wrap: break-word;
+                                    overflow-wrap: break-word;
+                                    hyphens: auto;
+                                }
+                                .admin-service-table .service-name {
+                                    word-break: break-word;
+                                    white-space: normal;
+                                    line-height: 1.5;
+                                    font-weight: 500;
+                                    padding-left: 0.75rem;
+                                    padding-right: 0.75rem;
+                                    min-width: 200px;
+                                }
+                                .admin-service-table tr td:nth-child(2),
+                                .admin-service-table tr th:nth-child(2) {
+                                    text-align: center;
+                                    white-space: nowrap;
+                                    font-size: 0.85rem;
+                                    padding-left: 0.2rem;
+                                    padding-right: 0.2rem;
+                                    min-width: 60px;
+                                }
+                                .admin-service-table tr td:nth-child(3),
+                                .admin-service-table tr th:nth-child(3) {
+                                    text-align: right;
+                                    white-space: nowrap;
+                                    font-size: 0.85rem;
+                                    padding-left: 0.2rem;
+                                    padding-right: 0.2rem;
+                                    min-width: 90px;
+                                }
+                                .admin-service-table tfoot th {
+                                    border: 1px solid #e3e6f0;
+                                    background-color: #f8f9fc;
+                                    padding: 0.75rem 0.5rem;
+                                }
+
+                            </style>
                         </div>
                     </div>
                 </div>

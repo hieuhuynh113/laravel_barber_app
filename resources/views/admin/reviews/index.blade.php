@@ -390,7 +390,7 @@
             </div>
 
             <div class="mt-3">
-                {{ $reviews->links() }}
+                {{ $reviews->links('admin.partials.pagination') }}
             </div>
         </div>
     </div>

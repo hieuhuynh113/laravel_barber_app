@@ -253,7 +253,7 @@
             </div>
 
             <div class="mt-3">
-                {{ $invoices->appends(request()->query())->links() }}
+                {{ $invoices->appends(request()->query())->links('admin.partials.pagination') }}
             </div>
         </div>
     </div>

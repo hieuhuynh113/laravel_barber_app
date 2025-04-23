@@ -425,7 +425,7 @@
             </div>
 
             <div class="mt-3">
-                {{ $services->links() }}
+                {{ $services->links('admin.partials.pagination') }}
             </div>
         </div>
     </div>

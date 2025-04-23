@@ -79,9 +79,9 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <div class="mt-3">
-                {{ $barbers->links() }}
+                {{ $barbers->links('admin.partials.pagination') }}
             </div>
         </div>
     </div>
@@ -99,4 +99,4 @@
         });
     });
 </script>
-@endsection 
+@endsection

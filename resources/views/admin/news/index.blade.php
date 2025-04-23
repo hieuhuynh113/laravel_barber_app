@@ -353,7 +353,7 @@
             </div>
 
             <div class="mt-3">
-                {{ $news->appends(request()->query())->links() }}
+                {{ $news->appends(request()->query())->links('admin.partials.pagination') }}
             </div>
         </div>
     </div>

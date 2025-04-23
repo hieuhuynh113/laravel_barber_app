@@ -290,8 +290,8 @@
                 </div>
             </form>
 
-            <div class="d-flex justify-content-end mt-3">
-                {{ $contacts->appends(request()->query())->links() }}
+            <div class="d-flex justify-content-center mt-3">
+                {{ $contacts->appends(request()->query())->links('admin.partials.pagination') }}
             </div>
         </div>
     </div>

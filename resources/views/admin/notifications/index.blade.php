@@ -231,7 +231,7 @@
                                     <a href="{{ route('admin.contacts.show', $notification->data['contact_id']) }}" class="btn btn-sm btn-info">
                                         <i class="fas fa-eye"></i> Xem tin nhắn
                                     </a>
-                                    <a href="{{ route('admin.contacts.edit', $notification->data['contact_id']) }}" class="btn btn-sm btn-primary">
+                                    <a href="{{ route('admin.contacts.show', $notification->data['contact_id']) }}" class="btn btn-sm btn-primary">
                                         <i class="fas fa-reply"></i> Phản hồi
                                     </a>
                                 @endif

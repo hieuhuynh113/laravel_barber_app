@@ -49,3 +49,45 @@ if (!function_exists('get_default_avatar')) {
         return asset('images/default-avatar.svg');
     }
 }
+
+if (!function_exists('getCategoryIcon')) {
+    /**
+     * Lấy biểu tượng Font Awesome cho danh mục dịch vụ
+     *
+     * @param string $categoryName Tên danh mục
+     * @return string Class của biểu tượng Font Awesome
+     */
+    function getCategoryIcon($categoryName)
+    {
+        $categoryName = mb_strtolower($categoryName, 'UTF-8');
+
+        $icons = [
+            'uốn' => 'fas fa-wind',
+            'gội' => 'fas fa-shower',
+            'nhuộm' => 'fas fa-palette',
+            'cắt' => 'fas fa-cut',
+            'tạo kiểu' => 'fas fa-magic',
+            'chăm sóc' => 'fas fa-hand-holding-heart',
+            'massage' => 'fas fa-hands',
+            'combo' => 'fas fa-layer-group',
+            'trị liệu' => 'fas fa-spa',
+            'dưỡng' => 'fas fa-tint',
+            'phục hồi' => 'fas fa-sync-alt',
+            'tẩy' => 'fas fa-eraser',
+            'làm sạch' => 'fas fa-soap',
+            'đặc biệt' => 'fas fa-star',
+            'vip' => 'fas fa-crown',
+            'xu hướng' => 'fas fa-fire',
+        ];
+
+        // Tìm kiếm từ khóa trong tên danh mục
+        foreach ($icons as $keyword => $icon) {
+            if (mb_strpos($categoryName, $keyword) !== false) {
+                return $icon;
+            }
+        }
+
+        // Mặc định nếu không tìm thấy
+        return 'fas fa-scissors';
+    }
+}

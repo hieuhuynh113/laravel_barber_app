@@ -215,29 +215,107 @@
     /* Services cell styles */
     .services-cell {
         overflow: hidden;
-        text-align: center;
+        text-align: left;
     }
 
-    .services-cell .badge {
-        display: inline-block;
-        margin: 2px;
+    .service-list {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 3px;
+    }
+
+    .services-cell .service-badge {
+        display: flex;
+        align-items: center;
+        margin: 2px 0;
         white-space: normal;
-        text-align: center;
-        word-break: break-word;
-        padding: 5px 8px;
+        text-align: left;
+        word-break: normal;
+        padding: 4px 8px;
         font-size: 0.75rem;
-        font-weight: normal;
-        max-width: 90%;
+        font-weight: 500;
+        max-width: 100%;
+        border-radius: 6px;
+        background-color: #f8f9fa;
+        border: 1px solid rgba(0,0,0,0.1);
+        color: #495057;
+        transition: all 0.2s ease;
     }
 
-    /* Limit number of badges shown */
-    .services-cell .badge:nth-child(n+4) {
+    .services-cell .service-badge:hover {
+        transform: translateX(2px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .services-cell .service-badge i {
+        margin-right: 5px;
+        font-size: 0.7rem;
+    }
+
+    /* Thêm màu khác nhau cho các loại dịch vụ */
+    .services-cell .service-badge[data-type="uon"] {
+        border-left: 3px solid #36b9cc;
+    }
+
+    .services-cell .service-badge[data-type="uon"] i {
+        color: #36b9cc;
+    }
+
+    .services-cell .service-badge[data-type="goi"] {
+        border-left: 3px solid #1cc88a;
+    }
+
+    .services-cell .service-badge[data-type="goi"] i {
+        color: #1cc88a;
+    }
+
+    .services-cell .service-badge[data-type="nhuom"] {
+        border-left: 3px solid #f6c23e;
+    }
+
+    .services-cell .service-badge[data-type="nhuom"] i {
+        color: #f6c23e;
+    }
+
+    .services-cell .service-badge[data-type="other"] {
+        border-left: 3px solid #4e73df;
+    }
+
+    .services-cell .service-badge[data-type="other"] i {
+        color: #4e73df;
+    }
+
+    /* Hiển thị tối đa 3 dịch vụ */
+    .service-list .service-badge:nth-child(n+4) {
         display: none;
     }
 
     .services-cell .more-badge {
-        background-color: #6c757d;
+        background-color: #f8f9fa;
+        border: 1px dashed #858796;
+        color: #4e73df;
         cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        padding: 3px 8px;
+        margin-top: 4px;
+        border-radius: 4px;
+        transition: all 0.2s;
+    }
+
+    .services-cell .more-badge i {
+        margin-right: 4px;
+        font-size: 0.65rem;
+    }
+
+    .services-cell .more-badge:hover {
+        background-color: #4e73df;
+        color: white;
+        border-color: #4e73df;
+        transform: translateY(-1px);
     }
 
     /* Status and payment styles */
@@ -392,6 +470,53 @@
     .pulse {
         animation: pulse 0.3s ease-in-out;
     }
+
+    /* Custom pagination styles */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+
+    .pagination .page-item {
+        margin: 0 2px;
+    }
+
+    .pagination .page-item .page-link {
+        border-radius: 4px;
+        padding: 0.4rem 0.75rem;
+        color: #4e73df;
+        border: 1px solid #dee2e6;
+        background-color: #fff;
+        font-size: 0.9rem;
+        line-height: 1.25;
+        text-align: center;
+        transition: all 0.2s;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #4e73df;
+        border-color: #4e73df;
+        color: white;
+    }
+
+    .pagination .page-item .page-link:hover {
+        background-color: #eaecf4;
+        border-color: #dee2e6;
+        color: #224abe;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #858796;
+        pointer-events: none;
+        background-color: #fff;
+        border-color: #dee2e6;
+    }
+
+    /* Ensure pagination arrows are properly sized */
+    .pagination .page-link i.fa-sm {
+        font-size: 0.7rem;
+    }
 </style>
 @endsection
 
@@ -511,11 +636,37 @@
                                 </td>
                                 <td class="services-cell">
                                     @php $serviceCount = count($appointment->services); @endphp
-                                    @foreach($appointment->services as $index => $service)
-                                        <span class="badge bg-primary service-badge">{{ $service->name }}</span>
-                                    @endforeach
-                                    @if($serviceCount > 3)
-                                        <span class="badge more-badge" data-appointment-id="{{ $appointment->id }}" title="Xem tất cả {{ $serviceCount }} dịch vụ">+{{ $serviceCount - 3 }}</span>
+                                    @if($serviceCount > 0)
+                                        <div class="service-list">
+                                            @foreach($appointment->services as $index => $service)
+                                                @php
+                                                    $serviceType = 'other';
+                                                    $serviceIcon = 'fa-cut';
+
+                                                    if (strpos(strtolower($service->name), 'uốn') !== false) {
+                                                        $serviceType = 'uon';
+                                                        $serviceIcon = 'fa-wind';
+                                                    } elseif (strpos(strtolower($service->name), 'gội') !== false) {
+                                                        $serviceType = 'goi';
+                                                        $serviceIcon = 'fa-shower';
+                                                    } elseif (strpos(strtolower($service->name), 'nhuộm') !== false) {
+                                                        $serviceType = 'nhuom';
+                                                        $serviceIcon = 'fa-palette';
+                                                    }
+                                                @endphp
+                                                <div class="service-badge" data-type="{{ $serviceType }}">
+                                                    <i class="fas {{ $serviceIcon }}"></i>
+                                                    <span>{{ $service->name }}</span>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        @if($serviceCount > 3)
+                                            <div class="more-badge" data-appointment-id="{{ $appointment->id }}" title="Xem tất cả {{ $serviceCount }} dịch vụ">
+                                                <i class="fas fa-list-ul"></i> Xem tất cả ({{ $serviceCount }})
+                                            </div>
+                                        @endif
+                                    @else
+                                        <span class="text-muted">Không có dịch vụ</span>
                                     @endif
                                 </td>
                                 <td class="date-cell">
@@ -597,8 +748,9 @@
                                                 </button>
                                             </form>
                                         </div>
-                                    </td>
-                                </tr>
+                                    </div>
+                                </td>
+                            </tr>
                             @empty
                                 <tr>
                                     <td colspan="8" class="text-center">Không có lịch hẹn nào</td>
@@ -609,7 +761,7 @@
                 </div>
 
                 <div class="mt-3">
-                    {{ $appointments->appends(request()->query())->links() }}
+                    {{ $appointments->appends(request()->query())->links('admin.partials.pagination') }}
                 </div>
             </div>
         </div>
@@ -796,35 +948,71 @@
             e.stopPropagation();
         });
 
-        // Xử lý hiển thị tất cả dịch vụ khi nhấn vào nút "Xem thêm"
+        // Xử lý hiển thị tất cả dịch vụ khi nhấn vào nút "Xem tất cả"
         $('.more-badge').on('click', function() {
             var appointmentId = $(this).data('appointment-id');
             var $cell = $(this).closest('.services-cell');
             var services = [];
 
-            // Lấy tất cả dịch vụ trong cell
+            // Lấy tất cả dịch vụ trong cell với thông tin loại dịch vụ
             $cell.find('.service-badge').each(function() {
-                services.push($(this).text());
+                services.push({
+                    name: $(this).text(),
+                    type: $(this).data('type') || 'other'
+                });
             });
 
             // Tạo nội dung cho modal
-            var modalContent = '<ul class="list-group">';
-            services.forEach(function(service) {
-                modalContent += '<li class="list-group-item">' + service + '</li>';
+            var modalContent = '<div class="list-group service-modal-list">';
+            services.forEach(function(service, index) {
+                var serviceIcon = 'fa-cut';
+                var iconColor = '#4e73df';
+
+                // Xác định biểu tượng và màu sắc dựa trên loại dịch vụ
+                if (service.type === 'uon') {
+                    serviceIcon = 'fa-wind';
+                    iconColor = '#36b9cc';
+                } else if (service.type === 'goi') {
+                    serviceIcon = 'fa-shower';
+                    iconColor = '#1cc88a';
+                } else if (service.type === 'nhuom') {
+                    serviceIcon = 'fa-palette';
+                    iconColor = '#f6c23e';
+                }
+
+                modalContent += '<div class="list-group-item service-modal-item">' +
+                                '<div class="d-flex align-items-center">' +
+                                '<div class="service-icon-wrapper me-3" style="border-left: 3px solid ' + iconColor + '; padding-left: 10px;">' +
+                                '<i class="fas ' + serviceIcon + '" style="color: ' + iconColor + ';"></i>' +
+                                '</div>' +
+                                '<div class="service-details">' +
+                                '<div class="service-name fw-medium">' + (index + 1) + '. ' + service.name + '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
             });
-            modalContent += '</ul>';
+            modalContent += '</div>';
+
+            // Thêm CSS cho modal
+            modalContent += '<style>' +
+                            '.service-modal-list { border-radius: 8px; overflow: hidden; }' +
+                            '.service-modal-item { padding: 12px 15px; transition: all 0.2s; }' +
+                            '.service-modal-item:hover { background-color: #f8f9fa; }' +
+                            '.service-icon-wrapper { display: flex; align-items: center; justify-content: center; width: 30px; }' +
+                            '.service-details { flex: 1; }' +
+                            '</style>';
 
             // Tạo và hiển thị modal
             var $modal = $('<div class="modal fade" tabindex="-1" role="dialog">' +
                 '<div class="modal-dialog modal-dialog-centered" role="document">' +
                 '<div class="modal-content">' +
-                '<div class="modal-header">' +
-                '<h5 class="modal-title">Danh sách dịch vụ</h5>' +
+                '<div class="modal-header" style="background-color: #f8f9fa; border-bottom: 1px solid rgba(0,0,0,0.05);">' +
+                '<h5 class="modal-title"><i class="fas fa-list-ul me-2 text-primary"></i>Danh sách dịch vụ</h5>' +
                 '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
                 '</div>' +
-                '<div class="modal-body">' + modalContent + '</div>' +
-                '<div class="modal-footer">' +
-                '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>' +
+                '<div class="modal-body p-0">' + modalContent + '</div>' +
+                '<div class="modal-footer" style="border-top: 1px solid rgba(0,0,0,0.05);">' +
+                '<button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Đóng</button>' +
                 '</div>' +
                 '</div>' +
                 '</div>' +
