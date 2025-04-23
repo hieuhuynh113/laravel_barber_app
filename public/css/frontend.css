@@ -42,6 +42,14 @@ body {
     padding: 15px 0;
 }
 
+/* Container padding cho các kích thước màn hình khác nhau */
+@media (min-width: 1200px) {
+    .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
 .navbar-brand img {
     max-height: 50px;
 }
@@ -532,6 +540,74 @@ label {
 }
 
 /* Responsive Styles */
+@media (min-width: 1200px) and (max-width: 1400px) {
+    .nav-link {
+        padding: 0.5rem 0.6rem !important;
+        font-size: 0.95rem;
+    }
+
+    .btn-primary {
+        padding: 0.5rem 1rem;
+        margin-right: 0.5rem !important;
+    }
+
+    .navbar-nav {
+        gap: 0.1rem;
+    }
+
+    .d-flex.align-items-center {
+        gap: 0.5rem;
+    }
+
+    .nav-item {
+        margin-right: 2px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .nav-link {
+        padding: 0.5rem 0.35rem !important;
+        font-size: 0.9rem;
+    }
+
+    .btn-primary {
+        padding: 0.4rem 0.7rem;
+        margin-right: 0.4rem !important;
+        font-size: 0.9rem;
+    }
+
+    .navbar-nav {
+        gap: 0;
+    }
+
+    .d-flex.align-items-center {
+        gap: 0.3rem;
+    }
+
+    .nav-item {
+        margin-right: 0;
+    }
+
+    .navbar-brand img {
+        max-height: 38px;
+    }
+
+    .navbar {
+        padding: 10px 0;
+    }
+
+    /* Giảm kích thước dropdown menu */
+    .dropdown-menu {
+        min-width: 10rem;
+        padding: 0.3rem 0;
+    }
+
+    .dropdown-item {
+        padding: 0.4rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
 @media (max-width: 991.98px) {
     .hero-title {
         font-size: 2.5rem;
@@ -546,6 +622,49 @@ label {
         padding: 1rem;
         border-radius: 0.3rem;
         margin-top: 1rem;
+    }
+
+    /* Cải thiện hiển thị menu trên màn hình nhỏ */
+    .navbar-toggler {
+        margin-right: 0.5rem;
+    }
+
+    .navbar-brand img {
+        max-height: 35px;
+    }
+
+    .navbar {
+        padding: 8px 0;
+    }
+
+    /* Đảm bảo nút đặt lịch hiển thị đúng */
+    .d-flex.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .d-flex.align-items-center .btn {
+        width: 100%;
+        text-align: center;
+        margin-right: 0 !important;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Tăng cỡ chữ cho menu trên màn hình nhỏ */
+    .nav-link {
+        font-size: 1rem;
+        padding: 0.7rem 1rem !important;
+    }
+
+    .dropdown-item {
+        font-size: 1rem;
+        padding: 0.7rem 1.2rem;
+    }
+
+    .btn {
+        font-size: 1rem;
     }
 }
 
@@ -580,6 +699,94 @@ label {
     .barber-image {
         width: 150px;
         height: 150px;
+    }
+
+    /* Tăng cỡ chữ cho màn hình nhỏ hơn */
+    .nav-link {
+        font-size: 1.1rem;
+        padding: 0.8rem 1.2rem !important;
+    }
+
+    .dropdown-item {
+        font-size: 1.1rem;
+        padding: 0.8rem 1.2rem;
+    }
+
+    .btn {
+        font-size: 1.1rem;
+        padding: 0.7rem 1.2rem;
+    }
+
+    /* Tăng cỡ chữ cho nội dung */
+    body {
+        font-size: 1.05rem;
+    }
+
+    p {
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    .card-text {
+        font-size: 1.05rem;
+    }
+}
+
+/* Màn hình cực nhỏ */
+@media (max-width: 575.98px) {
+    /* Tăng cỡ chữ cho màn hình cực nhỏ */
+    .nav-link {
+        font-size: 1.15rem;
+        padding: 0.9rem 1.2rem !important;
+    }
+
+    .dropdown-item {
+        font-size: 1.15rem;
+        padding: 0.9rem 1.2rem;
+    }
+
+    .btn {
+        font-size: 1.15rem;
+        padding: 0.8rem 1.2rem;
+    }
+
+    /* Tăng cỡ chữ cho nội dung */
+    body {
+        font-size: 1.1rem;
+    }
+
+    p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+    }
+
+    .card-text {
+        font-size: 1.1rem;
+    }
+
+    /* Tăng cỡ chữ cho tiêu đề */
+    h1, .h1 {
+        font-size: 2.2rem;
+    }
+
+    h2, .h2 {
+        font-size: 1.9rem;
+    }
+
+    h3, .h3 {
+        font-size: 1.7rem;
+    }
+
+    h4, .h4 {
+        font-size: 1.5rem;
+    }
+
+    h5, .h5 {
+        font-size: 1.3rem;
+    }
+
+    h6, .h6 {
+        font-size: 1.1rem;
     }
 }
 
