@@ -788,6 +788,7 @@ main > .container.py-5 {
     margin-left: -50vw;
     margin-right: -50vw;
     padding: 5rem 0;
+    background-color: var(--primary-color) !important; /* Sử dụng màu chủ đạo của dự án */
 }
 
 .cta-appointment .btn-light {

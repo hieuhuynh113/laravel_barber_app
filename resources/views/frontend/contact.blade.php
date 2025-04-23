@@ -126,7 +126,7 @@
     </div>
 </section>
 
-<section class="py-5 bg-primary text-white text-center cta-appointment">
+<section class="py-5 text-white text-center cta-appointment">
     <div class="container">
         <h2 class="h1 mb-4">Bạn cần đặt lịch?</h2>
         <p class="lead mb-4">Hãy đặt lịch ngay hôm nay để trải nghiệm dịch vụ tuyệt vời tại Barber Shop.</p>

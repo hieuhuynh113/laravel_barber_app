@@ -112,7 +112,7 @@
     </div>
 </section>
 
-<section class="py-5 bg-primary text-white text-center cta-appointment">
+<section class="py-5 text-white text-center cta-appointment">
     <div class="container">
         <h2 class="h1 mb-4">Cần tư vấn thêm về sản phẩm?</h2>
         <p class="lead mb-4">Đừng ngần ngại liên hệ hoặc ghé cửa hàng để được tư vấn chi tiết về sản phẩm phù hợp.</p>

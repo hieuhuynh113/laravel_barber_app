@@ -225,7 +225,7 @@
     </div>
 </section>
 
-<section class="py-5 bg-primary text-white text-center cta-appointment">
+<section class="py-5 text-white text-center cta-appointment">
     <div class="container">
         <h2 class="h1 mb-4">Sẵn sàng trải nghiệm dịch vụ?</h2>
         <p class="lead mb-4">Đặt lịch ngay hôm nay và trải nghiệm dịch vụ cắt tóc chuyên nghiệp tại Barber Shop.</p>

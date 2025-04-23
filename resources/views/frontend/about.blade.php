@@ -129,6 +129,28 @@
                     <img src="{{ asset('storage/' . $barber->user->avatar) }}" alt="{{ $barber->user->name }}" class="barber-image rounded-circle mb-3" style="width: 180px; height: 180px; object-fit: cover; border: 5px solid #efefef;">
                     <h4 class="barber-name">{{ $barber->user->name }}</h4>
                     <p class="barber-position text-muted">Thợ cắt tóc{{ $barber->experience > 0 ? ' - ' . $barber->experience . ' năm kinh nghiệm' : '' }}</p>
+
+                    <!-- Đánh giá trung bình -->
+                    <div class="barber-rating mb-2">
+                        @php
+                            $avgRating = $barber->reviews_avg_rating ?? 0;
+                            $reviewsCount = $barber->reviews_count ?? 0;
+                        @endphp
+                        <div class="stars">
+                            @for($i = 1; $i <= 5; $i++)
+                                @if($i <= round($avgRating))
+                                    <i class="fas fa-star text-warning"></i>
+                                @elseif($i - 0.5 <= $avgRating)
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                @else
+                                    <i class="far fa-star text-warning"></i>
+                                @endif
+                            @endfor
+                            <span class="ms-1 text-muted">({{ number_format($avgRating, 1) }})</span>
+                        </div>
+                        <small class="text-muted">{{ $reviewsCount }} đánh giá</small>
+                    </div>
+
                     <p class="barber-description mb-3">{{ Str::limit($barber->description, 100) }}</p>
                     <div class="social-icons">
                         <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
@@ -142,7 +164,7 @@
     </div>
 </section>
 
-<section class="py-5 bg-primary text-white text-center cta-appointment">
+<section class="py-5 text-white text-center cta-appointment">
     <div class="container">
         <h2 class="h1 mb-4">Sẵn sàng trải nghiệm dịch vụ của chúng tôi?</h2>
         <p class="lead mb-4">Đặt lịch ngay hôm nay để có trải nghiệm cắt tóc tuyệt vời!</p>
