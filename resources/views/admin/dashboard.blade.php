@@ -402,19 +402,19 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <a href="{{ route('admin.reviews.index', ['rating' => 1]) }}" class="text-decoration-none">
+            <a href="{{ route('admin.reviews.index', ['rating' => '1,2']) }}" class="text-decoration-none">
                 <div class="card border-left-warning shadow h-100 py-2 dashboard-card">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                    Đánh giá 1 sao</div>
+                                    Đánh giá 1 - 2 sao</div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
                                     @php
-                                        $oneStarCount = \App\Models\Review::where('rating', 1)->count();
-                                        $oneStarPercentage = $totalReviews > 0 ? round(($oneStarCount / $totalReviews) * 100) : 0;
+                                        $lowStarCount = \App\Models\Review::whereIn('rating', [1, 2])->count();
+                                        $lowStarPercentage = $totalReviews > 0 ? round(($lowStarCount / $totalReviews) * 100) : 0;
                                     @endphp
-                                    {{ $oneStarCount }} ({{ $oneStarPercentage }}%)
+                                    {{ $lowStarCount }} ({{ $lowStarPercentage }}%)
                                 </div>
                             </div>
                             <div class="col-auto">

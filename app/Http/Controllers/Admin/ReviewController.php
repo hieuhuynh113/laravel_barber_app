@@ -17,38 +17,44 @@ class ReviewController extends Controller
     public function index(Request $request)
     {
         $query = Review::with(['user', 'service', 'barber.user']);
-        
+
         // Lọc theo dịch vụ
         if ($request->has('service_id') && $request->service_id) {
             $query->where('service_id', $request->service_id);
         }
-        
+
         // Lọc theo thợ cắt tóc
         if ($request->has('barber_id') && $request->barber_id) {
             $query->where('barber_id', $request->barber_id);
         }
-        
+
         // Lọc theo số sao
         if ($request->has('rating') && $request->rating) {
-            $query->where('rating', $request->rating);
+            // Kiểm tra nếu rating là chuỗi có dấu phẩy (ví dụ: "1,2")
+            if (strpos($request->rating, ',') !== false) {
+                $ratings = explode(',', $request->rating);
+                $query->whereIn('rating', $ratings);
+            } else {
+                $query->where('rating', $request->rating);
+            }
         }
-        
+
         // Lọc theo trạng thái
         if ($request->has('status')) {
             $query->where('status', $request->status);
         }
-        
+
         // Sắp xếp
         $sortBy = $request->input('sort_by', 'created_at');
         $sortOrder = $request->input('sort_order', 'desc');
         $query->orderBy($sortBy, $sortOrder);
-        
+
         $reviews = $query->paginate(10)->withQueryString();
-        
+
         // Lấy danh sách dịch vụ và thợ cắt tóc cho bộ lọc
         $services = Service::active()->get();
         $barbers = Barber::with('user')->active()->get();
-        
+
         return view('admin.reviews.index', compact('reviews', 'services', 'barbers'));
     }
 
@@ -88,11 +94,11 @@ class ReviewController extends Controller
             'status' => 'required|boolean',
             'admin_response' => 'nullable|string|max:500',
         ]);
-        
+
         $review->status = $validated['status'];
         $review->admin_response = $validated['admin_response'];
         $review->save();
-        
+
         return redirect()->route('admin.reviews.show', $review->id)
             ->with('success', 'Đánh giá đã được cập nhật thành công.');
     }
@@ -110,13 +116,13 @@ class ReviewController extends Controller
                 Storage::delete($imagePath);
             }
         }
-        
+
         $review->delete();
-        
+
         return redirect()->route('admin.reviews.index')
             ->with('success', 'Đánh giá đã được xóa thành công.');
     }
-    
+
     /**
      * Hiển thị thống kê đánh giá
      */
@@ -125,7 +131,7 @@ class ReviewController extends Controller
         // Thống kê tổng quan
         $totalReviews = Review::count();
         $averageRating = Review::avg('rating');
-        
+
         // Thống kê theo số sao
         $ratingDistribution = [];
         for ($i = 1; $i <= 5; $i++) {
@@ -134,7 +140,7 @@ class ReviewController extends Controller
                 'percentage' => $totalReviews > 0 ? round((Review::where('rating', $i)->count() / $totalReviews) * 100, 1) : 0
             ];
         }
-        
+
         // Thống kê theo dịch vụ (top 5)
         $serviceStats = Service::withCount('reviews')
             ->withAvg('reviews', 'rating')
@@ -142,7 +148,7 @@ class ReviewController extends Controller
             ->orderByDesc('reviews_count')
             ->take(5)
             ->get();
-            
+
         // Thống kê theo thợ cắt tóc (top 5)
         $barberStats = Barber::with('user')
             ->withCount('reviews')
@@ -151,16 +157,16 @@ class ReviewController extends Controller
             ->orderByDesc('reviews_avg_rating')
             ->take(5)
             ->get();
-            
+
         return view('admin.reviews.statistics', compact(
-            'totalReviews', 
-            'averageRating', 
-            'ratingDistribution', 
-            'serviceStats', 
+            'totalReviews',
+            'averageRating',
+            'ratingDistribution',
+            'serviceStats',
             'barberStats'
         ));
     }
-    
+
     /**
      * Thay đổi trạng thái đánh giá
      */
@@ -168,7 +174,7 @@ class ReviewController extends Controller
     {
         $review->status = !$review->status;
         $review->save();
-        
+
         return redirect()->back()->with('success', 'Trạng thái đánh giá đã được cập nhật.');
     }
 }
