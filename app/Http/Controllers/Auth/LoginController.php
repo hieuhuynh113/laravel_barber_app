@@ -48,12 +48,57 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        } else if ($user->role === 'barber') {
-            return redirect()->route('barber.dashboard');
+        // Xác định URL chuyển hướng dựa trên vai trò
+        $redirectUrl = $this->getRedirectUrlByRole($user);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Đăng nhập thành công',
+                'user' => $user,
+                'redirect_url' => $redirectUrl
+            ]);
         }
 
-        return redirect()->route('profile.index');
+        return redirect()->to($redirectUrl);
+    }
+
+    /**
+     * Lấy URL chuyển hướng dựa trên vai trò của người dùng
+     *
+     * @param  \App\Models\User  $user
+     * @return string
+     */
+    protected function getRedirectUrlByRole($user)
+    {
+        if ($user->role === 'admin') {
+            return route('admin.dashboard');
+        } else if ($user->role === 'barber') {
+            return route('barber.dashboard');
+        }
+
+        return route('profile.index');
+    }
+
+    /**
+     * Get the failed login response instance.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => trans('auth.failed')
+            ], 422);
+        }
+
+        return redirect()->back()
+            ->withInput($request->only($this->username(), 'remember'))
+            ->withErrors([
+                $this->username() => trans('auth.failed'),
+            ]);
     }
 }

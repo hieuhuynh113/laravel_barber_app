@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class EmailVerificationController extends Controller
@@ -43,11 +44,23 @@ class EmailVerificationController extends Controller
      */
     public function sendOTP(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email',
             'name' => 'required|string|max:255',
             'password' => 'required|string|min:8|confirmed',
         ]);
+
+        if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Thông tin không hợp lệ',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return back()->withErrors($validator)->withInput();
+        }
 
         // Tạo mã OTP ngẫu nhiên 6 số
         $otp = sprintf('%06d', mt_rand(1, 999999));
@@ -70,6 +83,13 @@ class EmailVerificationController extends Controller
         $expiryTime = 600; // 10 phút = 600 giây
 
         if (!$emailSent && config('app.env') !== 'local') {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể gửi email xác thực. Vui lòng thử lại sau.'
+                ], 500);
+            }
+
             return back()->with('error', 'Không thể gửi email xác thực. Vui lòng thử lại sau.');
         }
 
@@ -79,6 +99,14 @@ class EmailVerificationController extends Controller
         // Chỉ hiển thị hướng dẫn kiểm tra log trong môi trường phát triển và khi sử dụng log driver
         if (config('app.env') === 'local' && config('mail.mailer') === 'log') {
             $message .= ' (Kiểm tra mã OTP trong log của ứng dụng)';
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'expiryTime' => $expiryTime
+            ]);
         }
 
         return redirect()->route('verification.form', ['email' => $request->email])
@@ -91,10 +119,22 @@ class EmailVerificationController extends Controller
      */
     public function verifyOTP(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'otp' => 'required|string|size:6',
         ]);
+
+        if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Thông tin không hợp lệ',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return back()->withErrors($validator);
+        }
 
         $verification = EmailVerification::where('email', $request->email)
             ->where('otp', $request->otp)
@@ -102,6 +142,13 @@ class EmailVerificationController extends Controller
             ->first();
 
         if (!$verification) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Mã OTP không hợp lệ hoặc đã hết hạn'
+                ], 422);
+            }
+
             return back()->with('error', 'Mã OTP không hợp lệ hoặc đã hết hạn');
         }
 
@@ -120,6 +167,15 @@ class EmailVerificationController extends Controller
         // Đăng nhập người dùng
         auth()->login($user);
 
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Đăng ký tài khoản thành công!',
+                'user' => $user,
+                'redirect_url' => route('profile.index') // Người dùng mới luôn là khách hàng, chuyển hướng đến trang profile
+            ]);
+        }
+
         return redirect()->route('home')
             ->with('success', 'Đăng ký tài khoản thành công!');
     }
@@ -129,13 +185,32 @@ class EmailVerificationController extends Controller
      */
     public function resendOTP(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email',
         ]);
+
+        if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Email không hợp lệ',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return back()->withErrors($validator);
+        }
 
         $verification = EmailVerification::where('email', $request->email)->first();
 
         if (!$verification) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy thông tin đăng ký'
+                ], 404);
+            }
+
             return back()->with('error', 'Không tìm thấy thông tin đăng ký');
         }
 
@@ -155,6 +230,13 @@ class EmailVerificationController extends Controller
         $expiryTime = 600; // 10 phút = 600 giây
 
         if (!$emailSent && config('app.env') !== 'local') {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể gửi email xác thực. Vui lòng thử lại sau.'
+                ], 500);
+            }
+
             return back()->with('error', 'Không thể gửi email xác thực. Vui lòng thử lại sau.');
         }
 
@@ -164,6 +246,14 @@ class EmailVerificationController extends Controller
         // Chỉ hiển thị hướng dẫn kiểm tra log trong môi trường phát triển và khi sử dụng log driver
         if (config('app.env') === 'local' && config('mail.mailer') === 'log') {
             $message .= ' (Kiểm tra mã OTP trong log của ứng dụng)';
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'expiryTime' => $expiryTime
+            ]);
         }
 
         return back()->with('success', $message)->with('expiryTime', $expiryTime);
