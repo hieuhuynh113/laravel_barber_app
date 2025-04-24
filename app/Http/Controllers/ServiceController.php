@@ -7,6 +7,7 @@ use App\Models\Service;
 use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 
 class ServiceController extends Controller
 {
@@ -14,25 +15,53 @@ class ServiceController extends Controller
     {
         $categoryId = $request->input('category_id');
         $level = $request->input('level');
+        $price = $request->input('price');
         $sort = $request->input('sort');
+        $categoryType = $request->input('category_type');
 
         $query = Service::active()->with('category')
             ->withCount('reviews')
             ->withAvg('reviews', 'rating');
 
-        // Apply category filter
-        if ($categoryId) {
+        // Apply category filter (multiple categories)
+        if ($categoryId && is_array($categoryId)) {
+            $query->whereIn('category_id', $categoryId);
+        } elseif ($categoryId) {
             $query->where('category_id', $categoryId);
         }
 
-        // Apply level filter (assuming you have a level column)
-        if ($level) {
-            $query->where('level', $level);
+
+
+        // Apply price range filter (multiple price ranges)
+        if ($price && is_array($price)) {
+            $query->where(function($q) use ($price) {
+                foreach ($price as $priceRange) {
+                    $range = explode('-', $priceRange);
+                    if (count($range) == 2) {
+                        $minPrice = (int)$range[0];
+                        $maxPrice = (int)$range[1];
+                        $q->orWhereBetween('price', [$minPrice, $maxPrice]);
+                    }
+                }
+            });
+        } elseif ($price) {
+            $priceRange = explode('-', $price);
+            if (count($priceRange) == 2) {
+                $minPrice = (int)$priceRange[0];
+                $maxPrice = (int)$priceRange[1];
+                $query->whereBetween('price', [$minPrice, $maxPrice]);
+            }
         }
 
         // Apply sorting
         if ($sort) {
             switch ($sort) {
+                case 'price_low':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_high':
+                    $query->orderBy('price', 'desc');
+                    break;
                 case 'popular':
                     $query->orderBy('views', 'desc');
                     break;
@@ -49,7 +78,7 @@ class ServiceController extends Controller
             $query->orderBy('id', 'desc');
         }
 
-        $services = $query->paginate(9);
+        $services = $query->paginate(6); // Reduced to 6 for better display in list view
         $categories = Category::service()->active()->get();
 
         // Handle AJAX request
@@ -67,7 +96,7 @@ class ServiceController extends Controller
             ]);
         }
 
-        return view('frontend.services.index', compact('services', 'categories', 'categoryId', 'level', 'sort'));
+        return view('frontend.services.index', compact('services', 'categories', 'categoryId', 'level', 'price', 'sort'));
     }
 
     public function show($slug)

@@ -34,53 +34,43 @@ document.addEventListener('DOMContentLoaded', function() {
         return 'services'; // Default to services
     }
 
-    // Category filter handling
-    const categoryFilter = document.getElementById('categoryFilter');
-    if (categoryFilter) {
-        categoryFilter.addEventListener('change', function() {
-            currentCategory = this.value;
-            currentPage = 1;
-            fetchItems();
-        });
-    }
-
-    // Level filter handling (for services)
-    const levelFilter = document.getElementById('levelFilter');
-    if (levelFilter) {
-        levelFilter.addEventListener('change', function() {
-            currentLevel = this.value;
-            currentPage = 1;
-            fetchItems();
-        });
-    }
-
-    // Price filter handling (for products)
-    const priceFilter = document.getElementById('priceFilter');
-    if (priceFilter) {
-        priceFilter.addEventListener('change', function() {
-            currentPrice = this.value;
-            currentPage = 1;
-            fetchItems();
-        });
-    }
-
-    // Tab filter handling
-    const filterTabs = document.querySelectorAll('.filter-tab');
-    if (filterTabs.length > 0) {
-        filterTabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                // Remove active class from all tabs
-                filterTabs.forEach(t => t.classList.remove('active'));
-                // Add active class to clicked tab
-                this.classList.add('active');
-
-                // Get sort value from data attribute
-                currentSort = this.getAttribute('data-sort');
+    // Auto filter handling
+    const autoFilters = document.querySelectorAll('.auto-filter');
+    if (autoFilters.length > 0) {
+        autoFilters.forEach(filter => {
+            filter.addEventListener('change', function() {
+                // Reset page to 1 when filter changes
                 currentPage = 1;
+
+                // Fetch items immediately when filter changes
                 fetchItems();
             });
         });
     }
+
+    // Clear all filters button
+    const clearAllFiltersBtn = document.getElementById('clearAllFilters');
+    if (clearAllFiltersBtn) {
+        clearAllFiltersBtn.addEventListener('click', function() {
+            // Uncheck all checkboxes
+            document.querySelectorAll('input[type="checkbox"].auto-filter').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+            // Uncheck all radio buttons
+            document.querySelectorAll('input[type="radio"].auto-filter').forEach(radio => {
+                radio.checked = false;
+            });
+
+            // Reset page to 1
+            currentPage = 1;
+
+            // Fetch items with cleared filters
+            fetchItems();
+        });
+    }
+
+    // Tab filter handling removed
 
     // Pagination handling
     document.addEventListener('click', function(e) {
@@ -107,27 +97,53 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading indicator
         loadingIndicator.classList.add('active');
 
+        // Scroll to top of services container
+        if (itemsContainer) {
+            window.scrollTo({
+                top: itemsContainer.offsetTop - 100,
+                behavior: 'smooth'
+            });
+        }
+
         // Build URL with filter parameters
         const url = new URL(window.location.origin + window.location.pathname);
 
-        // Add category filter if set
-        if (currentCategory) {
-            url.searchParams.set('category_id', currentCategory);
+        // Get all checked category type checkboxes
+        const categoryTypeCheckboxes = document.querySelectorAll('input[name="category_type"]:checked');
+        if (categoryTypeCheckboxes.length > 0) {
+            categoryTypeCheckboxes.forEach((checkbox, index) => {
+                url.searchParams.append('category_type', checkbox.value);
+            });
         }
 
-        // Add level filter for services
-        if (currentLevel && currentPageType === 'services') {
-            url.searchParams.set('level', currentLevel);
+        // Get all checked category checkboxes
+        const categoryCheckboxes = document.querySelectorAll('input[name="category_id[]"]:checked');
+        if (categoryCheckboxes.length > 0) {
+            categoryCheckboxes.forEach((checkbox, index) => {
+                url.searchParams.append('category_id[]', checkbox.value);
+            });
         }
 
-        // Add price filter for products
-        if (currentPrice && currentPageType === 'products') {
-            url.searchParams.set('price', currentPrice);
+        // Get all checked level checkboxes
+        const levelCheckboxes = document.querySelectorAll('input[name="level[]"]:checked');
+        if (levelCheckboxes.length > 0) {
+            levelCheckboxes.forEach((checkbox, index) => {
+                url.searchParams.append('level[]', checkbox.value);
+            });
         }
 
-        // Add sort filter if set
-        if (currentSort) {
-            url.searchParams.set('sort', currentSort);
+        // Get all checked price checkboxes
+        const priceCheckboxes = document.querySelectorAll('input[name="price[]"]:checked');
+        if (priceCheckboxes.length > 0) {
+            priceCheckboxes.forEach((checkbox, index) => {
+                url.searchParams.append('price[]', checkbox.value);
+            });
+        }
+
+        // Get selected sort radio
+        const sortRadio = document.querySelector('input[name="sort"]:checked');
+        if (sortRadio) {
+            url.searchParams.set('sort', sortRadio.value);
         }
 
         // Add page number
@@ -155,6 +171,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update items container
             if (itemsContainer && data.html) {
                 itemsContainer.innerHTML = data.html;
+
+                // Reinitialize appointment buttons after AJAX load
+                initAppointmentButtons();
             }
 
             // Update pagination
@@ -185,48 +204,94 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Function to reinitialize appointment buttons after AJAX load
+    function initAppointmentButtons() {
+        // Check if appointment-auth-check.js has initialized a function for this
+        if (typeof initializeAppointmentButtons === 'function') {
+            initializeAppointmentButtons();
+        } else {
+            // Fallback initialization
+            const appointmentBtns = document.querySelectorAll('.appointment-btn');
+            if (appointmentBtns.length > 0) {
+                appointmentBtns.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        // If user is not logged in, show login modal
+                        if (document.body.classList.contains('user-guest')) {
+                            e.preventDefault();
+                            const targetUrl = this.getAttribute('href');
+                            localStorage.setItem('redirectAfterLogin', targetUrl);
+
+                            // Show login modal if it exists
+                            const authModal = document.getElementById('authModal');
+                            if (authModal) {
+                                const bsModal = new bootstrap.Modal(authModal);
+                                bsModal.show();
+                            }
+                        }
+                    });
+                });
+            }
+        }
+    }
+
     // Function to update browser URL without page reload
     function updateBrowserUrl() {
         const url = new URL(window.location.href);
 
-        // Update or remove category parameter
-        if (currentCategory) {
-            url.searchParams.set('category_id', currentCategory);
-        } else {
-            url.searchParams.delete('category_id');
+        // Clear all existing parameters
+        Array.from(url.searchParams.keys()).forEach(key => {
+            url.searchParams.delete(key);
+        });
+
+        // Get all checked category type checkboxes
+        const categoryTypeCheckboxes = document.querySelectorAll('input[name="category_type"]:checked');
+        if (categoryTypeCheckboxes.length > 0) {
+            categoryTypeCheckboxes.forEach((checkbox, index) => {
+                url.searchParams.append('category_type', checkbox.value);
+            });
         }
 
-        // Update or remove level parameter (for services)
-        if (currentLevel && currentPageType === 'services') {
-            url.searchParams.set('level', currentLevel);
-        } else {
-            url.searchParams.delete('level');
+        // Get all checked category checkboxes
+        const categoryCheckboxes = document.querySelectorAll('input[name="category_id[]"]:checked');
+        if (categoryCheckboxes.length > 0) {
+            categoryCheckboxes.forEach((checkbox, index) => {
+                url.searchParams.append('category_id[]', checkbox.value);
+            });
         }
 
-        // Update or remove price parameter (for products)
-        if (currentPrice && currentPageType === 'products') {
-            url.searchParams.set('price', currentPrice);
-        } else {
-            url.searchParams.delete('price');
+        // Get all checked level checkboxes
+        const levelCheckboxes = document.querySelectorAll('input[name="level[]"]:checked');
+        if (levelCheckboxes.length > 0) {
+            levelCheckboxes.forEach((checkbox, index) => {
+                url.searchParams.append('level[]', checkbox.value);
+            });
         }
 
-        // Update or remove sort parameter
-        if (currentSort) {
-            url.searchParams.set('sort', currentSort);
-        } else {
-            url.searchParams.delete('sort');
+        // Get all checked price checkboxes
+        const priceCheckboxes = document.querySelectorAll('input[name="price[]"]:checked');
+        if (priceCheckboxes.length > 0) {
+            priceCheckboxes.forEach((checkbox, index) => {
+                url.searchParams.append('price[]', checkbox.value);
+            });
+        }
+
+        // Get selected sort radio
+        const sortRadio = document.querySelector('input[name="sort"]:checked');
+        if (sortRadio) {
+            url.searchParams.set('sort', sortRadio.value);
         }
 
         // Update or remove page parameter
         if (currentPage > 1) {
             url.searchParams.set('page', currentPage);
-        } else {
-            url.searchParams.delete('page');
         }
 
         // Update browser history without reloading
         window.history.pushState({}, '', url);
     }
+
+    // Initialize appointment buttons on page load
+    initAppointmentButtons();
 
     // Initialize: Set initial values from URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -258,11 +323,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set initial sort
     if (urlParams.has('sort')) {
         currentSort = urlParams.get('sort');
-        filterTabs.forEach(tab => {
-            if (tab.getAttribute('data-sort') === currentSort) {
-                filterTabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-            }
-        });
+        // Update sort radio if available
+        const sortRadio = document.querySelector(`input[name="sortFilter"][value="${currentSort}"]`);
+        if (sortRadio) {
+            sortRadio.checked = true;
+        }
     }
 });
