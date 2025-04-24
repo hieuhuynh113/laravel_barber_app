@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Lấy dịch vụ nổi bật và tính toán đánh giá trung bình
         $featuredServices = Service::active()->with('category')
@@ -28,7 +28,18 @@ class HomeController extends Controller
 
         $latestNews = News::published()->with('category')->latest()->limit(3)->get();
 
-        return view('frontend.home', compact('featuredServices', 'barbers', 'latestNews'));
+        // Kiểm tra tham số auth để hiển thị modal tương ứng
+        $showAuthModal = null;
+        if ($request->has('auth')) {
+            $authType = $request->input('auth');
+            if ($authType === 'login') {
+                $showAuthModal = 'login';
+            } elseif ($authType === 'register') {
+                $showAuthModal = 'register';
+            }
+        }
+
+        return view('frontend.home', compact('featuredServices', 'barbers', 'latestNews', 'showAuthModal'));
     }
 
     public function about()

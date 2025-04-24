@@ -1,5 +1,42 @@
 @extends('layouts.frontend')
 
+@section('scripts')
+@if(isset($showAuthModal))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lấy các phần tử cần thiết
+        const authModal = document.getElementById('authModal');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const modalTitle = document.querySelector('#authModal .modal-title');
+
+        // Khởi tạo modal Bootstrap
+        if (typeof bootstrap !== 'undefined' && authModal) {
+            const bsModal = new bootstrap.Modal(authModal);
+
+            // Hiển thị form tương ứng
+            if ('{{ $showAuthModal }}' === 'login') {
+                if (loginForm && registerForm) {
+                    loginForm.style.display = 'block';
+                    registerForm.style.display = 'none';
+                    if (modalTitle) modalTitle.textContent = 'Đăng nhập';
+                }
+            } else if ('{{ $showAuthModal }}' === 'register') {
+                if (loginForm && registerForm) {
+                    loginForm.style.display = 'none';
+                    registerForm.style.display = 'block';
+                    if (modalTitle) modalTitle.textContent = 'Đăng ký';
+                }
+            }
+
+            // Hiển thị modal
+            bsModal.show();
+        }
+    });
+</script>
+@endif
+@endsection
+
 @section('title', 'Trang chủ')
 
 @section('hero')

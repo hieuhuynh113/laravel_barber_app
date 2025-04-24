@@ -72,14 +72,28 @@ Route::prefix('appointment')->name('appointment.')->middleware(\App\Http\Middlew
     Route::post('/upload-receipt/{id}', [AppointmentController::class, 'uploadReceipt'])->name('upload-receipt');
 });
 
-// Auth Routes
-Auth::routes();
+// Auth Routes - Chỉ giữ lại các route cần thiết
+Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login');
+Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+Route::post('/password/email', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/password/reset', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/password/reset', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
+Route::get('/password/reset/{token}', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 
 // Email Verification Routes
 Route::post('/register/verify', [\App\Http\Controllers\EmailVerificationController::class, 'sendOTP'])->name('verification.send');
 Route::get('/register/verify', [\App\Http\Controllers\EmailVerificationController::class, 'showVerificationForm'])->name('verification.form');
 Route::post('/register/verify/confirm', [\App\Http\Controllers\EmailVerificationController::class, 'verifyOTP'])->name('verification.verify');
 Route::post('/register/verify/resend', [\App\Http\Controllers\EmailVerificationController::class, 'resendOTP'])->name('verification.resend');
+
+// Redirect login/register to home with modal
+Route::get('/login', function() {
+    return redirect()->route('home', ['auth' => 'login']);
+})->name('login');
+
+Route::get('/register', function() {
+    return redirect()->route('home', ['auth' => 'register']);
+})->name('register');
 
 // Profile Routes
 Route::middleware(['auth'])->group(function () {
@@ -97,13 +111,13 @@ Route::middleware(['auth'])->group(function () {
 // Admin Routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     // Admin Profile Routes
     Route::get('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile');
     Route::get('/profile/edit', [\App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/change-password', [\App\Http\Controllers\Admin\ProfileController::class, 'changePassword'])->name('profile.change-password');
-    
+
     // Category Routes
     Route::resource('categories', CategoryController::class);
 
