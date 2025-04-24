@@ -19,7 +19,9 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers;
+    use AuthenticatesUsers {
+        attemptLogin as protected baseAttemptLogin;
+    }
 
     /**
      * Where to redirect users after login.
@@ -48,15 +50,24 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        // Xác định URL chuyển hướng dựa trên vai trò
-        $redirectUrl = $this->getRedirectUrlByRole($user);
+        // Kiểm tra xem có URL dự định truy cập trong session không
+        $intendedUrl = session('url.intended');
+
+        // Xác định URL chuyển hướng dựa trên vai trò nếu không có URL dự định truy cập
+        $redirectUrl = $intendedUrl ?: $this->getRedirectUrlByRole($user);
+
+        // Xóa URL dự định truy cập khỏi session
+        if ($intendedUrl) {
+            session()->forget('url.intended');
+        }
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Đăng nhập thành công',
                 'user' => $user,
-                'redirect_url' => $redirectUrl
+                'redirect_url' => $redirectUrl,
+                'has_intended_url' => !empty($intendedUrl)
             ]);
         }
 
@@ -100,5 +111,39 @@ class LoginController extends Controller
             ->withErrors([
                 $this->username() => trans('auth.failed'),
             ]);
+    }
+
+    /**
+     * Ghi đè phương thức attemptLogin để kiểm tra vai trò
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    protected function attemptLogin(Request $request)
+    {
+        // Lấy thông tin đăng nhập
+        $credentials = $this->credentials($request);
+
+        // Kiểm tra xem người dùng có tồn tại không
+        $user = \App\Models\User::where('email', $credentials['email'])->first();
+
+        // Nếu người dùng tồn tại và không phải là khách hàng, trả về lỗi
+        if ($user && $user->role !== 'customer') {
+            if ($request->ajax() || $request->wantsJson()) {
+                abort(403, 'Vui lòng đăng nhập tại trang dành cho ' .
+                    ($user->role === 'admin' ? 'quản trị viên' : 'thợ cắt tóc'));
+            }
+
+            // Thêm lỗi vào session và chuyển hướng
+            return redirect()->back()
+                ->withInput($request->only($this->username(), 'remember'))
+                ->withErrors([
+                    $this->username() => 'Tài khoản này không phải là tài khoản khách hàng. Vui lòng đăng nhập tại trang dành cho ' .
+                        ($user->role === 'admin' ? 'quản trị viên' : 'thợ cắt tóc'),
+                ])->send();
+        }
+
+        // Nếu là khách hàng, tiếp tục đăng nhập bình thường
+        return $this->baseAttemptLogin($request);
     }
 }

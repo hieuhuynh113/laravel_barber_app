@@ -166,6 +166,10 @@
             </div>
             <div class="text-center pt-4 mt-4 border-top">
                 <p class="mb-0">&copy; {{ date('Y') }} Barber Shop. Bản quyền thuộc về chúng tôi.</p>
+                <div class="mt-2">
+                    <a href="{{ route('admin.login') }}" class="text-white text-decoration-none me-3"><small>Đăng nhập quản trị</small></a>
+                    <a href="{{ route('barber.login') }}" class="text-white text-decoration-none"><small>Đăng nhập thợ cắt tóc</small></a>
+                </div>
             </div>
         </div>
     </footer>

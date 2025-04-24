@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
 
         // Custom middlewares
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'admin.guest' => \App\Http\Middleware\AdminGuestMiddleware::class,
         'barber' => \App\Http\Middleware\BarberMiddleware::class,
         'check.appointment.auth' => \App\Http\Middleware\CheckAppointmentAuth::class,
     ];

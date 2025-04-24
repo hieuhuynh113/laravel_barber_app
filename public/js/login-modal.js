@@ -327,18 +327,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     showSuccess('Đăng nhập thành công! Đang chuyển hướng...');
 
-                    // Kiểm tra URL dự định truy cập hoặc URL chuyển hướng từ server
-                    const intendedUrl = localStorage.getItem('intended_url');
+                    // Kiểm tra URL dự định truy cập từ localStorage (từ form hero) hoặc URL chuyển hướng từ server
+                    const intendedUrlFromLocalStorage = localStorage.getItem('intended_url');
                     const redirectUrl = data.redirect_url || null;
+                    const hasIntendedUrlFromServer = data.has_intended_url || false;
 
                     // Chuyển hướng sau 1 giây
                     setTimeout(() => {
-                        if (intendedUrl) {
-                            // Nếu có URL dự định truy cập (từ nút đặt lịch), ưu tiên sử dụng
+                        if (intendedUrlFromLocalStorage && !hasIntendedUrlFromServer) {
+                            // Nếu có URL dự định truy cập từ localStorage (từ form hero) và không có URL dự định từ server
                             localStorage.removeItem('intended_url');
-                            window.location.href = intendedUrl;
+                            window.location.href = intendedUrlFromLocalStorage;
                         } else if (redirectUrl) {
-                            // Nếu có URL chuyển hướng từ server (dựa trên vai trò), sử dụng nó
+                            // Nếu có URL chuyển hướng từ server (có thể là URL dự định hoặc URL dựa trên vai trò)
                             window.location.href = redirectUrl;
                         } else {
                             // Nếu không có URL nào, tải lại trang
@@ -654,6 +655,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Lưu URL hiện tại vào localStorage
                 const targetUrl = button.getAttribute('href');
                 localStorage.setItem('intended_url', targetUrl);
+
+                // Lưu URL dự định truy cập vào session thông qua một AJAX request
+                fetch('/save-intended-url', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ url: targetUrl })
+                }).catch(error => {
+                    console.error('Error saving intended URL:', error);
+                });
 
                 // Hiển thị modal đăng nhập
                 showLoginFormUI();

@@ -19,7 +19,7 @@ class BarberMiddleware
         if (Auth::check() && (Auth::user()->role === 'barber' || Auth::user()->role === 'admin')) {
             return $next($request);
         }
-        
-        return redirect('/login')->with('error', 'Bạn không có quyền truy cập vào trang này');
+
+        return redirect('/barber/login')->with('error', 'Vui lòng đăng nhập để tiếp tục');
     }
 }

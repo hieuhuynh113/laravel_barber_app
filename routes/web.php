@@ -95,6 +95,14 @@ Route::get('/register', function() {
     return redirect()->route('home', ['auth' => 'register']);
 })->name('register');
 
+// Admin Login Routes
+Route::get('/admin/login', [\App\Http\Controllers\Auth\AdminLoginController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [\App\Http\Controllers\Auth\AdminLoginController::class, 'login'])->name('admin.login.submit');
+
+// Barber Login Routes
+Route::get('/barber/login', [\App\Http\Controllers\Auth\BarberLoginController::class, 'showLoginForm'])->name('barber.login');
+Route::post('/barber/login', [\App\Http\Controllers\Auth\BarberLoginController::class, 'login'])->name('barber.login.submit');
+
 // Profile Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
@@ -109,8 +117,22 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Admin Routes
+// Route riêng cho /admin để xử lý chuyển hướng đúng
+Route::get('/admin', function() {
+    if (!auth()->check()) {
+        return redirect('/admin/login')->with('error', 'Vui lòng đăng nhập để tiếp tục');
+    }
+
+    if (auth()->user()->role !== 'admin') {
+        return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập vào trang này');
+    }
+
+    return app()->make(\App\Http\Controllers\Admin\DashboardController::class)->index();
+});
+
+// Các route admin khác
 Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard')->withoutMiddleware(['auth']);
 
     // Admin Profile Routes
     Route::get('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile');
@@ -187,8 +209,22 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
 });
 
 // Barber Routes
+// Route riêng cho /barber để xử lý chuyển hướng đúng
+Route::get('/barber', function() {
+    if (!auth()->check()) {
+        return redirect('/barber/login')->with('error', 'Vui lòng đăng nhập để tiếp tục');
+    }
+
+    if (auth()->user()->role !== 'barber' && auth()->user()->role !== 'admin') {
+        return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập vào trang này');
+    }
+
+    return app()->make(\App\Http\Controllers\Barber\DashboardController::class)->index();
+});
+
+// Các route barber khác
 Route::prefix('barber')->name('barber.')->middleware(['auth', \App\Http\Middleware\BarberMiddleware::class])->group(function () {
-    Route::get('/', [\App\Http\Controllers\Barber\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [\App\Http\Controllers\Barber\DashboardController::class, 'index'])->name('dashboard')->withoutMiddleware(['auth']);
     // Thêm routes cho barber dashboard và quản lý lịch hẹn
 });
 

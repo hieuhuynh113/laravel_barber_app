@@ -52,4 +52,6 @@ class HomeController extends Controller
 
         return view('frontend.about', compact('barbers'));
     }
+
+
 }

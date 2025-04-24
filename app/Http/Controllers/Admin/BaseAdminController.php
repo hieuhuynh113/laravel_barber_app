@@ -12,11 +12,15 @@ class BaseAdminController extends Controller
         $this->middleware('auth');
         $this->middleware(function ($request, $next) {
             // Check if the user is an admin
-            if (!Auth::user() || Auth::user()->role !== 'admin') {
-                return redirect('/')->with('error', 'Bạn không có quyền truy cập vào trang này');
+            if (!Auth::user()) {
+                return redirect()->route('admin.login')->with('error', 'Vui lòng đăng nhập để tiếp tục');
             }
-            
+
+            if (Auth::user()->role !== 'admin') {
+                return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập vào trang này');
+            }
+
             return $next($request);
         });
     }
-} 
+}

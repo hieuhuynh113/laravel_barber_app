@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class AdminGuestMiddleware
 {
     /**
      * Handle an incoming request.
@@ -18,14 +18,16 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check()) {
-            return redirect('/admin/login')->with('error', 'Vui lòng đăng nhập để tiếp tục');
-        }
-
-        if (Auth::user()->role !== 'admin') {
+        if (Auth::check()) {
+            $user = Auth::user();
+            
+            if ($user->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+            
             return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập vào trang này');
         }
-
+        
         return $next($request);
     }
 }
