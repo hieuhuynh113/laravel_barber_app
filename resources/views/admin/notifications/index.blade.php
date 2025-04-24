@@ -66,6 +66,53 @@
         border-radius: 0.25rem;
         margin-left: 0.5rem;
     }
+
+    /* Custom pagination styles */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+
+    .pagination .page-item {
+        margin: 0 2px;
+    }
+
+    .pagination .page-item .page-link {
+        border-radius: 4px;
+        padding: 0.4rem 0.75rem;
+        color: #4e73df;
+        border: 1px solid #dee2e6;
+        background-color: #fff;
+        font-size: 0.9rem;
+        line-height: 1.25;
+        text-align: center;
+        transition: all 0.2s;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #4e73df;
+        border-color: #4e73df;
+        color: white;
+    }
+
+    .pagination .page-item .page-link:hover {
+        background-color: #eaecf4;
+        border-color: #dee2e6;
+        color: #224abe;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #858796;
+        pointer-events: none;
+        background-color: #fff;
+        border-color: #dee2e6;
+    }
+
+    /* Ensure pagination arrows are properly sized */
+    .pagination .page-link i.fa-sm {
+        font-size: 0.7rem;
+    }
 </style>
 @endsection
 
@@ -140,6 +187,11 @@
                                             <i class="fas fa-envelope"></i>
                                         </span>
                                         Liên hệ mới
+                                    @elseif($notification->type == 'App\\Notifications\\AppointmentCanceledNotification')
+                                        <span class="notification-icon" style="background-color: #f8d7da; color: #dc3545;">
+                                            <i class="fas fa-calendar-times"></i>
+                                        </span>
+                                        Lịch hẹn đã hủy
                                     @else
                                         <span class="notification-icon">
                                             <i class="fas fa-bell text-primary"></i>
@@ -195,6 +247,25 @@
                                     <p>Chủ đề: <strong>{{ $notification->data['subject'] }}</strong></p>
                                     <p class="mt-2">{{ Str::limit($notification->data['message'], 100) }}</p>
 
+                                @elseif($notification->type == 'App\\Notifications\\AppointmentCanceledNotification')
+                                    <p>
+                                        <strong>{{ $notification->data['user_name'] }}</strong> đã hủy lịch hẹn
+                                    </p>
+                                    <p>Mã đặt lịch: <strong>{{ $notification->data['booking_code'] }}</strong></p>
+                                    <p>Ngày hẹn: <strong>{{ \Carbon\Carbon::parse($notification->data['appointment_date'])->format('d/m/Y') }}</strong></p>
+                                    <p>Giờ hẹn: <strong>{{ $notification->data['appointment_time'] }}</strong></p>
+                                    <p>Thợ cắt tóc: <strong>{{ $notification->data['barber_name'] }}</strong></p>
+                                    <p>Thời gian hủy: <strong>{{ $notification->data['canceled_at'] }}</strong></p>
+                                    <p>Dịch vụ:
+                                        @if(isset($notification->data['services']) && is_array($notification->data['services']))
+                                            @foreach($notification->data['services'] as $service)
+                                                <span class="badge bg-info">{{ $service['name'] }}</span>
+                                            @endforeach
+                                        @else
+                                            <span class="text-muted">Không có thông tin dịch vụ</span>
+                                        @endif
+                                    </p>
+
                                 @else
                                     <p>{{ json_encode($notification->data) }}</p>
                                 @endif
@@ -234,6 +305,10 @@
                                     <a href="{{ route('admin.contacts.show', $notification->data['contact_id']) }}" class="btn btn-sm btn-primary">
                                         <i class="fas fa-reply"></i> Phản hồi
                                     </a>
+                                @elseif($notification->type == 'App\\Notifications\\AppointmentCanceledNotification')
+                                    <a href="{{ route('admin.appointments.show', $notification->data['appointment_id']) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i> Xem chi tiết lịch hẹn
+                                    </a>
                                 @endif
 
                                 @if(is_null($notification->read_at))
@@ -249,8 +324,8 @@
                     @endforeach
                 </div>
 
-                <div class="p-3">
-                    {{ $notifications->links() }}
+                <div class="mt-3 p-3">
+                    {{ $notifications->appends(request()->query())->links('admin.partials.pagination') }}
                 </div>
             @else
                 <div class="p-4 text-center">

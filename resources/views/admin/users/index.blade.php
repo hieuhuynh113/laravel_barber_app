@@ -2,6 +2,9 @@
 
 @section('title', 'Quản lý người dùng')
 
+@section('styles')
+@endsection
+
 @section('content')
 <div class="container-fluid py-4">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
