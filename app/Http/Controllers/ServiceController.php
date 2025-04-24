@@ -18,10 +18,22 @@ class ServiceController extends Controller
         $price = $request->input('price');
         $sort = $request->input('sort');
         $categoryType = $request->input('category_type');
+        $search = $request->input('search');
 
         $query = Service::active()->with('category')
             ->withCount('reviews')
             ->withAvg('reviews', 'rating');
+
+        // Apply search filter
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhereHas('category', function($q2) use ($search) {
+                      $q2->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
 
         // Apply category filter (multiple categories)
         if ($categoryId && is_array($categoryId)) {
@@ -53,32 +65,30 @@ class ServiceController extends Controller
             }
         }
 
-        // Apply sorting
-        if ($sort) {
-            switch ($sort) {
-                case 'price_low':
-                    $query->orderBy('price', 'asc');
-                    break;
-                case 'price_high':
-                    $query->orderBy('price', 'desc');
-                    break;
-                case 'popular':
-                    $query->orderBy('views', 'desc');
-                    break;
-                case 'newest':
-                    $query->orderBy('created_at', 'desc');
-                    break;
-                case 'recommended':
-                    $query->where('is_featured', 1)->orderBy('created_at', 'desc');
-                    break;
-                default:
-                    $query->orderBy('id', 'desc');
-            }
-        } else {
-            $query->orderBy('id', 'desc');
+        // Apply sorting - Sử dụng switch case để tối ưu
+        switch ($sort) {
+            case 'price_low':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_high':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'popular':
+                // Sắp xếp theo giá giảm dần thay vì views (không tồn tại)
+                $query->orderBy('price', 'desc');
+                break;
+            case 'newest':
+                $query->orderBy('created_at', 'desc');
+                break;
+            case 'recommended':
+                $query->where('is_featured', 1)->orderBy('created_at', 'desc');
+                break;
+            default:
+                $query->orderBy('id', 'desc');
         }
 
-        $services = $query->paginate(6); // Reduced to 6 for better display in list view
+        // Thực hiện phân trang với số lượng phù hợp và giữ query string
+        $services = $query->paginate(6)->withQueryString(); // Reduced to 6 for better display in list view
         $categories = Category::service()->active()->get();
 
         // Handle AJAX request
@@ -101,17 +111,22 @@ class ServiceController extends Controller
 
     public function show($slug)
     {
-        $service = Service::where('slug', $slug)
+        // Tải dịch vụ với eager loading category để tối ưu hiệu suất
+        $service = Service::with('category')
+            ->where('slug', $slug)
             ->active()
             ->withCount('reviews')
             ->withAvg('reviews', 'rating')
             ->firstOrFail();
 
-        $relatedServices = Service::where('category_id', $service->category_id)
+        // Lấy các dịch vụ liên quan cùng danh mục
+        $relatedServices = Service::with('category')
+            ->where('category_id', $service->category_id)
             ->where('id', '!=', $service->id)
             ->active()
             ->withCount('reviews')
             ->withAvg('reviews', 'rating')
+            ->orderBy('created_at', 'desc') // Sắp xếp theo thời gian tạo mới nhất
             ->limit(3)
             ->get();
 
@@ -122,12 +137,19 @@ class ServiceController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(5);
 
-        // Tính toán phân bố đánh giá theo số sao
+        // Tính toán phân bố đánh giá theo số sao - Tối ưu bằng cách sử dụng một truy vấn duy nhất
         $ratingDistribution = [];
+
+        // Lấy số lượng đánh giá cho mỗi mức sao trong một truy vấn
+        $ratingCounts = Review::where('service_id', $service->id)
+            ->selectRaw('rating, count(*) as count')
+            ->groupBy('rating')
+            ->pluck('count', 'rating')
+            ->toArray();
+
+        // Tạo phân bố đánh giá
         for ($i = 1; $i <= 5; $i++) {
-            $count = Review::where('service_id', $service->id)
-                ->where('rating', $i)
-                ->count();
+            $count = $ratingCounts[$i] ?? 0;
             $ratingDistribution[$i] = [
                 'count' => $count,
                 'percentage' => $service->reviews_count > 0 ? round(($count / $service->reviews_count) * 100, 1) : 0

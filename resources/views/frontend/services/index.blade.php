@@ -14,11 +14,16 @@
         <div class="row">
             <div class="col-lg-8">
                 <!-- Services List Header -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="mb-0 text-muted">Danh sách dịch vụ</h5>
                     <div class="filter-count text-muted">
                         Hiển thị {{ $services->count() }} / {{ $services->total() }} dịch vụ
                     </div>
+                </div>
+
+                <!-- Active Filters -->
+                <div id="active-filters" class="mb-3">
+                    <!-- Sẽ được điền bởi JavaScript -->
                 </div>
 
                 <!-- Services List -->
@@ -111,18 +116,32 @@
 
             <!-- Sidebar Filters -->
             <div class="col-lg-4">
-                <div class="card shadow-sm">
+                <div class="card shadow-sm filter-sidebar">
                     <div class="card-header bg-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0 d-flex align-items-center">
                             <i class="fas fa-filter me-2 text-primary"></i>
                             BỘ LỌC
                         </h5>
-                        <button id="clearAllFilters" class="btn btn-sm text-primary border-0">
-                            CLEAR
-                        </button>
+                        <div>
+                            <button id="clearAllFilters" class="btn btn-sm text-primary border-0">
+                                CLEAR
+                            </button>
+                            <button id="closeFilterSidebar" class="btn btn-sm text-primary border-0 d-lg-none">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body">
-
+                        <!-- Search Filter -->
+                        <div class="filter-section mb-4">
+                            <h6 class="filter-title">Tìm kiếm</h6>
+                            <div class="input-group">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Tên dịch vụ..." value="{{ request('search') }}">
+                                <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
 
                         <!-- Category Filter -->
                         <div class="filter-section mb-4">
@@ -211,50 +230,22 @@
     </div>
 </section>
 
-<section class="py-5 bg-light">
+<section class="py-5 text-white text-center cta-appointment">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body p-4">
-                        <div class="row align-items-center">
-                            <div class="col-lg-8">
-                                <h4 class="mb-3">Tại sao chọn dịch vụ của chúng tôi?</h4>
-                                <div class="row">
-                                    <div class="col-md-4 mb-3 mb-md-0">
-                                        <div class="text-center p-3 h-100 border rounded">
-                                            <i class="fas fa-user-tie text-primary mb-3" style="font-size: 28px;"></i>
-                                            <h6>Thợ cắt tóc chuyên nghiệp</h6>
-                                            <p class="small text-muted mb-0">Đội ngũ được đào tạo bài bản và có nhiều năm kinh nghiệm</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 mb-3 mb-md-0">
-                                        <div class="text-center p-3 h-100 border rounded">
-                                            <i class="fas fa-cut text-primary mb-3" style="font-size: 28px;"></i>
-                                            <h6>Dụng cụ hiện đại</h6>
-                                            <p class="small text-muted mb-0">Sử dụng các dụng cụ và sản phẩm chất lượng cao</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="text-center p-3 h-100 border rounded">
-                                            <i class="fas fa-gem text-primary mb-3" style="font-size: 28px;"></i>
-                                            <h6>Không gian sang trọng</h6>
-                                            <p class="small text-muted mb-0">Môi trường thoải mái, sang trọng và thư giãn</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 mt-4 mt-lg-0 text-center">
-                                <a href="{{ route('appointment.step1') }}" class="btn btn-primary btn-lg appointment-btn">
-                                    <i class="fas fa-calendar-alt me-2"></i>Đặt lịch ngay
-                                </a>
-                                <p class="small text-muted mt-2">Đặt lịch trước để được phục vụ tốt nhất</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <h2 class="h1 mb-4">Dịch vụ cắt tóc nam chuyên nghiệp</h2>
+        <p class="lead mb-4">Chúng tôi cung cấp các dịch vụ cắt tóc, cạo râu và chăm sóc da đầu chất lượng cao với đội ngũ thợ cắt tóc chuyên nghiệp.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg appointment-btn">Đặt lịch ngay</a>
+            <a href="#services-container" class="btn btn-outline-light btn-lg">Xem dịch vụ</a>
         </div>
     </div>
 </section>
+
+<!-- Mobile Filter Button -->
+<button id="showFilterSidebar" class="mobile-filter-btn">
+    <i class="fas fa-filter"></i>
+</button>
+
+<!-- Filter Backdrop -->
+<div class="filter-backdrop"></div>
 @endsection

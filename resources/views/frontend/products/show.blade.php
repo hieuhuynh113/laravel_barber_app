@@ -96,14 +96,22 @@
             @foreach($relatedProducts as $relatedProduct)
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 product-card">
-                    <img src="{{ asset('storage/' . $relatedProduct->image) }}" class="card-img-top" alt="{{ $relatedProduct->name }}">
+                    <div class="card-img-container position-relative">
+                        <img src="{{ asset('storage/' . $relatedProduct->image) }}" class="card-img-top" alt="{{ $relatedProduct->name }}">
+                        <div class="product-status position-absolute">
+                            <span class="{{ $relatedProduct->stock > 0 ? 'in-stock' : 'out-of-stock' }}">{{ $relatedProduct->stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</span>
+                        </div>
+                    </div>
                     <div class="card-body">
+                        <div class="product-category mb-2">
+                            <span class="badge bg-light text-dark">{{ $relatedProduct->category->name }}</span>
+                        </div>
                         <h5 class="card-title">{{ $relatedProduct->name }}</h5>
                         <p class="card-text">{{ Str::limit($relatedProduct->description, 100) }}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="price text-primary fw-bold">{{ number_format($relatedProduct->price) }} VNĐ</span>
-                            <a href="{{ route('products.show', $relatedProduct->slug) }}" class="btn btn-outline-primary">Chi tiết</a>
-                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
+                        <span class="price text-primary fw-bold">{{ number_format($relatedProduct->price) }} VNĐ</span>
+                        <a href="{{ route('products.show', $relatedProduct->slug) }}" class="btn btn-sm btn-outline-primary">Chi tiết <i class="fas fa-arrow-right ms-1"></i></a>
                     </div>
                 </div>
             </div>

@@ -28,6 +28,8 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/frontend.css') }}">
     <link rel="stylesheet" href="{{ asset('css/filter-style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/product-style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/service-button.css') }}">
 
     <!-- Page Specific CSS -->
     @yield('styles')
@@ -185,6 +187,7 @@
     <script src="{{ asset('js/appointment-auth-check.js') }}"></script>
     <script src="{{ asset('js/filter.js') }}"></script>
     <script src="{{ asset('js/login-modal.js') }}"></script>
+    <script src="{{ asset('js/smooth-scroll.js') }}"></script>
 
     @yield('scripts')
 

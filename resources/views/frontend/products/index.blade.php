@@ -11,55 +11,23 @@
 
 <section class="py-5 bg-light">
     <div class="container">
-        <!-- New Filter UI based on reference image -->
-        <div class="filter-header mb-4">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="filter-toggle d-flex align-items-center">
-                    <i class="fas fa-filter me-2"></i>
-                    <span>Filters:</span>
-                </div>
-                <div class="filter-count">
-                    Hiển thị {{ $products->count() }} / {{ $products->total() }} sản phẩm
-                </div>
-            </div>
-        </div>
-
-        <div class="filter-options mb-4">
-            <div class="row">
-                <div class="col-md-6 mb-3 mb-md-0">
-                    <div class="filter-group">
-                        <label for="categoryFilter">Danh mục:</label>
-                        <select class="form-select" id="categoryFilter">
-                            <option value="" {{ !$categoryId ? 'selected' : '' }}>Tất cả danh mục</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ $categoryId == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                            @endforeach
-                        </select>
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Products List Header -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0 text-muted">Danh sách sản phẩm</h5>
+                    <div class="filter-count text-muted">
+                        Hiển thị {{ $products->count() }} / {{ $products->total() }} sản phẩm
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="filter-group">
-                        <label for="priceFilter">Giá:</label>
-                        <select class="form-select" id="priceFilter">
-                            <option value="">Tất cả mức giá</option>
-                            <option value="low">Dưới 200.000 VNĐ</option>
-                            <option value="medium">200.000 - 500.000 VNĐ</option>
-                            <option value="high">Trên 500.000 VNĐ</option>
-                        </select>
-                    </div>
+
+                <!-- Active Filters -->
+                <div id="active-filters" class="mb-3">
+                    <!-- Sẽ được điền bởi JavaScript -->
                 </div>
-            </div>
-        </div>
 
-        <!-- Filter Tabs -->
-        <div class="filter-tabs mb-4">
-            <div class="filter-tab {{ !$sort ? 'active' : '' }}" data-sort="">Tất cả sản phẩm</div>
-            <div class="filter-tab {{ $sort == 'popular' ? 'active' : '' }}" data-sort="popular">Phổ biến nhất</div>
-            <div class="filter-tab {{ $sort == 'newest' ? 'active' : '' }}" data-sort="newest">Mới nhất</div>
-            <div class="filter-tab {{ $sort == 'recommended' ? 'active' : '' }}" data-sort="recommended">Đề xuất</div>
-        </div>
-
-        <div class="row" id="products-container">
+                <!-- Products List -->
+                <div id="products-container" class="row">
             @forelse($products as $product)
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 product-card">
@@ -91,127 +59,135 @@
             @endforelse
         </div>
 
-        <div class="mt-4 pagination-container">
-            {{ $products->appends(request()->query())->links() }}
-        </div>
-    </div>
-</section>
+                <div class="mt-4 pagination-container">
+                    {{ $products->appends(request()->query())->links() }}
+                </div>
+            </div>
 
-<section class="py-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6 mb-4 mb-lg-0">
-                <h2>Tại sao chọn sản phẩm của chúng tôi?</h2>
-                <p>Barber Shop tự hào cung cấp các sản phẩm chăm sóc tóc và da đầu chất lượng cao. Chúng tôi cam kết chỉ bán những sản phẩm tốt nhất để quý khách có mái tóc khỏe mạnh và đẹp.</p>
-
-                <div class="mt-4">
-                    <div class="d-flex mb-3">
-                        <div class="feature-icon me-3">
-                            <i class="fas fa-check-circle text-primary" style="font-size: 24px;"></i>
-                        </div>
+            <!-- Sidebar Filters -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm filter-sidebar">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 d-flex align-items-center">
+                            <i class="fas fa-filter me-2 text-primary"></i>
+                            BỘ LỌC
+                        </h5>
                         <div>
-                            <h5>Chất lượng đảm bảo</h5>
-                            <p class="text-muted">Sản phẩm được nhập khẩu chính hãng, có giấy chứng nhận rõ ràng.</p>
+                            <button id="clearAllFilters" class="btn btn-sm text-primary border-0">
+                                CLEAR
+                            </button>
+                            <button id="closeFilterSidebar" class="btn btn-sm text-primary border-0 d-lg-none">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     </div>
+                    <div class="card-body">
+                        <!-- Search Filter -->
+                        <div class="filter-section mb-4">
+                            <h6 class="filter-title">Tìm kiếm</h6>
+                            <div class="input-group">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Tên sản phẩm..." value="{{ request('search') }}">
+                                <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
 
-                    <div class="d-flex mb-3">
-                        <div class="feature-icon me-3">
-                            <i class="fas fa-leaf text-primary" style="font-size: 24px;"></i>
+                        <!-- Category Filter -->
+                        <div class="filter-section mb-4">
+                            <h6 class="filter-title">Danh mục sản phẩm</h6>
+                            <div class="filter-options">
+                                @foreach($categories as $category)
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input auto-filter" type="checkbox" name="category_id[]" id="category{{ $category->id }}" value="{{ $category->id }}" {{ (is_array(request('category_id')) && in_array($category->id, request('category_id'))) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="category{{ $category->id }}">
+                                            {{ $category->name }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
-                        <div>
-                            <h5>An toàn cho sức khỏe</h5>
-                            <p class="text-muted">Nhiều sản phẩm có thành phần thiên nhiên, an toàn và lành tính.</p>
-                        </div>
-                    </div>
 
-                    <div class="d-flex">
-                        <div class="feature-icon me-3">
-                            <i class="fas fa-star text-primary" style="font-size: 24px;"></i>
+
+
+                        <!-- Price Range Filter -->
+                        <div class="filter-section mb-4">
+                            <h6 class="filter-title">Khoảng giá</h6>
+                            <div class="filter-options">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input auto-filter" type="checkbox" name="price[]" id="price1" value="0-200000" {{ (is_array(request('price')) && in_array('0-200000', request('price'))) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="price1">
+                                        Dưới 200.000 VNĐ
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input auto-filter" type="checkbox" name="price[]" id="price2" value="200000-500000" {{ (is_array(request('price')) && in_array('200000-500000', request('price'))) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="price2">
+                                        200.000 - 500.000 VNĐ
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input auto-filter" type="checkbox" name="price[]" id="price3" value="500000-1000000" {{ (is_array(request('price')) && in_array('500000-1000000', request('price'))) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="price3">
+                                        Trên 500.000 VNĐ
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <h5>Hiệu quả cao</h5>
-                            <p class="text-muted">Sản phẩm được thử nghiệm và đánh giá cao bởi khách hàng và chuyên gia.</p>
+
+                        <!-- Sort By -->
+                        <div class="filter-section mb-4">
+                            <h6 class="filter-title">Sắp xếp theo</h6>
+                            <div class="filter-options">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input auto-filter" type="radio" name="sort" id="sortPriceLow" value="price_low" {{ $sort == 'price_low' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="sortPriceLow">
+                                        Giá thấp đến cao
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input auto-filter" type="radio" name="sort" id="sortPriceHigh" value="price_high" {{ $sort == 'price_high' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="sortPriceHigh">
+                                        Giá cao đến thấp
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input auto-filter" type="radio" name="sort" id="sortPopular" value="popular" {{ $sort == 'popular' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="sortPopular">
+                                        Phổ biến nhất
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input auto-filter" type="radio" name="sort" id="sortNewest" value="newest" {{ $sort == 'newest' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="sortNewest">
+                                        Mới nhất
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-6">
-                <div class="position-relative">
-                    <img src="{{ asset('images/products-main.jpg') }}" alt="Sản phẩm chăm sóc tóc" class="img-fluid rounded shadow">
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <h2 class="mb-4">Câu hỏi thường gặp</h2>
-                <p class="mb-5">Một số câu hỏi khách hàng thường hỏi về sản phẩm của chúng tôi</p>
-            </div>
-        </div>
-
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="accordion" id="faqAccordion">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingOne">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Sản phẩm có phù hợp với mọi loại tóc không?
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Chúng tôi có nhiều dòng sản phẩm khác nhau cho từng loại tóc. Quý khách có thể tham khảo thông tin chi tiết trên trang sản phẩm hoặc tư vấn trực tiếp với nhân viên để chọn sản phẩm phù hợp nhất.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingTwo">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                Chính sách đổi trả sản phẩm như thế nào?
-                            </button>
-                        </h2>
-                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Chúng tôi áp dụng chính sách đổi trả trong vòng 7 ngày đối với sản phẩm chưa qua sử dụng và còn nguyên seal. Trường hợp sản phẩm bị lỗi do nhà sản xuất, chúng tôi sẽ đổi sản phẩm mới cho quý khách.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingThree">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                Cách sử dụng sản phẩm hiệu quả nhất?
-                            </button>
-                        </h2>
-                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Mỗi sản phẩm sẽ có hướng dẫn sử dụng riêng được ghi rõ trên bao bì. Nếu quý khách có bất kỳ thắc mắc nào, hãy liên hệ với nhân viên của chúng tôi để được tư vấn chi tiết và cụ thể cho từng loại sản phẩm.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="text-center mt-5">
-            <p class="mb-3">Còn câu hỏi khác? Liên hệ với chúng tôi</p>
-            <a href="{{ route('contact.index') }}" class="btn btn-primary">Liên hệ ngay</a>
         </div>
     </div>
 </section>
 
 <section class="py-5 text-white text-center cta-appointment">
     <div class="container">
-        <h2 class="h1 mb-4">Chăm sóc tóc tại nhà cùng sản phẩm chính hãng</h2>
-        <p class="lead mb-4">Đặt lịch ngay hôm nay và trải nghiệm dịch vụ cắt tóc chuyên nghiệp tại Barber Shop.</p>
-        <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg appointment-btn">Đặt lịch ngay</a>
+        <h2 class="h1 mb-4">Sản phẩm chăm sóc tóc chất lượng cao</h2>
+        <p class="lead mb-4">Chúng tôi cung cấp các sản phẩm chăm sóc tóc chính hãng, giúp bạn duy trì mái tóc khỏe đẹp sau khi cắt tóc tại Barber Shop.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{{ route('contact.index') }}" class="btn btn-light btn-lg">Liên hệ tư vấn</a>
+            <a href="#products-container" class="btn btn-outline-light btn-lg">Xem sản phẩm</a>
+        </div>
     </div>
 </section>
+
+<!-- Mobile Filter Button -->
+<button id="showFilterSidebar" class="mobile-filter-btn">
+    <i class="fas fa-filter"></i>
+</button>
+
+<!-- Filter Backdrop -->
+<div class="filter-backdrop"></div>
 @endsection

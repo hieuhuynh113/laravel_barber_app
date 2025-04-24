@@ -1,0 +1,87 @@
+/* Custom styles for service detail button with higher specificity */
+.service-card .btn.btn-outline-primary,
+.service-card .btn-sm.btn-outline-primary {
+    color: #9E8A78 !important; /* Màu chủ đạo */
+    border-color: #9E8A78 !important;
+    background-color: transparent !important;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.service-card .btn.btn-outline-primary:before,
+.service-card .btn-sm.btn-outline-primary:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background-color: #9E8A78 !important; /* Màu chủ đạo */
+    transition: all 0.3s ease;
+    z-index: -1;
+}
+
+.service-card .btn.btn-outline-primary:hover,
+.service-card .btn-sm.btn-outline-primary:hover,
+.service-card .btn.btn-outline-primary:active,
+.service-card .btn-sm.btn-outline-primary:active,
+.service-card .btn.btn-outline-primary:focus,
+.service-card .btn-sm.btn-outline-primary:focus,
+.service-card .btn.btn-outline-primary.active,
+.service-card .btn-sm.btn-outline-primary.active {
+    color: white !important;
+    border-color: #9E8A78 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+.service-card .btn.btn-outline-primary:hover:before,
+.service-card .btn-sm.btn-outline-primary:hover:before,
+.service-card .btn.btn-outline-primary:focus:before,
+.service-card .btn-sm.btn-outline-primary:focus:before,
+.service-card .btn.btn-outline-primary:active:before,
+.service-card .btn-sm.btn-outline-primary:active:before,
+.service-card .btn.btn-outline-primary.active:before,
+.service-card .btn-sm.btn-outline-primary.active:before {
+    width: 100%;
+}
+
+/* Thêm CSS cho trạng thái focus-visible */
+.service-card .btn.btn-outline-primary:focus-visible,
+.service-card .btn-sm.btn-outline-primary:focus-visible {
+    outline: 2px solid #9E8A78 !important;
+    outline-offset: 2px;
+}
+
+/* Ensure consistent styling with other buttons */
+.service-card .btn {
+    border-radius: 0.3rem;
+    font-weight: 500;
+}
+
+/* Đảm bảo hiệu ứng hoạt động trên tất cả các trình duyệt */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    /* IE10+ CSS */
+    .service-card .btn.btn-outline-primary:hover,
+    .service-card .btn-sm.btn-outline-primary:hover {
+        background-color: #9E8A78 !important;
+        color: white !important;
+    }
+}
+
+/* Đảm bảo hiệu ứng hoạt động trên Safari */
+@supports (-webkit-appearance:none) {
+    .service-card .btn.btn-outline-primary,
+    .service-card .btn-sm.btn-outline-primary {
+        -webkit-transition: all 0.3s ease;
+        transition: all 0.3s ease;
+    }
+
+    .service-card .btn.btn-outline-primary:before,
+    .service-card .btn-sm.btn-outline-primary:before {
+        -webkit-transition: all 0.3s ease;
+        transition: all 0.3s ease;
+    }
+}

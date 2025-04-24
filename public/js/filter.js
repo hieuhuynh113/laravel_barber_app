@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentLevel = '';
     let currentPrice = '';
     let currentSort = '';
+    let currentSearch = '';
     let isLoading = false;
 
     // Determine current page type
@@ -34,6 +35,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return 'services'; // Default to services
     }
 
+    // Initialize active filters display
+    updateActiveFilters();
+
     // Auto filter handling
     const autoFilters = document.querySelectorAll('.auto-filter');
     if (autoFilters.length > 0) {
@@ -42,9 +46,69 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Reset page to 1 when filter changes
                 currentPage = 1;
 
-                // Fetch items immediately when filter changes
-                fetchItems();
+                // Update active filters display
+                updateActiveFilters();
+
+                // Fetch items immediately when filter changes, không cuộn trang
+                fetchItemsWithScroll(false);
             });
+        });
+    }
+
+    // Search input handling
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+
+    if (searchInput && searchButton) {
+        // Set initial search value
+        currentSearch = searchInput.value;
+
+        // Handle search button click
+        searchButton.addEventListener('click', function() {
+            currentSearch = searchInput.value;
+            currentPage = 1;
+            updateActiveFilters();
+            fetchItemsWithScroll(false);
+        });
+
+        // Handle Enter key press in search input
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                currentSearch = searchInput.value;
+                currentPage = 1;
+                updateActiveFilters();
+                fetchItemsWithScroll(false);
+            }
+        });
+    }
+
+    // Mobile filter sidebar handling
+    const showFilterSidebarBtn = document.getElementById('showFilterSidebar');
+    const closeFilterSidebarBtn = document.getElementById('closeFilterSidebar');
+    const filterSidebar = document.querySelector('.filter-sidebar');
+    const filterBackdrop = document.querySelector('.filter-backdrop');
+
+    if (showFilterSidebarBtn && filterSidebar && filterBackdrop) {
+        showFilterSidebarBtn.addEventListener('click', function() {
+            filterSidebar.classList.add('show');
+            filterBackdrop.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        });
+    }
+
+    if (closeFilterSidebarBtn && filterSidebar && filterBackdrop) {
+        closeFilterSidebarBtn.addEventListener('click', function() {
+            filterSidebar.classList.remove('show');
+            filterBackdrop.classList.remove('show');
+            document.body.style.overflow = ''; // Enable scrolling
+        });
+    }
+
+    if (filterBackdrop && filterSidebar) {
+        filterBackdrop.addEventListener('click', function() {
+            filterSidebar.classList.remove('show');
+            filterBackdrop.classList.remove('show');
+            document.body.style.overflow = ''; // Enable scrolling
         });
     }
 
@@ -52,6 +116,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const clearAllFiltersBtn = document.getElementById('clearAllFilters');
     if (clearAllFiltersBtn) {
         clearAllFiltersBtn.addEventListener('click', function() {
+            // Clear search input
+            if (searchInput) {
+                searchInput.value = '';
+                currentSearch = '';
+            }
+
             // Uncheck all checkboxes
             document.querySelectorAll('input[type="checkbox"].auto-filter').forEach(checkbox => {
                 checkbox.checked = false;
@@ -65,8 +135,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Reset page to 1
             currentPage = 1;
 
-            // Fetch items with cleared filters
-            fetchItems();
+            // Update active filters display
+            updateActiveFilters();
+
+            // Fetch items with cleared filters, không cuộn trang
+            fetchItemsWithScroll(false);
         });
     }
 
@@ -79,34 +152,53 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const url = new URL(paginationLink.href);
             currentPage = url.searchParams.get('page') || 1;
-            fetchItems();
 
-            // Scroll to top of items section
-            const filterHeader = document.querySelector('.filter-header');
-            if (filterHeader) {
-                filterHeader.scrollIntoView({ behavior: 'smooth' });
-            }
+            // Lưu vị trí cuộn hiện tại trước khi thực hiện phân trang
+            const currentScrollPosition = window.scrollY;
+
+            // Đặt cờ để biết đây là thao tác phân trang
+            const isPaginationAction = true;
+
+            // Gọi fetchItems với tham số isPaginationAction
+            fetchItemsWithScroll(isPaginationAction, currentScrollPosition);
         }
     });
 
-    // Function to fetch items via AJAX
-    function fetchItems() {
+    // Hàm fetchItems có thêm tham số để xử lý cuộn trang
+    function fetchItemsWithScroll(isPagination = false, scrollPosition = 0) {
         if (isLoading) return;
         isLoading = true;
 
         // Show loading indicator
         loadingIndicator.classList.add('active');
 
-        // Scroll to top of services container
-        if (itemsContainer) {
+        // Chỉ cuộn trang khi thực hiện phân trang
+        if (isPagination && itemsContainer) {
             window.scrollTo({
                 top: itemsContainer.offsetTop - 100,
                 behavior: 'smooth'
             });
         }
 
+        // Gọi hàm fetchItems gốc
+        fetchItems(false);
+    }
+
+    // Function to fetch items via AJAX
+    function fetchItems(checkLoading = true) {
+        if (checkLoading && isLoading) return;
+        isLoading = true;
+
+        // Show loading indicator
+        loadingIndicator.classList.add('active');
+
         // Build URL with filter parameters
         const url = new URL(window.location.origin + window.location.pathname);
+
+        // Add search parameter if set
+        if (currentSearch) {
+            url.searchParams.set('search', currentSearch);
+        }
 
         // Get all checked category type checkboxes
         const categoryTypeCheckboxes = document.querySelectorAll('input[name="category_type"]:checked');
@@ -243,6 +335,11 @@ document.addEventListener('DOMContentLoaded', function() {
             url.searchParams.delete(key);
         });
 
+        // Add search parameter if set
+        if (currentSearch) {
+            url.searchParams.set('search', currentSearch);
+        }
+
         // Get all checked category type checkboxes
         const categoryTypeCheckboxes = document.querySelectorAll('input[name="category_type"]:checked');
         if (categoryTypeCheckboxes.length > 0) {
@@ -299,24 +396,45 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set initial category
     if (urlParams.has('category_id')) {
         currentCategory = urlParams.get('category_id');
-        if (categoryFilter) {
-            categoryFilter.value = currentCategory;
+        // Check if category checkboxes exist and set them
+        if (Array.isArray(currentCategory)) {
+            currentCategory.forEach(catId => {
+                const checkbox = document.querySelector(`input[name="category_id[]"][value="${catId}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+        } else {
+            const checkbox = document.querySelector(`input[name="category_id[]"][value="${currentCategory}"]`);
+            if (checkbox) checkbox.checked = true;
         }
     }
 
     // Set initial level (for services)
     if (urlParams.has('level') && currentPageType === 'services') {
         currentLevel = urlParams.get('level');
-        if (levelFilter) {
-            levelFilter.value = currentLevel;
+        // Check if level checkboxes exist and set them
+        if (Array.isArray(currentLevel)) {
+            currentLevel.forEach(level => {
+                const checkbox = document.querySelector(`input[name="level[]"][value="${level}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+        } else {
+            const checkbox = document.querySelector(`input[name="level[]"][value="${currentLevel}"]`);
+            if (checkbox) checkbox.checked = true;
         }
     }
 
     // Set initial price (for products)
     if (urlParams.has('price') && currentPageType === 'products') {
         currentPrice = urlParams.get('price');
-        if (priceFilter) {
-            priceFilter.value = currentPrice;
+        // Check if price checkboxes exist and set them
+        if (Array.isArray(currentPrice)) {
+            currentPrice.forEach(price => {
+                const checkbox = document.querySelector(`input[name="price[]"][value="${price}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+        } else {
+            const checkbox = document.querySelector(`input[name="price[]"][value="${currentPrice}"]`);
+            if (checkbox) checkbox.checked = true;
         }
     }
 
@@ -324,9 +442,118 @@ document.addEventListener('DOMContentLoaded', function() {
     if (urlParams.has('sort')) {
         currentSort = urlParams.get('sort');
         // Update sort radio if available
-        const sortRadio = document.querySelector(`input[name="sortFilter"][value="${currentSort}"]`);
+        const sortRadio = document.querySelector(`input[name="sort"][value="${currentSort}"]`);
         if (sortRadio) {
             sortRadio.checked = true;
+        }
+    }
+
+    // Set initial search
+    if (urlParams.has('search')) {
+        currentSearch = urlParams.get('search');
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.value = currentSearch;
+        }
+    }
+
+    // Function to update active filters display
+    function updateActiveFilters() {
+        const activeFiltersContainer = document.getElementById('active-filters');
+        if (!activeFiltersContainer) return;
+
+        // Clear current active filters
+        activeFiltersContainer.innerHTML = '';
+
+        let hasActiveFilters = false;
+
+        // Add search filter if active
+        if (currentSearch) {
+            hasActiveFilters = true;
+            const searchFilter = document.createElement('span');
+            searchFilter.className = 'active-filter';
+            searchFilter.innerHTML = `Tìm kiếm: ${currentSearch} <span class="filter-remove" data-filter-type="search"><i class="fas fa-times"></i></span>`;
+            activeFiltersContainer.appendChild(searchFilter);
+        }
+
+        // Add category filters
+        const categoryCheckboxes = document.querySelectorAll('input[name="category_id[]"]:checked');
+        categoryCheckboxes.forEach(checkbox => {
+            hasActiveFilters = true;
+            const categoryName = checkbox.nextElementSibling.textContent.trim();
+            const categoryFilter = document.createElement('span');
+            categoryFilter.className = 'active-filter';
+            categoryFilter.innerHTML = `${categoryName} <span class="filter-remove" data-filter-type="category" data-filter-id="${checkbox.value}"><i class="fas fa-times"></i></span>`;
+            activeFiltersContainer.appendChild(categoryFilter);
+        });
+
+        // Add price filters
+        const priceCheckboxes = document.querySelectorAll('input[name="price[]"]:checked');
+        priceCheckboxes.forEach(checkbox => {
+            hasActiveFilters = true;
+            const priceName = checkbox.nextElementSibling.textContent.trim();
+            const priceFilter = document.createElement('span');
+            priceFilter.className = 'active-filter';
+            priceFilter.innerHTML = `${priceName} <span class="filter-remove" data-filter-type="price" data-filter-id="${checkbox.value}"><i class="fas fa-times"></i></span>`;
+            activeFiltersContainer.appendChild(priceFilter);
+        });
+
+        // Add sort filter if active
+        const sortRadio = document.querySelector('input[name="sort"]:checked');
+        if (sortRadio) {
+            hasActiveFilters = true;
+            const sortName = sortRadio.nextElementSibling.textContent.trim();
+            const sortFilter = document.createElement('span');
+            sortFilter.className = 'active-filter';
+            sortFilter.innerHTML = `Sắp xếp: ${sortName} <span class="filter-remove" data-filter-type="sort"><i class="fas fa-times"></i></span>`;
+            activeFiltersContainer.appendChild(sortFilter);
+        }
+
+        // Add event listeners to remove buttons
+        const removeButtons = document.querySelectorAll('.filter-remove');
+        removeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const filterType = this.dataset.filterType;
+                const filterId = this.dataset.filterId;
+
+                if (filterType === 'search') {
+                    const searchInput = document.getElementById('searchInput');
+                    if (searchInput) {
+                        searchInput.value = '';
+                        currentSearch = '';
+                    }
+                } else if (filterType === 'category') {
+                    const checkbox = document.querySelector(`input[name="category_id[]"][value="${filterId}"]`);
+                    if (checkbox) {
+                        checkbox.checked = false;
+                    }
+                } else if (filterType === 'price') {
+                    const checkbox = document.querySelector(`input[name="price[]"][value="${filterId}"]`);
+                    if (checkbox) {
+                        checkbox.checked = false;
+                    }
+                } else if (filterType === 'sort') {
+                    document.querySelectorAll('input[name="sort"]').forEach(radio => {
+                        radio.checked = false;
+                    });
+                }
+
+                // Reset page to 1
+                currentPage = 1;
+
+                // Update active filters display
+                updateActiveFilters();
+
+                // Fetch items with updated filters, không cuộn trang
+                fetchItemsWithScroll(false);
+            });
+        });
+
+        // Show or hide the active filters container
+        if (hasActiveFilters) {
+            activeFiltersContainer.style.display = 'flex';
+        } else {
+            activeFiltersContainer.style.display = 'none';
         }
     }
 });
