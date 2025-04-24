@@ -94,7 +94,7 @@
                                                 </div>
                                             @endif
                                             <div class="card-body d-flex flex-column">
-                                                <input class="service-checkbox" type="checkbox" name="services[]" value="{{ $service->id }}" id="service-{{ $service->id }}" {{ in_array($service->id, old('services', [])) ? 'checked' : '' }} hidden>
+                                                <input class="service-checkbox" type="checkbox" name="services[]" value="{{ $service->id }}" id="service-{{ $service->id }}" {{ in_array($service->id, old('services', [])) || (isset($selectedServiceId) && $selectedServiceId == $service->id) ? 'checked' : '' }} hidden>
                                                 <h5 class="card-title mb-2">{{ $service->name }}</h5>
                                                 <div class="service-category mb-2">
                                                     <span class="badge bg-light text-dark">
@@ -551,6 +551,23 @@
     .modal-backdrop {
         will-change: opacity;
     }
+
+    /* Hiệu ứng nhấp nháy cho dịch vụ được chọn từ URL */
+    @keyframes pulse-highlight {
+        0% {
+            box-shadow: 0 0 0 0 rgba(158, 138, 120, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(158, 138, 120, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(158, 138, 120, 0);
+        }
+    }
+
+    .pulse-animation {
+        animation: pulse-highlight 1s ease-in-out 3;
+    }
 </style>
 @endsection
 
@@ -681,6 +698,30 @@
                 'visibility': 'visible',
                 'transform': 'translateY(0)'
             });
+
+            // Nếu có service_id trong URL, cuộn đến dịch vụ đó
+            @if(isset($selectedServiceId))
+            if ($(this).val() == {{ $selectedServiceId }}) {
+                // Cuộn đến dịch vụ đã chọn sau khi trang tải xong
+                setTimeout(function() {
+                    $('html, body').animate({
+                        scrollTop: card.offset().top - 100
+                    }, 500);
+
+                    // Thêm hiệu ứng nhấp nháy để thu hút sự chú ý
+                    card.addClass('pulse-animation');
+                    setTimeout(function() {
+                        card.removeClass('pulse-animation');
+                    }, 1500);
+                }, 500);
+
+                // Nếu dịch vụ thuộc danh mục khác, chuyển sang danh mục đó
+                var category = card.closest('.service-item').data('category');
+                if (category) {
+                    $('.category-filter[data-category="' + category + '"]').click();
+                }
+            }
+            @endif
         });
 
         // Xử lý bộ lọc danh mục

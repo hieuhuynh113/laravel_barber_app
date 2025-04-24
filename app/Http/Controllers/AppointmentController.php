@@ -49,11 +49,14 @@ class AppointmentController extends Controller
         return null;
     }
 
-    public function step1()
+    public function step1(Request $request)
     {
         $services = Service::active()->with('category')->get();
 
-        return view('frontend.appointment.step1', compact('services'));
+        // Lấy service_id từ URL nếu có
+        $selectedServiceId = $request->query('service_id');
+
+        return view('frontend.appointment.step1', compact('services', 'selectedServiceId'));
     }
 
     public function postStep1(Request $request)

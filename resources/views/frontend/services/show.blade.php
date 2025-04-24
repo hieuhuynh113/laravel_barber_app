@@ -314,9 +314,12 @@
                         </div>
 
                         <p class="card-text">{{ Str::limit($relatedService->description, 80) }}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="price text-primary fw-bold">{{ number_format($relatedService->price) }} VNĐ</span>
-                            <a href="{{ route('services.show', $relatedService->slug) }}" class="btn btn-sm btn-outline-primary">Chi tiết</a>
+                        <div class="d-flex flex-column">
+                            <span class="price text-primary fw-bold mb-2">{{ number_format($relatedService->price) }} VNĐ</span>
+                            <div class="d-flex gap-2">
+                                <a href="{{ route('appointment.step1', ['service_id' => $relatedService->id]) }}" class="btn btn-sm btn-primary flex-grow-1 appointment-btn">Đặt lịch</a>
+                                <a href="{{ route('services.show', $relatedService->slug) }}" class="btn btn-sm btn-outline-primary flex-grow-1">Chi tiết</a>
+                            </div>
                         </div>
                     </div>
                 </div>
