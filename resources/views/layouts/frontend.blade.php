@@ -44,35 +44,36 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex">
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Trang chủ</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}">Giới thiệu</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('services.*') ? 'active' : '' }}" href="{{ route('services.index') }}">Dịch vụ</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">Sản phẩm</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('price.index') ? 'active' : '' }}" href="{{ route('price.index') }}">Bảng giá</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}" href="{{ route('news.index') }}">Tin tức</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('contact.*') ? 'active' : '' }}" href="{{ route('contact.index') }}">Liên hệ</a>
-                        </li>
-                    </ul>
-                    <div class="d-flex align-items-center">
+                    <div class="navbar-nav-container">
+                        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Trang chủ</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}">Giới thiệu</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('services.*') ? 'active' : '' }}" href="{{ route('services.index') }}">Dịch vụ</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">Sản phẩm</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('price.index') ? 'active' : '' }}" href="{{ route('price.index') }}">Bảng giá</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}" href="{{ route('news.index') }}">Tin tức</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('contact.*') ? 'active' : '' }}" href="{{ route('contact.index') }}">Liên hệ</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="d-flex align-items-center navbar-actions">
                         <a href="{{ route('appointment.step1') }}" class="btn btn-primary me-3 appointment-btn">Đặt lịch ngay</a>
 
                         @guest
-                            <a href="{{ route('login') }}" class="btn btn-outline-light me-2">Đăng nhập</a>
-                            <a href="{{ route('register') }}" class="btn btn-light">Đăng ký</a>
+                            <button type="button" class="btn btn-outline-light" id="loginButton">Đăng nhập</button>
                         @else
                             <div class="dropdown">
                                 <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -179,7 +180,188 @@
     <script src="{{ asset('js/frontend.js') }}"></script>
     <script src="{{ asset('js/appointment-auth-check.js') }}"></script>
     <script src="{{ asset('js/filter.js') }}"></script>
+    <script src="{{ asset('js/login-modal.js') }}"></script>
 
     @yield('scripts')
+
+    <!-- Login/Register Modal -->
+    <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="authModalLabel">Đăng nhập</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Alert Messages -->
+                    <div id="authAlert" class="alert alert-danger alert-dismissible fade show d-none" role="alert">
+                        <span id="authAlertMessage"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <!-- Login Form -->
+                    <div id="loginForm">
+                        <form id="ajaxLoginForm" method="POST" action="{{ route('login') }}">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="login_email" class="form-label">Email</label>
+                                <div class="position-relative">
+                                    <input id="login_email" type="email" class="form-control" name="email" required autocomplete="email" autofocus>
+                                    <div id="emailFeedback" class="invalid-feedback">
+                                        Vui lòng nhập email hợp lệ.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="login_password" class="form-label">Mật khẩu</label>
+                                <div class="position-relative">
+                                    <input id="login_password" type="password" class="form-control" name="password" required autocomplete="current-password">
+                                    <div id="passwordFeedback" class="invalid-feedback">
+                                        Vui lòng nhập mật khẩu.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input class="form-check-input" type="checkbox" name="remember" id="login_remember">
+                                <label class="form-check-label" for="login_remember">
+                                    Ghi nhớ đăng nhập
+                                </label>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary" id="loginButton">
+                                    <span class="spinner-border spinner-border-sm d-none" id="loginSpinner" role="status" aria-hidden="true"></span>
+                                    Đăng nhập
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="mt-3 text-center">
+                            @if (Route::has('password.request'))
+                                <a class="text-decoration-none" href="{{ route('password.request') }}">
+                                    Quên mật khẩu?
+                                </a>
+                            @endif
+                            <p class="mt-3">Chưa có tài khoản? <a href="javascript:void(0)" id="showRegisterForm" class="text-decoration-none">Đăng ký ngay</a></p>
+                        </div>
+                    </div>
+
+                    <!-- Register Form -->
+                    <div id="registerForm" style="display: none;">
+                        <form id="ajaxRegisterForm" method="POST" action="{{ route('verification.send') }}" class="needs-validation" novalidate>
+                            @csrf
+                            <div class="mb-3">
+                                <label for="register_name" class="form-label">Họ tên</label>
+                                <input id="register_name" type="text" class="form-control" name="name" required autocomplete="name" autofocus>
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập họ tên.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="register_email" class="form-label">Email</label>
+                                <input id="register_email" type="email" class="form-control" name="email" required autocomplete="email">
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập email hợp lệ.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="register_password" class="form-label">Mật khẩu</label>
+                                <input id="register_password" type="password" class="form-control" name="password" required autocomplete="new-password">
+                                <div class="invalid-feedback">
+                                    Mật khẩu phải có ít nhất 8 ký tự.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password-confirm" class="form-label">Xác nhận mật khẩu</label>
+                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                                <div class="invalid-feedback">
+                                    Xác nhận mật khẩu không khớp.
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary" id="registerButton">
+                                    <span class="spinner-border spinner-border-sm d-none" id="registerSpinner" role="status" aria-hidden="true"></span>
+                                    Đăng ký
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="mt-3 text-center">
+                            <p>Đã có tài khoản? <a href="javascript:void(0)" id="showLoginForm" class="text-decoration-none">Đăng nhập ngay</a></p>
+                        </div>
+                    </div>
+
+                    <!-- OTP Verification Form -->
+                    <div id="otpVerificationForm" style="display: none;">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-envelope-open-text fa-3x text-primary mb-3"></i>
+                            <h4>Xác thực email</h4>
+                            <p>Chúng tôi đã gửi mã OTP đến email của bạn. Vui lòng nhập mã để hoàn tất đăng ký.</p>
+
+                            <!-- Đồng hồ đếm ngược -->
+                            <div class="otp-timer-container mt-3">
+                                <div class="otp-timer-label">Mã OTP sẽ hết hạn sau:</div>
+                                <div id="otpExpiryTimer" class="otp-timer">05:00</div>
+                            </div>
+                        </div>
+
+                        <form id="ajaxOtpForm" method="POST" action="{{ route('verification.verify') }}">
+                            @csrf
+                            <input type="hidden" name="email" id="otp_email">
+
+                            <div class="mb-4">
+                                <label for="otp" class="form-label">Mã xác thực (OTP)</label>
+                                <div class="position-relative">
+                                    <input id="otp" type="text" class="form-control form-control-lg text-center" name="otp" required autocomplete="off" autofocus maxlength="6">
+                                    <div id="otpFeedback" class="invalid-feedback">
+                                        Vui lòng nhập mã OTP hợp lệ.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 mb-3">
+                                <button type="submit" class="btn btn-primary" id="verifyButton">
+                                    <span class="spinner-border spinner-border-sm d-none" id="verifySpinner" role="status" aria-hidden="true"></span>
+                                    Xác thực
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Form hết hạn OTP (hiển thị khi hết thời gian) -->
+                        <div id="otpExpiredForm" class="text-center d-none">
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Mã OTP đã hết hạn
+                            </div>
+                            <p>Bạn có thể chọn gửi lại mã mới hoặc quay lại form đăng ký.</p>
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-primary" id="resendExpiredOtp">
+                                    <i class="fas fa-paper-plane me-2"></i>Gửi lại mã
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="backToRegister">
+                                    <i class="fas fa-arrow-left me-2"></i>Quay lại đăng ký
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-3" id="resendOtpContainer">
+                            <p>Chưa nhận được mã?
+                                <a href="javascript:void(0)" id="resendOtp" class="text-decoration-none">
+                                    Gửi lại mã
+                                    <span id="otpCountdown" class="d-none">(60s)</span>
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
