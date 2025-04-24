@@ -389,7 +389,7 @@
                                 <tbody>
                                     @php
                                         $cancelledAppointments = $appointments->filter(function($appointment) {
-                                            return $appointment->status == 'cancelled';
+                                            return $appointment->status == 'canceled';
                                         });
                                     @endphp
 

@@ -110,17 +110,7 @@
                                 </p>
                             @endif
 
-                            <div class="mt-4">
-                                <a href="#" class="btn btn-success btn-sm mx-1">
-                                    <i class="fas fa-download me-1"></i> Tải về PDF
-                                </a>
-                                <a href="mailto:?subject=Lịch hẹn tại Barber Shop&body=Mã đặt lịch: {{ $appointment->booking_code }}" class="btn btn-info btn-sm text-white mx-1">
-                                    <i class="fas fa-envelope me-1"></i> Gửi qua email
-                                </a>
-                                <a href="#" class="btn btn-dark btn-sm mx-1">
-                                    <i class="fas fa-calendar-plus me-1"></i> Thêm vào lịch
-                                </a>
-                            </div>
+
                         </div>
                     </div>
                 </div>

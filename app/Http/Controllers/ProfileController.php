@@ -199,4 +199,71 @@ class ProfileController extends Controller
 
         return redirect()->route('profile.index')->with('success', 'Đổi mật khẩu thành công!');
     }
+
+    /**
+     * Hủy lịch hẹn
+     *
+     * @param int $id ID của lịch hẹn
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function cancelAppointment($id)
+    {
+        $user = Auth::user();
+        $appointment = Appointment::where('user_id', $user->id)
+            ->where('id', $id)
+            ->firstOrFail();
+
+        // Kiểm tra xem lịch hẹn có thể hủy không
+        if ($appointment->status === 'canceled') {
+            return redirect()->route('profile.appointments')->with('error', 'Lịch hẹn này đã bị hủy trước đó.');
+        }
+
+        if ($appointment->status === 'completed') {
+            return redirect()->route('profile.appointments')->with('error', 'Không thể hủy lịch hẹn đã hoàn thành.');
+        }
+
+        // Kiểm tra thời gian hủy lịch (có thể thêm logic kiểm tra thời gian hủy lịch ở đây)
+        // Ví dụ: Chỉ cho phép hủy lịch trước 24 giờ
+        $appointmentDate = \Carbon\Carbon::parse($appointment->appointment_date . ' ' . $appointment->appointment_time);
+        $now = \Carbon\Carbon::now();
+
+        if ($appointmentDate->diffInHours($now) < 24 && $appointmentDate > $now) {
+            return redirect()->route('profile.appointments')->with('error', 'Bạn chỉ có thể hủy lịch hẹn trước 24 giờ.');
+        }
+
+        // Cập nhật trạng thái lịch hẹn
+        $oldStatus = $appointment->status;
+        $appointment->status = 'canceled';
+        $appointment->save();
+
+        // Giảm số lượng đặt chỗ trong time slot
+        if ($oldStatus != 'canceled' && $appointment->time_slot) {
+            $timeSlot = \App\Models\TimeSlot::where('barber_id', $appointment->barber_id)
+                ->where('date', $appointment->appointment_date)
+                ->where('time_slot', $appointment->time_slot)
+                ->first();
+
+            if ($timeSlot) {
+                $timeSlot->decrementBookedCount();
+            }
+        }
+
+        // Gửi email thông báo hủy lịch hẹn cho khách hàng
+        try {
+            \Illuminate\Support\Facades\Mail::to($appointment->email)
+                ->send(new \App\Mail\AppointmentCanceled($appointment));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Không thể gửi email hủy lịch hẹn: " . $e->getMessage());
+        }
+
+        // Gửi thông báo cho admin về việc hủy lịch hẹn
+        try {
+            $admins = User::where('role', 'admin')->get();
+            Notification::send($admins, new \App\Notifications\AppointmentCanceledNotification($appointment));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Không thể gửi thông báo hủy lịch hẹn: " . $e->getMessage());
+        }
+
+        return redirect()->route('profile.appointments')->with('success', 'Lịch hẹn đã được hủy thành công.');
+    }
 }
