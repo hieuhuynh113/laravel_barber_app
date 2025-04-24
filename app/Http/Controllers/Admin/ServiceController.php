@@ -37,7 +37,13 @@ class ServiceController extends Controller
             });
         }
 
-        $services = $query->latest()->paginate(10)->withQueryString();
+        // Thêm thống kê đánh giá cho mỗi dịch vụ
+        $services = $query->withCount('reviews')
+                         ->withAvg('reviews', 'rating')
+                         ->latest()
+                         ->paginate(10)
+                         ->withQueryString();
+
         $categories = Category::where('type', 'service')->get();
 
         return view('admin.services.index', compact('services', 'categories', 'categoryId', 'status', 'search'));

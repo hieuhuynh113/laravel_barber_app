@@ -208,6 +208,8 @@
         font-weight: 600;
         text-align: center;
         min-width: 100px;
+        color: white; /* Đảm bảo chữ luôn có màu trắng */
+        text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2); /* Thêm đổ bóng nhẹ cho chữ để tăng độ tương phản */
     }
 
     /* Nút thao tác */
@@ -372,9 +374,13 @@
                                     @endif
                                 </td>
                                 <td class="col-price">{{ number_format($product->price) }} VNĐ</td>
-                                <td class="col-stock">{{ $product->stock ?? 0 }}</td>
+                                <td class="col-stock">
+                                    <span class="badge bg-{{ $product->stock > 0 ? 'info' : 'warning' }} text-white">
+                                        {{ $product->stock ?? 0 }}
+                                    </span>
+                                </td>
                                 <td class="col-status">
-                                    <span class="status-badge bg-{{ $product->status ? 'success' : 'danger' }}">
+                                    <span class="status-badge bg-{{ $product->status ? 'success' : 'danger' }} text-white">
                                         {{ $product->status ? 'Hoạt động' : 'Không hoạt động' }}
                                     </span>
                                 </td>
@@ -398,7 +404,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-4">Không có sản phẩm nào.</td>
+                                <td colspan="9" class="text-center py-4">Không có sản phẩm nào.</td>
                             </tr>
                         @endforelse
                     </tbody>

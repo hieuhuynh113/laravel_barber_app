@@ -103,6 +103,8 @@
         font-weight: 600;
         text-align: center;
         min-width: 100px;
+        color: white; /* Đảm bảo chữ luôn có màu trắng */
+        text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2); /* Thêm đổ bóng nhẹ cho chữ để tăng độ tương phản */
     }
 
     /* Nút thao tác */
@@ -310,7 +312,11 @@
                                         <span class="text-muted">Không có</span>
                                     @endif
                                 </td>
-                                <td class="col-views">{{ $item->view_count }}</td>
+                                <td class="col-views">
+                                    <span class="badge bg-secondary text-white">
+                                        {{ $item->view_count }}
+                                    </span>
+                                </td>
                                 <td class="col-featured">
                                     <form action="{{ route('admin.news.toggleFeatured', $item->id) }}" method="POST">
                                         @csrf
@@ -320,7 +326,7 @@
                                     </form>
                                 </td>
                                 <td class="col-status">
-                                    <span class="status-badge bg-{{ $item->status ? 'success' : 'warning' }}">
+                                    <span class="status-badge bg-{{ $item->status ? 'success' : 'warning' }} text-white">
                                         {{ $item->status ? 'Đã xuất bản' : 'Bản nháp' }}
                                     </span>
                                 </td>

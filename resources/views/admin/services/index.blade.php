@@ -184,6 +184,11 @@
     }
 
     .col-duration {
+        width: 8%;
+        text-align: center;
+    }
+
+    .col-rating {
         width: 10%;
         text-align: center;
     }
@@ -208,6 +213,8 @@
         font-weight: 600;
         text-align: center;
         min-width: 100px;
+        color: white; /* Đảm bảo chữ luôn có màu trắng */
+        text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2); /* Thêm đổ bóng nhẹ cho chữ để tăng độ tương phản */
     }
 
     /* Nút thao tác */
@@ -348,6 +355,7 @@
                             <th class="col-category">Danh mục</th>
                             <th class="col-price">Giá</th>
                             <th class="col-duration">Thời gian</th>
+                            <th class="col-rating">Đánh giá</th>
                             <th class="col-status">Trạng thái</th>
                             <th class="col-actions">Thao tác</th>
                         </tr>
@@ -394,9 +402,18 @@
                                     @endif
                                 </td>
                                 <td class="col-price">{{ number_format($service->price) }} VNĐ</td>
-                                <td class="col-duration">{{ $service->duration }} phút</td>
+                                <td class="col-duration">
+                                    <span class="badge bg-info text-white">{{ $service->duration }} phút</span>
+                                </td>
+                                <td class="col-rating">
+                                    <div class="d-flex align-items-center">
+                                        <span class="me-1">{{ number_format($service->reviews_avg_rating ?? 0, 1) }}</span>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <span class="ms-1">({{ $service->reviews_count }})</span>
+                                    </div>
+                                </td>
                                 <td class="col-status">
-                                    <span class="status-badge bg-{{ $service->status ? 'success' : 'danger' }}">
+                                    <span class="status-badge bg-{{ $service->status ? 'success' : 'danger' }} text-white">
                                         {{ $service->status ? 'Hoạt động' : 'Không hoạt động' }}
                                     </span>
                                 </td>
@@ -417,7 +434,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-4">Không có dịch vụ nào.</td>
+                                <td colspan="10" class="text-center py-4">Không có dịch vụ nào.</td>
                             </tr>
                         @endforelse
                     </tbody>
