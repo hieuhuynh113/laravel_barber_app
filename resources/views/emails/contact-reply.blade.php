@@ -74,9 +74,9 @@
 
             <div class="contact-info">
                 <p><strong>Barber Shop</strong><br>
-                123 Đường ABC, Quận XYZ, Thành phố HCM<br>
-                Điện thoại: 0123456789<br>
-                Email: info@barbershop.vn</p>
+                Quốc lộ 1A, Diên Toàn, Diên Khánh, Khánh Hòa<br>
+                Điện thoại: 0559764554<br>
+                Email: hieu.ht.63cntt@ntu.edu.vn</p>
             </div>
 
             <p>Trân trọng,<br><strong>Đội ngũ Barber Shop</strong></p>

@@ -79,7 +79,7 @@
                 @endforeach
             </ul>
 
-            <p><strong>Phương thức thanh toán:</strong> 
+            <p><strong>Phương thức thanh toán:</strong>
                 @if($appointment->payment_method == 'cash')
                     Tiền mặt
                 @elseif($appointment->payment_method == 'bank')
@@ -92,8 +92,8 @@
         <div class="payment-info">
             <p><strong>Thông tin thanh toán:</strong></p>
             <p>Ngân hàng: VCB - Vietcombank</p>
-            <p>Số tài khoản: 1234567890</p>
-            <p>Chủ tài khoản: CÔNG TY TNHH BARBER SHOP</p>
+            <p>Số tài khoản: 0559764554</p>
+            <p>Chủ tài khoản: HUYNH TRUNG HIEU</p>
             <p>Nội dung chuyển khoản: {{ $appointment->booking_code }}</p>
         </div>
         @endif
@@ -103,9 +103,9 @@
         <p>Trân trọng,<br>Đội ngũ Barber Shop</p>
 
         <div class="footer">
-            <p>Địa chỉ: 123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh</p>
-            <p>Điện thoại: 028 1234 5678 | Email: info@barbershop.vn</p>
-            <p>© 2025 Barber Shop. Đã đăng ký Bản quyền.</p>
+            <p>Địa chỉ: Quốc lộ 1A, Diên Toàn, Diên Khánh, Khánh Hòa</p>
+            <p>Điện thoại: 0559764554 | Email: hieu.ht.63cntt@ntu.edu.vn</p>
+            <p>© {{ date('Y') }} Barber Shop. Đã đăng ký Bản quyền.</p>
         </div>
     </div>
 </body>

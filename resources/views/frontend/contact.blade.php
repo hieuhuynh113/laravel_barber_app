@@ -81,22 +81,24 @@
 
                         <div class="mb-4">
                             <h5><i class="fas fa-map-marker-alt text-primary me-2"></i> Địa chỉ</h5>
-                            <p class="ms-4">123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh</p>
+                            <p class="ms-4">Quốc lộ 1A, Diên Toàn, Diên Khánh, Khánh Hòa</p>
                         </div>
 
                         <div class="mb-4">
                             <h5><i class="fas fa-phone-alt text-primary me-2"></i> Điện thoại</h5>
-                            <p class="ms-4">0123456789</p>
+                            <p class="ms-4"><a href="tel:0559764554" class="text-decoration-none">0559764554</a></p>
                         </div>
 
                         <div class="mb-4">
                             <h5><i class="fas fa-envelope text-primary me-2"></i> Email</h5>
-                            <p class="ms-4">hieu0559764554@gmail.com</p>
+                            <p class="ms-4"><a href="mailto:hieu0559764554@gmail.com" class="text-decoration-none">hieu.ht.63cntt@ntu.edu.vn</a></p>
                         </div>
 
                         <div class="mb-4">
                             <h5><i class="fas fa-clock text-primary me-2"></i> Giờ làm việc</h5>
-                            <p class="ms-4">Thứ 2 - Chủ nhật: 8:00 - 20:00</p>
+                            <p class="ms-4">Thứ 2 - Thứ 6: 8:00 - 20:00</p>
+                            <p class="ms-4">Thứ 7: 8:00 - 21:00</p>
+                            <p class="ms-4">Chủ nhật: 9:00 - 18:00</p>
                         </div>
 
                         <div class="mb-4">

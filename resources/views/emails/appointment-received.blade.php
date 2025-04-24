@@ -68,7 +68,7 @@
                 @endforeach
             </ul>
 
-            <p><strong>Phương thức thanh toán:</strong> 
+            <p><strong>Phương thức thanh toán:</strong>
                 @if($appointment->payment_method == 'cash')
                     Tiền mặt
                 @elseif($appointment->payment_method == 'bank')
@@ -92,9 +92,9 @@
         <p>Trân trọng,<br>Đội ngũ Barber Shop</p>
 
         <div class="footer">
-            <p>Địa chỉ: 123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh</p>
-            <p>Điện thoại: 028 1234 5678 | Email: info@barbershop.vn</p>
-            <p>© 2025 Barber Shop. Đã đăng ký Bản quyền.</p>
+            <p>Địa chỉ: Quốc lộ 1A, Diên Toàn, Diên Khánh, Khánh Hòa</p>
+            <p>Điện thoại: 0559764554 | Email: hieu.ht.63cntt@ntu.edu.vn</p>
+            <p>© {{ date('Y') }} Barber Shop. Đã đăng ký Bản quyền.</p>
         </div>
     </div>
 </body>

@@ -92,15 +92,15 @@
                                         <tbody>
                                             <tr>
                                                 <th style="width: 35%">Ngân hàng:</th>
-                                                <td>Vietcombank</td>
+                                                <td>VCB - Vietcombank</td>
                                             </tr>
                                             <tr>
                                                 <th>Số tài khoản:</th>
-                                                <td><span class="fw-bold">1234567890</span></td>
+                                                <td><span class="fw-bold">0559764554</span></td>
                                             </tr>
                                             <tr>
                                                 <th>Chủ tài khoản:</th>
-                                                <td>CÔNG TY TNHH BARBER SHOP</td>
+                                                <td>HUYNH TRUNG HIEU</td>
                                             </tr>
                                             <tr>
                                                 <th>Số tiền:</th>
@@ -148,7 +148,7 @@
                             <h6>Các bước tiếp theo:</h6>
                             <ol>
                                 <li>Chuyển khoản theo thông tin bên trên</li>
-                                <li>Tải lên biên lai chuyển khoản hoặc gửi qua email <a href="mailto:info@barbershop.com">info@barbershop.com</a></li>
+                                <li>Tải lên biên lai chuyển khoản hoặc gửi qua email <a href="mailto:hieu.ht.63cntt@ntu.edu.vn">hieu.ht.63cntt@ntu.edu.vn</a></li>
                                 <li>Chúng tôi sẽ xác nhận thanh toán và gửi email xác nhận cho bạn</li>
                                 <li>Đến tiệm theo lịch hẹn đã đặt</li>
                             </ol>
@@ -172,7 +172,7 @@
     function copyToClipboard(elementId) {
         const element = document.getElementById(elementId);
         const text = element.textContent;
-        
+
         navigator.clipboard.writeText(text).then(function() {
             // Hiển thị thông báo đã sao chép
             const button = element.nextElementSibling;
@@ -180,7 +180,7 @@
             button.innerHTML = '<i class="fas fa-check"></i>';
             button.classList.remove('btn-outline-primary');
             button.classList.add('btn-success');
-            
+
             setTimeout(function() {
                 button.innerHTML = originalHTML;
                 button.classList.remove('btn-success');

@@ -178,15 +178,15 @@
                                                 <tbody>
                                                     <tr>
                                                         <th style="width: 35%">Ngân hàng:</th>
-                                                        <td>Vietcombank</td>
+                                                        <td>VCB - Vietcombank</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Số tài khoản:</th>
-                                                        <td><span class="fw-bold">1234567890</span></td>
+                                                        <td><span class="fw-bold">0559764554</span></td>
                                                     </tr>
                                                     <tr>
                                                         <th>Chủ tài khoản:</th>
-                                                        <td>CÔNG TY TNHH BARBER SHOP</td>
+                                                        <td>HUYNH TRUNG HIEU</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Số tiền:</th>
@@ -211,7 +211,7 @@
                                             <h6>Sau khi chuyển khoản:</h6>
                                             <ol>
                                                 <li>Chụp màn hình hoặc lưu biên lai chuyển khoản</li>
-                                                <li>Gửi biên lai qua email <a href="mailto:info@barbershop.com">info@barbershop.com</a> hoặc số Zalo <strong>0123456789</strong></li>
+                                                <li>Gửi biên lai qua email <a href="mailto:hieu.ht.63cntt@ntu.edu.vn">hieu.ht.63cntt@ntu.edu.vn</a> hoặc số Zalo <strong>0559764554</strong></li>
                                                 <li>Bạn sẽ nhận được email xác nhận sau khi chúng tôi xác nhận thanh toán</li>
                                             </ol>
                                         </div>
