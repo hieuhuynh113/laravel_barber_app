@@ -13,12 +13,28 @@ class NewsController extends Controller
         $categoryId = $request->input('category_id');
         $timeFilter = $request->input('time');
         $sort = $request->input('sort');
+        $search = $request->input('search');
 
         $query = News::published()->with(['category', 'user']);
 
+        // Apply search filter
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%")
+                  ->orWhereHas('category', function($q2) use ($search) {
+                      $q2->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
         // Apply category filter
         if ($categoryId) {
-            $query->where('category_id', $categoryId);
+            if (is_array($categoryId)) {
+                $query->whereIn('category_id', $categoryId);
+            } else {
+                $query->where('category_id', $categoryId);
+            }
         }
 
         // Apply time filter
@@ -40,7 +56,7 @@ class NewsController extends Controller
         if ($sort) {
             switch ($sort) {
                 case 'popular':
-                    $query->orderBy('views', 'desc');
+                    $query->orderBy('view_count', 'desc');
                     break;
                 case 'newest':
                     $query->orderBy('created_at', 'desc');
@@ -73,7 +89,7 @@ class NewsController extends Controller
             ]);
         }
 
-        return view('frontend.news.index', compact('news', 'categories', 'categoryId', 'timeFilter', 'sort'));
+        return view('frontend.news.index', compact('news', 'categories', 'categoryId', 'timeFilter', 'sort', 'search'));
     }
 
     public function show($slug)
@@ -88,6 +104,12 @@ class NewsController extends Controller
             ->limit(3)
             ->get();
 
-        return view('frontend.news.show', compact('news', 'relatedNews'));
+        // Lấy bài viết phổ biến nhất
+        $popularNews = News::published()
+            ->orderBy('view_count', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('frontend.news.show', compact('news', 'relatedNews', 'popularNews'));
     }
 }

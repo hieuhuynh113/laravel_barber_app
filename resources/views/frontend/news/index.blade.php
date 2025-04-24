@@ -11,91 +11,172 @@
 
 <section class="py-5 bg-light">
     <div class="container">
-        <!-- New Filter UI based on reference image -->
-        <div class="filter-header mb-4">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="filter-toggle d-flex align-items-center">
-                    <i class="fas fa-filter me-2"></i>
-                    <span>Filters:</span>
-                </div>
-                <div class="filter-count">
-                    Hiển thị {{ $news->count() }} / {{ $news->total() }} bài viết
-                </div>
-            </div>
-        </div>
-
-        <div class="filter-options mb-4">
-            <div class="row">
-                <div class="col-md-6 mb-3 mb-md-0">
-                    <div class="filter-group">
-                        <label for="categoryFilter">Danh mục:</label>
-                        <select class="form-select" id="categoryFilter">
-                            <option value="" {{ !$categoryId ? 'selected' : '' }}>Tất cả danh mục</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ $categoryId == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                            @endforeach
-                        </select>
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- News List Header -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0 text-muted">Danh sách tin tức</h5>
+                    <div class="filter-count text-muted">
+                        Hiển thị {{ $news->count() }} / {{ $news->total() }} bài viết
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="filter-group">
-                        <label for="timeFilter">Thời gian:</label>
-                        <select class="form-select" id="timeFilter">
-                            <option value="">Tất cả thời gian</option>
-                            <option value="today" {{ $timeFilter == 'today' ? 'selected' : '' }}>Hôm nay</option>
-                            <option value="week" {{ $timeFilter == 'week' ? 'selected' : '' }}>Tuần này</option>
-                            <option value="month" {{ $timeFilter == 'month' ? 'selected' : '' }}>Tháng này</option>
-                        </select>
+
+                <!-- Active Filters -->
+                <div id="active-filters" class="mb-3">
+                    <!-- Sẽ được điền bởi JavaScript -->
+                </div>
+
+                <!-- News List -->
+                <div id="news-container" class="row">
+                    @forelse($news as $item)
+                    <div class="col-md-6 col-lg-6 mb-4">
+                        <div class="card h-100 news-card">
+                            <div class="card-img-container position-relative">
+                                <img src="{{ asset('storage/' . $item->image) }}" class="card-img-top" alt="{{ $item->title }}">
+                                <div class="news-date position-absolute">
+                                    <span><i class="far fa-calendar-alt me-1"></i>{{ $item->created_at->format('d/m/Y') }}</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="news-category mb-2">
+                                    <span class="badge bg-light text-dark">{{ $item->category->name }}</span>
+                                </div>
+                                <h5 class="card-title">{{ $item->title }}</h5>
+                                <p class="card-text">{{ Str::limit($item->excerpt, 100) }}</p>
+                            </div>
+                            <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ asset('storage/' . $item->user->avatar) }}" alt="{{ $item->user->name }}" class="rounded-circle me-2" width="25" height="25">
+                                    <small>{{ $item->user->name }}</small>
+                                </div>
+                                <a href="{{ route('news.show', $item->slug) }}" class="btn btn-sm btn-outline-primary">Đọc tiếp <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </div>
                     </div>
+                    @empty
+                    <div class="col-12">
+                        <div class="alert alert-info text-center p-5">
+                            <i class="fas fa-info-circle fa-3x mb-3"></i>
+                            <h4>Không tìm thấy bài viết nào</h4>
+                            <p>Hiện tại không có bài viết nào phù hợp với bộ lọc. Vui lòng thử lại với bộ lọc khác.</p>
+                        </div>
+                    </div>
+                    @endforelse
+                </div>
+
+                <div class="mt-4 pagination-container">
+                    {{ $news->appends(request()->query())->links() }}
                 </div>
             </div>
-        </div>
 
-        <!-- Filter Tabs -->
-        <div class="filter-tabs mb-4">
-            <div class="filter-tab {{ !$sort ? 'active' : '' }}" data-sort="">Tất cả bài viết</div>
-            <div class="filter-tab {{ $sort == 'popular' ? 'active' : '' }}" data-sort="popular">Phổ biến nhất</div>
-            <div class="filter-tab {{ $sort == 'newest' ? 'active' : '' }}" data-sort="newest">Mới nhất</div>
-            <div class="filter-tab {{ $sort == 'recommended' ? 'active' : '' }}" data-sort="recommended">Đề xuất</div>
-        </div>
-
-        <div class="row" id="news-container">
-            @forelse($news as $item)
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 news-card">
-                    <div class="card-img-container position-relative">
-                        <img src="{{ asset('storage/' . $item->image) }}" class="card-img-top" alt="{{ $item->title }}">
-                        <div class="news-date position-absolute">
-                            <span><i class="far fa-calendar-alt me-1"></i>{{ $item->created_at->format('d/m/Y') }}</span>
+            <!-- Sidebar Filters -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm filter-sidebar">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 d-flex align-items-center">
+                            <i class="fas fa-filter me-2 text-primary"></i>
+                            BỘ LỌC
+                        </h5>
+                        <div>
+                            <button id="clearAllFilters" class="btn btn-sm text-primary border-0">
+                                CLEAR
+                            </button>
+                            <button id="closeFilterSidebar" class="btn btn-sm text-primary border-0 d-lg-none">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="news-category mb-2">
-                            <span class="badge bg-light text-dark">{{ $item->category->name }}</span>
+                        <!-- Search Filter -->
+                        <div class="filter-section mb-4">
+                            <h6 class="filter-title">Tìm kiếm</h6>
+                            <div class="input-group">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm tin tức..." value="{{ request('search') }}">
+                                <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
                         </div>
-                        <h5 class="card-title">{{ $item->title }}</h5>
-                        <p class="card-text">{{ Str::limit($item->excerpt, 100) }}</p>
-                    </div>
-                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <img src="{{ asset('storage/' . $item->user->avatar) }}" alt="{{ $item->user->name }}" class="rounded-circle me-2" width="25" height="25">
-                            <small>{{ $item->user->name }}</small>
-                        </div>
-                        <a href="{{ route('news.show', $item->slug) }}" class="btn btn-sm btn-outline-primary">Đọc tiếp <i class="fas fa-arrow-right ms-1"></i></a>
-                    </div>
-                </div>
-            </div>
-            @empty
-            <div class="col-12">
-                <div class="alert alert-info text-center">
-                    Hiện tại chưa có bài viết nào. Vui lòng quay lại sau.
-                </div>
-            </div>
-            @endforelse
-        </div>
 
-        <div class="mt-4 pagination-container">
-            {{ $news->appends(request()->query())->links() }}
+                        <!-- Category Filter -->
+                        <div class="filter-section mb-4">
+                            <h6 class="filter-title">Danh mục tin tức</h6>
+                            <div class="filter-options">
+                                @foreach($categories as $category)
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input auto-filter" type="checkbox" name="category_id[]" id="category{{ $category->id }}" value="{{ $category->id }}" {{ (is_array(request('category_id')) && in_array($category->id, request('category_id'))) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="category{{ $category->id }}">
+                                            {{ $category->name }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Time Filter -->
+                        <div class="filter-section mb-4">
+                            <h6 class="filter-title">Thời gian</h6>
+                            <div class="filter-options">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input auto-filter" type="radio" name="time" id="timeAll" value="" {{ !$timeFilter ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="timeAll">
+                                        Tất cả thời gian
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input auto-filter" type="radio" name="time" id="timeToday" value="today" {{ $timeFilter == 'today' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="timeToday">
+                                        Hôm nay
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input auto-filter" type="radio" name="time" id="timeWeek" value="week" {{ $timeFilter == 'week' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="timeWeek">
+                                        Tuần này
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input auto-filter" type="radio" name="time" id="timeMonth" value="month" {{ $timeFilter == 'month' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="timeMonth">
+                                        Tháng này
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sort By -->
+                        <div class="filter-section mb-4">
+                            <h6 class="filter-title">Sắp xếp theo</h6>
+                            <div class="filter-options">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input auto-filter" type="radio" name="sort" id="sortAll" value="" {{ !$sort ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="sortAll">
+                                        Mặc định
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input auto-filter" type="radio" name="sort" id="sortPopular" value="popular" {{ $sort == 'popular' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="sortPopular">
+                                        Phổ biến nhất
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input auto-filter" type="radio" name="sort" id="sortNewest" value="newest" {{ $sort == 'newest' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="sortNewest">
+                                        Mới nhất
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input auto-filter" type="radio" name="sort" id="sortRecommended" value="recommended" {{ $sort == 'recommended' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="sortRecommended">
+                                        Đề xuất
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -138,4 +219,12 @@
         <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg appointment-btn">Đặt lịch ngay</a>
     </div>
 </section>
+
+<!-- Mobile Filter Button -->
+<button id="showFilterSidebar" class="mobile-filter-btn">
+    <i class="fas fa-filter"></i>
+</button>
+
+<!-- Filter Backdrop -->
+<div class="filter-backdrop"></div>
 @endsection

@@ -1,5 +1,5 @@
 @forelse($news as $item)
-<div class="col-md-6 col-lg-4 mb-4">
+<div class="col-md-6 col-lg-6 mb-4">
     <div class="card h-100 news-card">
         <div class="card-img-container position-relative">
             <img src="{{ asset('storage/' . $item->image) }}" class="card-img-top" alt="{{ $item->title }}">

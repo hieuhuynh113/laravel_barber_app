@@ -232,6 +232,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
+        // Get selected time radio (for news page)
+        const timeRadio = document.querySelector('input[name="time"]:checked');
+        if (timeRadio && timeRadio.value) {
+            url.searchParams.set('time', timeRadio.value);
+        }
+
         // Get selected sort radio
         const sortRadio = document.querySelector('input[name="sort"]:checked');
         if (sortRadio) {
@@ -372,6 +378,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
+        // Get selected time radio (for news page)
+        const timeRadio = document.querySelector('input[name="time"]:checked');
+        if (timeRadio && timeRadio.value) {
+            url.searchParams.set('time', timeRadio.value);
+        }
+
         // Get selected sort radio
         const sortRadio = document.querySelector('input[name="sort"]:checked');
         if (sortRadio) {
@@ -498,6 +510,17 @@ document.addEventListener('DOMContentLoaded', function() {
             activeFiltersContainer.appendChild(priceFilter);
         });
 
+        // Add time filter if active (for news page)
+        const timeRadio = document.querySelector('input[name="time"]:checked');
+        if (timeRadio && timeRadio.value) {
+            hasActiveFilters = true;
+            const timeName = timeRadio.nextElementSibling.textContent.trim();
+            const timeFilter = document.createElement('span');
+            timeFilter.className = 'active-filter';
+            timeFilter.innerHTML = `Thời gian: ${timeName} <span class="filter-remove" data-filter-type="time"><i class="fas fa-times"></i></span>`;
+            activeFiltersContainer.appendChild(timeFilter);
+        }
+
         // Add sort filter if active
         const sortRadio = document.querySelector('input[name="sort"]:checked');
         if (sortRadio) {
@@ -531,6 +554,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     const checkbox = document.querySelector(`input[name="price[]"][value="${filterId}"]`);
                     if (checkbox) {
                         checkbox.checked = false;
+                    }
+                } else if (filterType === 'time') {
+                    document.querySelectorAll('input[name="time"]').forEach(radio => {
+                        radio.checked = false;
+                    });
+                    // Select the "All time" option if available
+                    const allTimeRadio = document.querySelector('input[name="time"][value=""]');
+                    if (allTimeRadio) {
+                        allTimeRadio.checked = true;
                     }
                 } else if (filterType === 'sort') {
                     document.querySelectorAll('input[name="sort"]').forEach(radio => {

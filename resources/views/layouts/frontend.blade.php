@@ -162,7 +162,7 @@
                     <ul class="list-unstyled contact-info">
                         <li class="mb-3"><i class="fas fa-map-marker-alt me-2"></i> Quốc lộ 1A, Diên Toàn, Diên Khánh, Khánh Hòa</li>
                         <li class="mb-3"><i class="fas fa-phone-alt me-2"></i> <a href="tel:0559764554" class="text-white text-decoration-none">0559764554</a></li>
-                        <li class="mb-3"><i class="fas fa-envelope me-2"></i> <a href="mailto:hieu0559764554@gmail.com" class="text-white text-decoration-none">hieu0559764554@gmail.com</a></li>
+                        <li class="mb-3"><i class="fas fa-envelope me-2"></i> <a href="mailto:hieu.ht.63cntt@ntu.edu.vn" class="text-white text-decoration-none">hieu.ht.63cntt@ntu.edu.vn</a></li>
                     </ul>
                 </div>
             </div>
