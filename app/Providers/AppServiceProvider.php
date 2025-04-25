@@ -21,12 +21,12 @@ class AppServiceProvider extends ServiceProvider
             $view->with('productCategories', Category::query()->product()->active()->get());
             $view->with('newsCategories', Category::query()->news()->active()->get());
 
-            // Các cài đặt chung
-            $view->with('shopName', 'Barber Shop');
-            $view->with('shopAddress', '123 Đường ABC, Quận XYZ, Thành phố HCM');
-            $view->with('shopPhone', '0123456789');
-            $view->with('shopEmail', 'hieu0559764554@gmail.com');
-            $view->with('shopWorkingHours', '8:00 - 20:00');
+            // Các cài đặt chung từ config/shop.php
+            $view->with('shopName', config('shop.name'));
+            $view->with('shopAddress', config('shop.address'));
+            $view->with('shopPhone', config('shop.phone'));
+            $view->with('shopEmail', config('shop.email'));
+            $view->with('shopWorkingHours', config('shop.working_hours'));
         });
     }
 }
