@@ -64,6 +64,9 @@ class AppointmentController extends Controller
         $request->validate([
             'services' => 'required|array|min:1',
             'services.*' => 'exists:services,id',
+        ], [
+            'services.required' => 'Vui lòng chọn ít nhất một dịch vụ để tiếp tục.',
+            'services.min' => 'Vui lòng chọn ít nhất một dịch vụ để tiếp tục.',
         ]);
 
         $services = Service::whereIn('id', $request->services)->get();
@@ -89,6 +92,9 @@ class AppointmentController extends Controller
     {
         $request->validate([
             'barber_id' => 'required|exists:barbers,id',
+        ], [
+            'barber_id.required' => 'Vui lòng chọn một thợ cắt tóc để tiếp tục.',
+            'barber_id.exists' => 'Thợ cắt tóc bạn chọn không tồn tại hoặc không khả dụng.',
         ]);
 
         $barber = Barber::findOrFail($request->barber_id);
@@ -229,6 +235,10 @@ class AppointmentController extends Controller
         $request->validate([
             'date' => 'required|date',
             'time_slot' => 'required',
+        ], [
+            'date.required' => 'Vui lòng chọn ngày đặt lịch.',
+            'date.date' => 'Ngày đặt lịch không hợp lệ.',
+            'time_slot.required' => 'Vui lòng chọn giờ đặt lịch.',
         ]);
 
         $startTime = $request->time_slot;
@@ -276,6 +286,14 @@ class AppointmentController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
+        ], [
+            'name.required' => 'Vui lòng nhập họ và tên của bạn.',
+            'name.max' => 'Họ và tên không được vượt quá 255 ký tự.',
+            'email.required' => 'Vui lòng nhập địa chỉ email của bạn.',
+            'email.email' => 'Địa chỉ email không hợp lệ.',
+            'email.max' => 'Email không được vượt quá 255 ký tự.',
+            'phone.required' => 'Vui lòng nhập số điện thoại của bạn.',
+            'phone.max' => 'Số điện thoại không được vượt quá 20 ký tự.',
         ]);
 
         // Lưu thông tin khách hàng vào session
@@ -302,6 +320,12 @@ class AppointmentController extends Controller
     {
         $request->validate([
             'payment_method' => 'required|in:cash,bank_transfer',
+            'agree_terms' => 'required|accepted',
+        ], [
+            'payment_method.required' => 'Vui lòng chọn phương thức thanh toán.',
+            'payment_method.in' => 'Phương thức thanh toán không hợp lệ.',
+            'agree_terms.required' => 'Vui lòng đồng ý với điều khoản và điều kiện của chúng tôi.',
+            'agree_terms.accepted' => 'Bạn phải đồng ý với điều khoản và điều kiện để tiếp tục.',
         ]);
 
         // Lưu phương thức thanh toán vào session
@@ -429,6 +453,7 @@ class AppointmentController extends Controller
         $appointment->payment_method = $paymentMethod;
         $appointment->payment_status = 'pending';
         $appointment->notes = $notes;
+
         $appointment->save();
 
         // Thêm các dịch vụ đã chọn

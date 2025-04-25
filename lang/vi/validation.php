@@ -169,6 +169,10 @@ return [
         'password' => [
             'confirmed' => 'Xác nhận mật khẩu không khớp với mật khẩu đã nhập.',
         ],
+        'services' => [
+            'required' => 'Vui lòng chọn ít nhất một dịch vụ để tiếp tục.',
+            'min' => 'Vui lòng chọn ít nhất một dịch vụ để tiếp tục.',
+        ],
     ],
 
     /*
@@ -194,5 +198,7 @@ return [
         'subject' => 'tiêu đề',
         'content' => 'nội dung',
         'otp' => 'mã OTP',
+        'services' => 'dịch vụ',
+        'services.*' => 'dịch vụ',
     ],
 ];
