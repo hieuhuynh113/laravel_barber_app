@@ -52,74 +52,125 @@
 
                         <!-- Hiển thị tóm tắt thông tin đã chọn -->
                         <div class="selected-info mb-4">
-                            <h6>Thông tin đặt lịch:</h6>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="card bg-light mb-3">
-                                        <div class="card-body">
-                                            <h6 class="card-title">Thông tin cá nhân</h6>
-                                            <p class="mb-1"><strong>Họ tên:</strong> {{ session('appointment_customer_name') }}</p>
-                                            <p class="mb-1"><strong>Email:</strong> {{ session('appointment_customer_email') }}</p>
-                                            <p class="mb-1"><strong>Số điện thoại:</strong> {{ session('appointment_customer_phone') }}</p>
-                                            @if(session('appointment_address'))
-                                                <p class="mb-1"><strong>Địa chỉ:</strong> {{ session('appointment_address') }}</p>
-                                            @endif
-                                            @if(session('appointment_notes'))
-                                                <p class="mb-0"><strong>Ghi chú:</strong> {{ session('appointment_notes') }}</p>
-                                            @endif
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-primary text-white py-3">
+                                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Thông tin đặt lịch</h6>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="customer-summary">
+                                                <h6 class="text-primary border-bottom pb-2 mb-3"><i class="fas fa-user-circle me-2"></i>Thông tin cá nhân</h6>
+                                                <div class="customer-details">
+                                                    <div class="d-flex mb-2">
+                                                        <div class="icon-col text-primary" style="width: 24px;">
+                                                            <i class="fas fa-user"></i>
+                                                        </div>
+                                                        <div class="ms-3">
+                                                            <div class="text-muted small">Họ tên</div>
+                                                            <div class="fw-medium">{{ session('appointment_customer_name') }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex mb-2">
+                                                        <div class="icon-col text-primary" style="width: 24px;">
+                                                            <i class="fas fa-envelope"></i>
+                                                        </div>
+                                                        <div class="ms-3">
+                                                            <div class="text-muted small">Email</div>
+                                                            <div class="fw-medium">{{ session('appointment_customer_email') }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex mb-2">
+                                                        <div class="icon-col text-primary" style="width: 24px;">
+                                                            <i class="fas fa-phone-alt"></i>
+                                                        </div>
+                                                        <div class="ms-3">
+                                                            <div class="text-muted small">Số điện thoại</div>
+                                                            <div class="fw-medium">{{ session('appointment_customer_phone') }}</div>
+                                                        </div>
+                                                    </div>
+                                                    @if(session('appointment_notes'))
+                                                    <div class="d-flex">
+                                                        <div class="icon-col text-primary" style="width: 24px;">
+                                                            <i class="fas fa-sticky-note"></i>
+                                                        </div>
+                                                        <div class="ms-3">
+                                                            <div class="text-muted small">Ghi chú</div>
+                                                            <div class="fw-medium">{{ session('appointment_notes') }}</div>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="appointment-summary">
+                                                <h6 class="text-primary border-bottom pb-2 mb-3"><i class="fas fa-calendar-check me-2"></i>Chi tiết cuộc hẹn</h6>
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <div class="icon-wrapper bg-light rounded-circle p-2 me-3">
+                                                        <i class="fas fa-calendar-day text-primary"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="text-muted small">Ngày</div>
+                                                        <div class="fw-medium">{{ \Carbon\Carbon::parse(session('appointment_date'))->format('d/m/Y') }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <div class="icon-wrapper bg-light rounded-circle p-2 me-3">
+                                                        <i class="fas fa-clock text-primary"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="text-muted small">Giờ</div>
+                                                        <div class="fw-medium">{{ session('appointment_start_time') }} - {{ session('appointment_end_time') }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="icon-wrapper bg-light rounded-circle p-2 me-3">
+                                                        <i class="fas fa-user-tie text-primary"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="text-muted small">Thợ cắt tóc</div>
+                                                        <div class="fw-medium">{{ session('appointment_barber')->user->name }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="card bg-light mb-3">
-                                        <div class="card-body">
-                                            <h6 class="card-title">Chi tiết cuộc hẹn</h6>
-                                            <p class="mb-1">
-                                                <strong>Ngày:</strong> {{ \Carbon\Carbon::parse(session('appointment_date'))->format('d/m/Y') }}
-                                            </p>
-                                            <p class="mb-1"><strong>Giờ:</strong> {{ session('appointment_start_time') }} - {{ session('appointment_end_time') }}</p>
-                                            <p class="mb-1">
-                                                <strong>Thợ cắt tóc:</strong> {{ session('appointment_barber')->user->name }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <h6 class="card-title">Dịch vụ đã chọn</h6>
-                                    <div class="table-responsive">
-                                        <table class="table table-sm">
-                                            <thead>
-                                                <tr>
-                                                    <th>Dịch vụ</th>
-                                                    <th>Thời gian</th>
-                                                    <th class="text-end">Giá</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @php $totalPrice = 0; $totalDuration = 0; @endphp
-                                                @foreach(session('appointment_services', []) as $service)
+                                    <div class="service-summary">
+                                        <h6 class="text-primary border-bottom pb-2 mb-3"><i class="fas fa-cut me-2"></i>Dịch vụ đã chọn</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <thead class="table-light">
                                                     <tr>
-                                                        <td>{{ $service->name }}</td>
-                                                        <td>{{ $service->duration }} phút</td>
-                                                        <td class="text-end">{{ number_format($service->price) }} VNĐ</td>
+                                                        <th>Dịch vụ</th>
+                                                        <th class="text-center">Thời gian</th>
+                                                        <th class="text-end">Giá</th>
                                                     </tr>
-                                                    @php
-                                                        $totalPrice += $service->price;
-                                                        $totalDuration += $service->duration;
-                                                    @endphp
-                                                @endforeach
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>Tổng</th>
-                                                    <th>{{ $totalDuration }} phút</th>
-                                                    <th class="text-end">{{ number_format($totalPrice) }} VNĐ</th>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    @php $totalPrice = 0; $totalDuration = 0; @endphp
+                                                    @foreach(session('appointment_services', []) as $service)
+                                                        <tr>
+                                                            <td>{{ $service->name }}</td>
+                                                            <td class="text-center">{{ $service->duration }} phút</td>
+                                                            <td class="text-end">{{ number_format($service->price) }} VNĐ</td>
+                                                        </tr>
+                                                        @php
+                                                            $totalPrice += $service->price;
+                                                            $totalDuration += $service->duration;
+                                                        @endphp
+                                                    @endforeach
+                                                </tbody>
+                                                <tfoot class="table-light">
+                                                    <tr>
+                                                        <th>Tổng cộng</th>
+                                                        <th class="text-center">{{ $totalDuration }} phút</th>
+                                                        <th class="text-end text-primary">{{ number_format($totalPrice) }} VNĐ</th>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -130,11 +181,22 @@
 
                         @if ($errors->any())
                             <div class="alert alert-danger">
-                                <ul class="mb-0">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-exclamation-circle me-2 fs-4"></i>
+                                    <div>
+                                        @if($errors->has('payment_method'))
+                                            <strong>{{ $errors->first('payment_method') }}</strong>
+                                        @elseif($errors->has('agree_terms'))
+                                            <strong>{{ $errors->first('agree_terms') }}</strong>
+                                        @else
+                                            <ul class="mb-0">
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
@@ -278,6 +340,36 @@
 
 @section('styles')
 <style>
+    /* Styling for selected info card */
+    .selected-info .card-header {
+        background-color: #9E8A78 !important;
+    }
+
+    .selected-info .text-primary {
+        color: #9E8A78 !important;
+    }
+
+    .selected-info .icon-wrapper {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .selected-info .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(158, 138, 120, 0.05);
+    }
+
+    .selected-info .table-light {
+        background-color: rgba(158, 138, 120, 0.1);
+    }
+
+    .customer-details .icon-col {
+        color: #9E8A78;
+    }
+
+    /* Progress steps styling */
     .progress-steps {
         position: relative;
     }

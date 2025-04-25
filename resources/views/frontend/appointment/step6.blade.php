@@ -65,6 +65,18 @@
                             <p>Chúng tôi đã nhận được yêu cầu đặt lịch của bạn và đang xử lý.</p>
                             <p>Bạn sẽ nhận được email xác nhận kèm theo mã đặt chỗ sau khi lịch hẹn được xác nhận.</p>
                             <p>Chúng tôi đã gửi email thông báo đến <strong>{{ $appointment->email }}</strong></p>
+
+                            @if(session('appointment_discount_percent') > 0)
+                            <div class="alert alert-success mt-3">
+                                <h5><i class="fas fa-tags me-2"></i> Ưu đãi thành viên</h5>
+                                <p class="mb-0">Bạn đã được giảm <strong>{{ session('appointment_discount_percent') }}%</strong> cho đơn đặt lịch này!</p>
+                                <p class="mb-0">
+                                    <del class="text-muted">{{ number_format(session('appointment_original_total')) }} VNĐ</del>
+                                    <span class="text-success fw-bold">→ {{ number_format(session('appointment_discounted_total')) }} VNĐ</span>
+                                </p>
+                            </div>
+                            @endif
+
                             <hr class="my-4">
                         </div>
 

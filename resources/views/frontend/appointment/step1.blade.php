@@ -45,13 +45,24 @@
                         <!-- Form chọn dịch vụ -->
                         <h5 class="card-title mb-4">Bước 1: Chọn dịch vụ</h5>
 
+
+
                         @if ($errors->any())
                             <div class="alert alert-danger">
-                                <ul class="mb-0">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-exclamation-circle me-2 fs-4"></i>
+                                    <div>
+                                        @if($errors->has('services'))
+                                            <strong>{{ $errors->first('services') }}</strong>
+                                        @else
+                                            <ul class="mb-0">
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
@@ -103,7 +114,9 @@
                                                 </div>
                                                 <p class="card-text flex-grow-1 service-description">{{ Str::limit($service->description, 100) }}</p>
                                                 <div class="d-flex justify-content-between align-items-center mt-auto">
-                                                    <span class="service-price">{{ number_format($service->price) }} VNĐ</span>
+                                                    <span class="service-price">
+                                                        {{ number_format($service->price) }} VNĐ
+                                                    </span>
                                                     <button type="button" class="btn btn-sm btn-link p-0 service-details" data-bs-toggle="modal" data-bs-target="#serviceModal-{{ $service->id }}">
                                                         Chi tiết <i class="fas fa-chevron-right ms-1"></i>
                                                     </button>
@@ -139,7 +152,9 @@
                                                                 </span>
                                                                 <span class="badge bg-secondary"><i class="far fa-clock me-1"></i> {{ $service->duration }} phút</span>
                                                             </div>
-                                                            <h4 class="text-primary mb-2 service-modal-price">{{ number_format($service->price) }} VNĐ</h4>
+                                                            <h4 class="text-primary mb-2 service-modal-price">
+                                                                {{ number_format($service->price) }} VNĐ
+                                                            </h4>
                                                         </div>
 
                                                         <div class="service-modal-description">
