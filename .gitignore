@@ -12,6 +12,7 @@ yarn-error.log
 .vscode
 /public/storage
 /storage/*.key
+/storage/fonts/
 admin_blade_diff.txt
 
 # Thêm các file tạm thời khác
