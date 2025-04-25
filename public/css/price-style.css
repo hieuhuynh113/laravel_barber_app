@@ -1,0 +1,792 @@
+/* Membership & Pricing Page Styles */
+
+/* Common Styles */
+.membership-section,
+.pricing-table-section,
+.combo-deals-section,
+.calculator-section,
+.faq-section {
+    padding: 80px 0;
+}
+
+.membership-section {
+    background-color: #f9f5f0;
+}
+
+.pricing-table-section {
+    background-color: #fff;
+}
+
+.combo-deals-section {
+    background-color: #f9f5f0;
+}
+
+.calculator-section {
+    background-color: #fff;
+}
+
+.faq-section {
+    background-color: #f9f5f0;
+}
+
+/* Membership Plans */
+.membership-plan {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.membership-plan:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.membership-plan.basic {
+    border-top: 5px solid #3498db;
+}
+
+.membership-plan.premium {
+    border-top: 5px solid #f1c40f;
+    position: relative;
+    z-index: 2;
+    transform: scale(1.05);
+}
+
+.membership-plan.premium.popular:before {
+    content: "Phổ biến nhất";
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #f1c40f;
+    color: #fff;
+    padding: 5px 15px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 0 0 0 10px;
+    z-index: 3;
+}
+
+.membership-plan.premium:hover {
+    transform: translateY(-10px) scale(1.05);
+}
+
+.membership-plan.vip {
+    border-top: 5px solid #e74c3c;
+}
+
+.membership-header {
+    padding: 30px 20px;
+    text-align: center;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.membership-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 30px;
+}
+
+.membership-plan.basic .membership-icon {
+    background-color: rgba(52, 152, 219, 0.1);
+    color: #3498db;
+}
+
+.membership-plan.premium .membership-icon {
+    background-color: rgba(241, 196, 15, 0.1);
+    color: #f1c40f;
+}
+
+.membership-plan.vip .membership-icon {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.membership-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.membership-price {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.membership-duration {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 0;
+}
+
+.membership-body {
+    padding: 30px 20px;
+}
+
+.membership-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px;
+}
+
+.membership-feature {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+
+.membership-feature i {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.membership-feature.included i {
+    color: #2ecc71;
+}
+
+.membership-feature.excluded {
+    color: #999;
+}
+
+.membership-feature.excluded i {
+    color: #e74c3c;
+}
+
+.membership-btn {
+    display: block;
+    background-color: #9E8A78;
+    color: #fff;
+    text-align: center;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.membership-btn:hover {
+    background-color: #8A7869;
+    color: #fff;
+    transform: translateY(-3px);
+}
+
+/* Pricing Table */
+.pricing-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.pricing-table thead th {
+    background-color: #9E8A78;
+    color: #fff;
+    padding: 15px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.pricing-table thead th:first-child {
+    text-align: left;
+}
+
+.pricing-table tbody td {
+    padding: 15px;
+    border-bottom: 1px solid #f1f1f1;
+    vertical-align: middle;
+}
+
+.service-name {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.service-duration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+    font-size: 14px;
+    background-color: #444;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    display: inline-flex;
+    margin: 0 auto;
+}
+
+.service-duration i {
+    margin-right: 5px;
+    color: #fff;
+}
+
+.price-regular {
+    text-align: center;
+    font-weight: 600;
+    color: #333;
+}
+
+.price-member {
+    text-align: center;
+    font-weight: 700;
+    color: #2ecc71;
+}
+
+.savings {
+    text-align: center;
+    font-size: 12px;
+    color: #fff;
+    background-color: #e74c3c;
+    padding: 2px 6px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-top: 3px;
+    font-weight: 600;
+}
+
+/* Combo Deals */
+.combo-deal {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.combo-deal:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Combo Headers with different colors */
+.combo-header {
+    color: #fff;
+    padding: 15px 20px;
+    text-align: center;
+}
+
+/* Basic Combo */
+.combo-deal:nth-child(1) .combo-header {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+/* Premium Combo */
+.combo-deal:nth-child(2) .combo-header {
+    background: linear-gradient(135deg, #f1c40f, #f39c12);
+}
+
+/* VIP Combo */
+.combo-deal:nth-child(3) .combo-header {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.combo-header h3 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 22px;
+}
+
+.combo-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+}
+
+.combo-services {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 auto;
+}
+
+.combo-service {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed #f1f1f1;
+}
+
+.combo-service:last-child {
+    border-bottom: none;
+}
+
+.combo-service.invisible {
+    visibility: hidden;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.combo-service-icon {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(52, 152, 219, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    color: #3498db;
+    font-size: 16px;
+}
+
+.combo-service-details {
+    flex: 1;
+}
+
+.combo-service-name {
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.combo-service-duration {
+    font-size: 13px;
+    color: #777;
+    background-color: #f5f5f5;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.combo-service-duration i {
+    margin-right: 5px;
+    color: #9E8A78;
+}
+
+.combo-pricing {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    height: 80px; /* Fixed height for all pricing sections */
+}
+
+.combo-price-details {
+    flex: 1;
+}
+
+.combo-price-regular {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 14px;
+}
+
+.combo-price-discounted {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2ecc71;
+}
+
+.combo-savings {
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+    display: inline-block;
+    transform: rotate(-5deg);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Combo buttons with different colors matching headers */
+.combo-btn {
+    display: block;
+    color: #fff;
+    text-align: center;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+/* Basic Combo Button */
+.combo-deal:nth-child(1) .combo-btn {
+    background-color: #3498db;
+}
+
+/* Premium Combo Button */
+.combo-deal:nth-child(2) .combo-btn {
+    background-color: #f39c12;
+}
+
+/* VIP Combo Button */
+.combo-deal:nth-child(3) .combo-btn {
+    background-color: #e74c3c;
+}
+
+.combo-btn:hover {
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Basic Combo Button Hover */
+.combo-deal:nth-child(1) .combo-btn:hover {
+    background-color: #2980b9;
+}
+
+/* Premium Combo Button Hover */
+.combo-deal:nth-child(2) .combo-btn:hover {
+    background-color: #e67e22;
+}
+
+/* VIP Combo Button Hover */
+.combo-deal:nth-child(3) .combo-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Price Calculator */
+.calculator-card {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.calculator-header {
+    background: linear-gradient(135deg, #9E8A78, #7F6E60);
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.calculator-header h2 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 24px;
+}
+
+.calculator-header h2 i {
+    margin-right: 10px;
+}
+
+.calculator-body {
+    padding: 30px;
+}
+
+.calculator-services {
+    margin-bottom: 30px;
+}
+
+.calculator-service {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.calculator-service-checkbox {
+    margin-right: 15px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.calculator-service-details {
+    flex: 1;
+}
+
+.calculator-service-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.calculator-service-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.calculator-service-duration {
+    font-size: 13px;
+    color: #777;
+}
+
+.calculator-service-duration i {
+    margin-right: 5px;
+    color: #9E8A78;
+}
+
+.calculator-service-price {
+    font-weight: 600;
+    color: #333;
+}
+
+.calculator-summary {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.calculator-summary-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.calculator-summary-item:last-child {
+    margin-bottom: 0;
+    padding-top: 10px;
+    border-top: 1px dashed #ddd;
+}
+
+.calculator-summary-label {
+    font-weight: 600;
+}
+
+.calculator-summary-value {
+    font-weight: 600;
+    color: #333;
+}
+
+.calculator-summary-total {
+    font-weight: 700;
+    font-size: 20px;
+    color: #2ecc71;
+}
+
+.calculator-savings {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #e74c3c;
+    color: #fff;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.calculator-savings-icon {
+    font-size: 24px;
+    margin-right: 15px;
+}
+
+.calculator-savings-text {
+    font-weight: 600;
+}
+
+.calculator-savings-value {
+    font-weight: 700;
+}
+
+/* FAQ Section */
+.faq-item {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 15px;
+}
+
+.faq-question {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.faq-question:hover {
+    background-color: #f9f9f9;
+}
+
+.faq-question.active {
+    background-color: #9E8A78;
+    color: #fff;
+}
+
+.faq-question i {
+    transition: all 0.3s ease;
+}
+
+.faq-question.active i {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-answer.active {
+    padding: 20px;
+    max-height: 500px;
+}
+
+.faq-answer p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Special Offers Section */
+.special-offers-section {
+    padding: 80px 0;
+}
+
+.special-offer-list {
+    margin-bottom: 30px;
+}
+
+.special-offer-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.special-offer-icon {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(158, 138, 120, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    color: #9E8A78;
+    font-size: 20px;
+}
+
+.special-offer-text {
+    font-weight: 500;
+    font-size: 16px;
+}
+
+/* CTA Section */
+.cta-appointment {
+    background: linear-gradient(135deg, #9E8A78, #7F6E60);
+    padding: 80px 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 991.98px) {
+    .membership-plan.premium {
+        transform: scale(1);
+    }
+
+    .membership-plan.premium:hover {
+        transform: translateY(-10px);
+    }
+
+    .pricing-table thead th,
+    .pricing-table tbody td {
+        padding: 10px;
+    }
+
+    .service-name {
+        font-size: 14px;
+    }
+
+    .service-duration,
+    .price-regular,
+    .price-member,
+    .savings {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .membership-section,
+    .pricing-table-section,
+    .combo-deals-section,
+    .calculator-section,
+    .faq-section,
+    .special-offers-section {
+        padding: 50px 0;
+    }
+
+    .membership-plan {
+        margin-bottom: 30px;
+    }
+
+    .combo-deal {
+        margin-bottom: 30px;
+    }
+
+    .calculator-service-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .calculator-service-price {
+        margin-top: 5px;
+    }
+
+    .special-offer-item {
+        margin-bottom: 15px;
+    }
+
+    .special-offer-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+        margin-right: 15px;
+    }
+
+    .special-offer-text {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .membership-title {
+        font-size: 20px;
+    }
+
+    .membership-price {
+        font-size: 28px;
+    }
+
+    .membership-feature {
+        font-size: 14px;
+    }
+
+    .combo-header h3 {
+        font-size: 20px;
+    }
+
+    .combo-price-discounted {
+        font-size: 20px;
+    }
+
+    .calculator-header h2 {
+        font-size: 20px;
+    }
+
+    .calculator-summary-total {
+        font-size: 18px;
+    }
+
+    .faq-question {
+        font-size: 15px;
+        padding: 15px;
+    }
+
+    .faq-answer {
+        padding: 15px;
+    }
+}

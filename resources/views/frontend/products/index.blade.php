@@ -12,59 +12,7 @@
 <section class="py-5 bg-light">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8">
-                <!-- Products List Header -->
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0 text-muted">Danh sách sản phẩm</h5>
-                    <div class="filter-count text-muted">
-                        Hiển thị {{ $products->count() }} / {{ $products->total() }} sản phẩm
-                    </div>
-                </div>
-
-                <!-- Active Filters -->
-                <div id="active-filters" class="mb-3">
-                    <!-- Sẽ được điền bởi JavaScript -->
-                </div>
-
-                <!-- Products List -->
-                <div id="products-container" class="row">
-            @forelse($products as $product)
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 product-card">
-                    <div class="card-img-container position-relative">
-                        <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}">
-                        <div class="product-status position-absolute">
-                            <span class="{{ $product->stock > 0 ? 'in-stock' : 'out-of-stock' }}">{{ $product->stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</span>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="product-category mb-2">
-                            <span class="badge bg-light text-dark">{{ $product->category->name }}</span>
-                        </div>
-                        <h5 class="card-title">{{ $product->name }}</h5>
-                        <p class="card-text">{{ Str::limit($product->description, 100) }}</p>
-                    </div>
-                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
-                        <span class="price text-primary fw-bold">{{ number_format($product->price) }} VNĐ</span>
-                        <a href="{{ route('products.show', $product->slug) }}" class="btn btn-sm btn-outline-primary">Chi tiết <i class="fas fa-arrow-right ms-1"></i></a>
-                    </div>
-                </div>
-            </div>
-            @empty
-            <div class="col-12">
-                <div class="alert alert-info text-center">
-                    Hiện tại chưa có sản phẩm nào. Vui lòng quay lại sau.
-                </div>
-            </div>
-            @endforelse
-        </div>
-
-                <div class="mt-4 pagination-container">
-                    {{ $products->appends(request()->query())->links() }}
-                </div>
-            </div>
-
-            <!-- Sidebar Filters -->
+            <!-- Sidebar Filters - Moved to left -->
             <div class="col-lg-4">
                 <div class="card shadow-sm filter-sidebar">
                     <div class="card-header bg-white d-flex justify-content-between align-items-center">
@@ -166,6 +114,59 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Products List - Moved to right -->
+            <div class="col-lg-8">
+                <!-- Products List Header -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0 text-muted">Danh sách sản phẩm</h5>
+                    <div class="filter-count text-muted">
+                        Hiển thị {{ $products->count() }} / {{ $products->total() }} sản phẩm
+                    </div>
+                </div>
+
+                <!-- Active Filters -->
+                <div id="active-filters" class="mb-3">
+                    <!-- Sẽ được điền bởi JavaScript -->
+                </div>
+
+                <!-- Products List -->
+                <div id="products-container" class="row">
+                    @forelse($products as $product)
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 product-card">
+                            <div class="card-img-container position-relative">
+                                <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}">
+                                <div class="product-status position-absolute">
+                                    <span class="{{ $product->stock > 0 ? 'in-stock' : 'out-of-stock' }}">{{ $product->stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="product-category mb-2">
+                                    <span class="badge bg-light text-dark">{{ $product->category->name }}</span>
+                                </div>
+                                <h5 class="card-title">{{ $product->name }}</h5>
+                                <p class="card-text">{{ Str::limit($product->description, 100) }}</p>
+                            </div>
+                            <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
+                                <span class="price text-primary fw-bold">{{ number_format($product->price) }} VNĐ</span>
+                                <a href="{{ route('products.show', $product->slug) }}" class="btn btn-sm btn-outline-primary">Chi tiết <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="col-12">
+                        <div class="alert alert-info text-center">
+                            Hiện tại chưa có sản phẩm nào. Vui lòng quay lại sau.
+                        </div>
+                    </div>
+                    @endforelse
+                </div>
+
+                <div class="mt-4 pagination-container">
+                    {{ $products->appends(request()->query())->links() }}
                 </div>
             </div>
         </div>

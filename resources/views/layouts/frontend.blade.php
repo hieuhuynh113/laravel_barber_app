@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="{{ asset('css/filter-style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/product-style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/service-button.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/price-style.css') }}">
 
     <!-- Page Specific CSS -->
     @yield('styles')
@@ -61,7 +62,7 @@
                                 <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">Sản phẩm</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('price.index') ? 'active' : '' }}" href="{{ route('price.index') }}">Bảng giá</a>
+                                <a class="nav-link {{ request()->routeIs('price.index') ? 'active' : '' }}" href="{{ route('price.index') }}">Thành viên & Giá cả</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}" href="{{ route('news.index') }}">Tin tức</a>
