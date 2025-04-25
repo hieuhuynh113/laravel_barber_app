@@ -1,12 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hóa đơn #{{ $invoice->invoice_code }}</title>
     <style>
+        @font-face {
+            font-family: 'DejaVu Sans';
+            src: url('{{ storage_path('fonts/DejaVuSans.ttf') }}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'DejaVu Sans';
+            src: url('{{ storage_path('fonts/DejaVuSans-Bold.ttf') }}') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'DejaVu Sans', sans-serif;
             line-height: 1.6;
             color: #333;
             margin: 0;
@@ -81,9 +93,9 @@
             <div>{{ $shopInfo['shop_address'] }}</div>
             <div>SĐT: {{ $shopInfo['shop_phone'] }} | Email: {{ $shopInfo['shop_email'] }}</div>
         </div>
-        
+
         <h1 style="text-align: center; color: #333;">HÓA ĐƠN #{{ $invoice->invoice_code }}</h1>
-        
+
         <div class="invoice-info">
             <div class="shop-info">
                 <h3>Thông tin cửa hàng</h3>
@@ -92,7 +104,7 @@
                 SĐT: {{ $shopInfo['shop_phone'] }}<br>
                 Email: {{ $shopInfo['shop_email'] }}</p>
             </div>
-            
+
             <div class="customer-info">
                 <h3>Thông tin khách hàng</h3>
                 <p>
@@ -110,7 +122,7 @@
                 </p>
             </div>
         </div>
-        
+
         <table>
             <thead>
                 <tr>
@@ -141,41 +153,41 @@
                     <td>{{ number_format($product->pivot->subtotal) }}đ</td>
                 </tr>
                 @endforeach
-                
+
                 <tr>
                     <td colspan="4" style="text-align: right;">Tổng phụ:</td>
                     <td>{{ number_format($invoice->subtotal) }}đ</td>
                 </tr>
-                
+
                 @if($invoice->discount > 0)
                 <tr>
                     <td colspan="4" style="text-align: right;">Giảm giá:</td>
                     <td>{{ number_format($invoice->discount) }}đ</td>
                 </tr>
                 @endif
-                
+
                 @if($invoice->tax > 0)
                 <tr>
                     <td colspan="4" style="text-align: right;">Thuế:</td>
                     <td>{{ number_format($invoice->tax) }}đ</td>
                 </tr>
                 @endif
-                
+
                 <tr class="total-row">
                     <td colspan="4" style="text-align: right;">Tổng cộng:</td>
                     <td>{{ number_format($invoice->total_amount) }}đ</td>
                 </tr>
             </tbody>
         </table>
-        
+
         <div class="thank-you">
             Cảm ơn quý khách đã sử dụng dịch vụ của chúng tôi!
         </div>
-        
+
         <div class="footer">
             <p>{{ $shopInfo['shop_name'] }} | {{ $shopInfo['shop_address'] }}</p>
             <p>Liên hệ: {{ $shopInfo['shop_phone'] }} | {{ $shopInfo['shop_email'] }}</p>
         </div>
     </div>
 </body>
-</html> 
+</html>

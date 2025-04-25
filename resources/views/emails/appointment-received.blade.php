@@ -81,8 +81,8 @@
         <div class="payment-info">
             <p><strong>Thông tin thanh toán:</strong></p>
             <p>Ngân hàng: VCB - Vietcombank</p>
-            <p>Số tài khoản: 1234567890</p>
-            <p>Chủ tài khoản: CÔNG TY TNHH BARBER SHOP</p>
+            <p>Số tài khoản: 0559764554</p>
+            <p>Chủ tài khoản: HUYNH TRUNG HIEU</p>
             <p>Nội dung chuyển khoản: {{ $appointment->booking_code }}</p>
         </div>
         @endif

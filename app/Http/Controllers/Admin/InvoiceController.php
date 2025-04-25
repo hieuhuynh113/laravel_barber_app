@@ -909,8 +909,43 @@ class InvoiceController extends Controller
         }
 
         try {
-            // Gửi email hóa đơn
-            \Illuminate\Support\Facades\Mail::to($user->email)->send(new InvoiceMail($invoice));
+            // Sử dụng cách gửi email đơn giản nhất
+            $data = [
+                'invoice' => $invoice,
+                'shopInfo' => [
+                    'shop_name' => config('shop.name'),
+                    'shop_address' => config('shop.address'),
+                    'shop_phone' => config('shop.phone'),
+                    'shop_email' => config('shop.email'),
+                ]
+            ];
+
+            \Illuminate\Support\Facades\Mail::send('emails.invoice', $data, function($message) use ($user, $invoice) {
+                $message->to($user->email)
+                        ->subject('Hóa đơn #' . $invoice->invoice_code);
+
+                // Tạo PDF đính kèm
+                $pdf = app('dompdf.wrapper');
+                $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
+                $pdf->getDomPDF()->set_option('isUnicode', true);
+                $pdf->getDomPDF()->set_option('isHtml5ParserEnabled', true);
+
+                $html = view('admin.invoices.pdf', [
+                    'invoice' => $invoice,
+                    'shopInfo' => [
+                        'shop_name' => config('shop.name'),
+                        'shop_address' => config('shop.address'),
+                        'shop_phone' => config('shop.phone'),
+                        'shop_email' => config('shop.email'),
+                    ]
+                ])->render();
+
+                $pdf->loadHTML($html);
+
+                $message->attachData($pdf->output(), "Hoa-don-{$invoice->invoice_code}.pdf", [
+                    'mime' => 'application/pdf',
+                ]);
+            });
 
             // Cập nhật trạng thái đã gửi email
             $invoice->update([
@@ -922,7 +957,8 @@ class InvoiceController extends Controller
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Lỗi gửi email hóa đơn: ' . $e->getMessage(), [
                 'invoice_id' => $invoice->id,
-                'user_email' => $user->email
+                'user_email' => $user->email,
+                'trace' => $e->getTraceAsString()
             ]);
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi gửi email: ' . $e->getMessage());
         }

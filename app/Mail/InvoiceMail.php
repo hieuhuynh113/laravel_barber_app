@@ -11,7 +11,7 @@ use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Invoice;
 
-class InvoiceMail extends Mailable
+class InvoiceMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -37,13 +37,13 @@ class InvoiceMail extends Mailable
     public function __construct(Invoice $invoice)
     {
         $this->invoice = $invoice;
-        
-        // Get shop information from settings or config
+
+        // Get shop information from config/shop.php
         $this->shopInfo = [
-            'shop_name' => config('app.name', 'Barber Shop'),
-            'shop_address' => config('shop.address', '123 Barber Street'),
-            'shop_phone' => config('shop.phone', '0123456789'),
-            'shop_email' => config('shop.email', 'contact@barbershop.com'),
+            'shop_name' => config('shop.name'),
+            'shop_address' => config('shop.address'),
+            'shop_phone' => config('shop.phone'),
+            'shop_email' => config('shop.email'),
         ];
     }
 
@@ -54,6 +54,11 @@ class InvoiceMail extends Mailable
     {
         return new Envelope(
             subject: 'Hóa đơn #' . $this->invoice->invoice_code,
+            tags: ['invoice'],
+            metadata: [
+                'invoice_id' => $this->invoice->id,
+                'invoice_code' => $this->invoice->invoice_code,
+            ],
         );
     }
 
@@ -64,7 +69,23 @@ class InvoiceMail extends Mailable
     {
         return new Content(
             view: 'emails.invoice',
+            with: [
+                'invoice' => $this->invoice,
+                'shopInfo' => $this->shopInfo,
+            ],
         );
+    }
+
+    /**
+     * Get the message headers.
+     */
+    public function headers(): array
+    {
+        return [
+            'X-Priority' => '1',
+            'Importance' => 'High',
+            'X-MSMail-Priority' => 'High',
+        ];
     }
 
     /**
@@ -76,18 +97,23 @@ class InvoiceMail extends Mailable
     {
         $invoice = $this->invoice;
         $pdf = app('dompdf.wrapper');
-        
+
+        // Cấu hình DomPDF để hỗ trợ tiếng Việt
+        $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
+        $pdf->getDomPDF()->set_option('isUnicode', true);
+        $pdf->getDomPDF()->set_option('isHtml5ParserEnabled', true);
+
         // Get the invoice view content
         $html = view('admin.invoices.pdf', [
             'invoice' => $invoice,
             'shopInfo' => $this->shopInfo
         ])->render();
-        
+
         $pdf->loadHTML($html);
-        
+
         return [
-            Attachment::fromData(fn () => $pdf->output(), "Invoice-{$invoice->invoice_code}.pdf")
+            Attachment::fromData(fn () => $pdf->output(), "Hoa-don-{$invoice->invoice_code}.pdf")
                 ->withMime('application/pdf'),
         ];
     }
-} 
+}
