@@ -45,35 +45,43 @@
                         </div>
 
                         <!-- Hiển thị dịch vụ đã chọn -->
-                        <div class="selected-services mb-4">
-                            <h6 class="fw-bold"><i class="fas fa-check-circle text-success me-2"></i>Dịch vụ đã chọn:</h6>
-                            <div class="row">
-                                @php $totalPrice = 0; $totalDuration = 0; @endphp
-                                @foreach(session('appointment_services', []) as $service)
-                                    <div class="col-md-6 mb-2">
-                                        <div class="card bg-light">
-                                            <div class="card-body py-2">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <span class="fw-medium">{{ $service->name }}</span>
-                                                    <span class="text-primary fw-bold">{{ number_format($service->price) }} VNĐ</span>
-                                                </div>
-                                                <small class="text-muted"><i class="far fa-clock me-1"></i>{{ $service->duration }} phút</small>
-                                            </div>
+                        <div class="selected-info mb-4">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-primary text-white py-3" style="background-color: #9E8A78 !important;">
+                                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Thông tin đã chọn</h6>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="service-summary">
+                                        <h6 class="text-primary border-bottom pb-2 mb-3" style="color: #9E8A78 !important;"><i class="fas fa-cut me-2"></i>Dịch vụ</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-borderless mb-0">
+                                                <tbody>
+                                                    @php $totalPrice = 0; $totalDuration = 0; @endphp
+                                                    @foreach(session('appointment_services', []) as $service)
+                                                        <tr>
+                                                            <td>{{ $service->name }}</td>
+                                                            <td class="text-end fw-medium">{{ number_format($service->price) }} VNĐ</td>
+                                                        </tr>
+                                                        @php
+                                                            $totalPrice += $service->price;
+                                                            $totalDuration += $service->duration;
+                                                        @endphp
+                                                    @endforeach
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th>Tổng cộng</th>
+                                                        <th class="text-end text-primary" style="color: #9E8A78 !important;">{{ number_format($totalPrice) }} VNĐ</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" class="text-muted pt-0">
+                                                            <small><i class="far fa-clock me-1"></i>Thời gian dự kiến: {{ $totalDuration }} phút</small>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
                                         </div>
                                     </div>
-                                    @php
-                                        $totalPrice += $service->price;
-                                        $totalDuration += $service->duration;
-                                    @endphp
-                                @endforeach
-                            </div>
-                            <div class="d-flex justify-content-between mt-3 p-3 bg-light rounded">
-                                <span class="fw-bold">Tổng cộng:</span>
-                                <div class="text-end">
-                                    <div>
-                                        <strong class="text-primary fs-5">{{ number_format($totalPrice) }} VNĐ</strong>
-                                    </div>
-                                    <small class="text-muted"><i class="far fa-clock me-1"></i>Thời gian dự kiến: {{ $totalDuration }} phút</small>
                                 </div>
                             </div>
                         </div>
@@ -84,11 +92,20 @@
 
                         @if ($errors->any())
                             <div class="alert alert-danger">
-                                <ul class="mb-0">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-exclamation-circle me-2 fs-4"></i>
+                                    <div>
+                                        @if($errors->has('barber_id'))
+                                            <strong>{{ $errors->first('barber_id') }}</strong>
+                                        @else
+                                            <ul class="mb-0">
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
@@ -207,6 +224,27 @@
     .step.completed .step-circle {
         background-color: #28a745;
         color: white;
+    }
+
+    /* Styling for selected info card */
+    .selected-info .card-header {
+        background-color: #9E8A78 !important;
+    }
+
+    .selected-info .text-primary {
+        color: #9E8A78 !important;
+    }
+
+    .selected-info .table-borderless tr:not(:last-child) td {
+        padding-bottom: 0.5rem;
+    }
+
+    .selected-info .table-borderless tfoot {
+        border-top: 1px dashed #dee2e6;
+    }
+
+    .selected-info .table-borderless tfoot th {
+        padding-top: 0.75rem;
     }
 
     .step-text {
