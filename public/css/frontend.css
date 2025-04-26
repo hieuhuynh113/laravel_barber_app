@@ -56,10 +56,16 @@ body {
 
 .navbar-nav {
     width: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
 }
 
 .navbar-actions {
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 /* Container padding cho các kích thước màn hình khác nhau */
@@ -67,6 +73,7 @@ body {
     .container {
         padding-left: 20px;
         padding-right: 20px;
+        max-width: 1320px;
     }
 }
 
@@ -79,6 +86,14 @@ body {
     .navbar-nav-container {
         width: 100%;
         justify-content: flex-start;
+    }
+
+    .navbar-nav {
+        flex-direction: column !important;
+    }
+
+    .nav-item {
+        width: 100%;
     }
 
     .navbar-actions {
@@ -94,9 +109,10 @@ body {
 
 .nav-link {
     font-weight: 500;
-    padding: 0.5rem 1.2rem !important;
+    padding: 0.5rem 0.8rem !important;
     transition: all 0.3s ease;
-    margin: 0 0.1rem;
+    margin: 0;
+    white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -684,10 +700,42 @@ label {
     color: var(--success-color);
 }
 
+/* User dropdown in navbar */
+.navbar-actions .dropdown {
+    display: flex;
+    align-items: center;
+    margin-left: 0.25rem;
+}
+
+.navbar-actions .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    height: 38px;
+}
+
+.navbar-actions .dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border: none;
+    padding: 0.5rem 0;
+    min-width: 200px;
+}
+
+.navbar-actions .dropdown-item {
+    padding: 0.6rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.navbar-actions .dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
 /* Responsive Styles */
 @media (min-width: 1200px) and (max-width: 1400px) {
     .nav-link {
-        padding: 0.5rem 0.6rem !important;
+        padding: 0.5rem 0.5rem !important;
         font-size: 0.95rem;
     }
 
@@ -697,7 +745,7 @@ label {
     }
 
     .navbar-nav {
-        gap: 0.1rem;
+        gap: 0;
     }
 
     .d-flex.align-items-center {
@@ -705,14 +753,14 @@ label {
     }
 
     .nav-item {
-        margin-right: 2px;
+        margin-right: 0;
     }
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
     .nav-link {
-        padding: 0.5rem 0.35rem !important;
-        font-size: 0.9rem;
+        padding: 0.5rem 0.3rem !important;
+        font-size: 0.85rem;
     }
 
     .btn-primary {
@@ -783,18 +831,27 @@ label {
     }
 
     /* Đảm bảo nút đặt lịch hiển thị đúng */
-    .d-flex.align-items-center {
+    .navbar-actions {
         flex-direction: column;
         align-items: flex-start !important;
-        gap: 0.5rem;
+        gap: 0.25rem;
         margin-top: 1rem;
+        width: 100%;
     }
 
-    .d-flex.align-items-center .btn {
+    .navbar-actions .btn {
         width: 100%;
         text-align: center;
-        margin-right: 0 !important;
-        margin-bottom: 0.5rem;
+        margin: 0 0 0.5rem 0 !important;
+    }
+
+    .navbar-actions .dropdown {
+        width: 100%;
+    }
+
+    .navbar-actions .dropdown-toggle {
+        width: 100%;
+        justify-content: center;
     }
 
     /* Tăng cỡ chữ cho menu trên màn hình nhỏ */

@@ -48,7 +48,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <div class="navbar-nav-container">
-                        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 d-flex flex-row">
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Trang chủ</a>
                             </li>
@@ -73,28 +73,28 @@
                         </ul>
                     </div>
                     <div class="d-flex align-items-center navbar-actions">
-                        <a href="{{ route('appointment.step1') }}" class="btn btn-primary me-3 appointment-btn">Đặt lịch ngay</a>
+                        <a href="{{ route('appointment.step1') }}" class="btn btn-primary appointment-btn me-2">Đặt lịch ngay</a>
 
                         @guest
                             <button type="button" class="btn btn-outline-light" id="loginButton">Đăng nhập</button>
                         @else
                             <div class="dropdown">
                                 <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    {{ Auth::user()->name }}
+                                    <span>{{ Auth::user()->name }}</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                     @if(Auth::user()->role === 'admin')
-                                        <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Quản trị</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i>Quản trị</a></li>
                                     @elseif(Auth::user()->role === 'barber')
-                                        <li><a class="dropdown-item" href="{{ route('barber.dashboard') }}">Bảng điều khiển</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('barber.dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i>Bảng điều khiển</a></li>
                                     @endif
-                                    <li><a class="dropdown-item" href="{{ url('/profile') }}">Hồ sơ của tôi</a></li>
-                                    <li><a class="dropdown-item" href="{{ url('/profile/appointments') }}">Lịch hẹn của tôi</a></li>
+                                    <li><a class="dropdown-item" href="{{ url('/profile') }}"><i class="fas fa-user me-2"></i>Hồ sơ của tôi</a></li>
+                                    <li><a class="dropdown-item" href="{{ url('/profile/appointments') }}"><i class="fas fa-calendar-alt me-2"></i>Lịch hẹn của tôi</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <a class="dropdown-item" href="{{ route('logout') }}"
                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            Đăng xuất
+                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                         </a>
                                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                             @csrf

@@ -246,7 +246,7 @@
                                             <td>{{ $appointment->id }}</td>
                                             <td>{{ $appointment->user->name }}</td>
                                             <td>{{ date('d/m/Y', strtotime($appointment->appointment_date)) }}</td>
-                                            <td>{{ $appointment->appointment_time }}</td>
+                                            <td>{{ $appointment->time_slot ?? ($appointment->start_time ? \Carbon\Carbon::parse($appointment->start_time)->format('H:i') : 'N/A') }}</td>
                                             <td>
                                                 @foreach($appointment->services as $service)
                                                     <span class="badge bg-secondary">{{ $service->name }}</span>
@@ -336,7 +336,7 @@
                                             <td>{{ $appointment->id }}</td>
                                             <td>{{ $appointment->user->name }}</td>
                                             <td>{{ date('d/m/Y', strtotime($appointment->appointment_date)) }}</td>
-                                            <td>{{ $appointment->appointment_time }}</td>
+                                            <td>{{ $appointment->time_slot ?? ($appointment->start_time ? \Carbon\Carbon::parse($appointment->start_time)->format('H:i') : 'N/A') }}</td>
                                             <td>
                                                 @foreach($appointment->services as $service)
                                                     <span class="badge bg-secondary">{{ $service->name }}</span>

@@ -374,7 +374,7 @@
                                             <td class="col-time">
                                                 <div class="date-display">
                                                     <span class="date">{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d/m/Y') }}</span>
-                                                    <span class="time">{{ $appointment->appointment_time }}</span>
+                                                    <span class="time">{{ $appointment->time_slot ?? ($appointment->start_time ? \Carbon\Carbon::parse($appointment->start_time)->format('H:i') : 'N/A') }}</span>
                                                 </div>
                                             </td>
                                             <td class="col-status">
@@ -659,7 +659,7 @@
                                     <td class="col-time">
                                         <div class="date-display">
                                             <span class="date">{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d/m/Y') }}</span>
-                                            <span class="time">{{ $appointment->appointment_time }}</span>
+                                            <span class="time">{{ $appointment->time_slot ?? ($appointment->start_time ? \Carbon\Carbon::parse($appointment->start_time)->format('H:i') : 'N/A') }}</span>
                                         </div>
                                     </td>
                                     <td class="col-status">

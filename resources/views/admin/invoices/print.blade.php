@@ -224,7 +224,7 @@
                     </p>
                     @if($invoice->appointment)
                     <p><strong>Ngày hẹn:</strong> {{ \Carbon\Carbon::parse($invoice->appointment->appointment_date)->format('d/m/Y') }}</p>
-                    <p><strong>Giờ hẹn:</strong> {{ $invoice->appointment->appointment_time }}</p>
+                    <p><strong>Giờ hẹn:</strong> {{ $invoice->appointment->time_slot ?? ($invoice->appointment->start_time ? \Carbon\Carbon::parse($invoice->appointment->start_time)->format('H:i') : 'N/A') }}</p>
                     @endif
                 </div>
             </div>

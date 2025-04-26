@@ -672,7 +672,7 @@
                                 <td class="date-cell">
                                     {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d/m/Y') }}
                                     <br>
-                                    <span class="time-cell">{{ \Carbon\Carbon::parse($appointment->appointment_time)->format('H:i') }}</span>
+                                    <span class="time-cell">{{ $appointment->time_slot ?? ($appointment->start_time ? \Carbon\Carbon::parse($appointment->start_time)->format('H:i') : 'N/A') }}</span>
                                 </td>
                                 <td class="status-cell">
                                     @if($appointment->status == 'pending')

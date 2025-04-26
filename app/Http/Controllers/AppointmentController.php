@@ -137,7 +137,7 @@ class AppointmentController extends Controller
 
         $schedule = $barber->schedules->first();
 
-        // Tạo các giờ cụ thể từ giờ bắt đầu đến giờ kết thúc (mỗi slot 30 phút)
+        // Tạo các giờ cụ thể từ giờ bắt đầu đến giờ kết thúc (mỗi slot 60 phút)
         $startTime = Carbon::parse($date . ' ' . $schedule->start_time->format('H:i:s'));
         $endTime = Carbon::parse($date . ' ' . $schedule->end_time->format('H:i:s'));
 
@@ -153,7 +153,7 @@ class AppointmentController extends Controller
                 'formatted' => $formattedTime,
             ];
 
-            $currentTime->addMinutes(30);
+            $currentTime->addMinutes(60);
         }
 
         // Lấy hoặc tạo các time slot trong cơ sở dữ liệu
@@ -242,8 +242,8 @@ class AppointmentController extends Controller
         ]);
 
         $startTime = $request->time_slot;
-        // Tính toán giờ kết thúc (30 phút sau giờ bắt đầu)
-        $endTime = Carbon::parse($startTime)->addMinutes(30)->format('H:i');
+        // Tính toán giờ kết thúc (60 phút sau giờ bắt đầu)
+        $endTime = Carbon::parse($startTime)->addMinutes(60)->format('H:i');
 
         // Kiểm tra xem giờ này còn trống không
         $timeSlot = TimeSlot::where([

@@ -72,7 +72,7 @@
                         <div class="col-md-6">
                             <h5 class="font-weight-bold">Thời gian</h5>
                             <p><strong>Ngày hẹn:</strong> {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d/m/Y') }}</p>
-                            <p><strong>Giờ hẹn:</strong> {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('H:i') }}</p>
+                            <p><strong>Giờ hẹn:</strong> {{ $appointment->time_slot ?? ($appointment->start_time ? \Carbon\Carbon::parse($appointment->start_time)->format('H:i') : 'N/A') }}</p>
                             <p><strong>Thời gian tạo:</strong> {{ $appointment->created_at->format('d/m/Y H:i') }}</p>
                             <p><strong>Cập nhật lần cuối:</strong> {{ $appointment->updated_at->format('d/m/Y H:i') }}</p>
                         </div>

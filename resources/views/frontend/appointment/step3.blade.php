@@ -436,14 +436,14 @@
                             // Chuyển đổi thời gian của slot thành đối tượng Date
                             const [slotHours, slotMinutes] = slot.formatted.split(':').map(Number);
 
-                            // So sánh với thời gian hiện tại + 30 phút
+                            // So sánh với thời gian hiện tại + 60 phút
                             const slotTime = new Date();
                             slotTime.setHours(slotHours, slotMinutes, 0);
 
                             const minAllowedTime = new Date();
-                            minAllowedTime.setMinutes(minAllowedTime.getMinutes() + 30);
+                            minAllowedTime.setMinutes(minAllowedTime.getMinutes() + 60);
 
-                            console.log(`Slot time: ${slot.formatted}, Current time + 30m: ${minAllowedTime.getHours()}:${minAllowedTime.getMinutes()}`);
+                            console.log(`Slot time: ${slot.formatted}, Current time + 60m: ${minAllowedTime.getHours()}:${minAllowedTime.getMinutes()}`);
 
                             // Chỉ giữ lại các khung giờ trong tương lai
                             return slotTime > minAllowedTime;

@@ -106,7 +106,7 @@ class TimeSlotController extends Controller
         $schedule = $barber->schedules->first();
         $maxBookings = $schedule->max_appointments ?? 2;
 
-        // Tạo các giờ cụ thể từ giờ bắt đầu đến giờ kết thúc (mỗi slot 30 phút)
+        // Tạo các giờ cụ thể từ giờ bắt đầu đến giờ kết thúc (mỗi slot 60 phút)
         $startTime = Carbon::parse($date . ' ' . $schedule->start_time->format('H:i:s'));
         $endTime = Carbon::parse($date . ' ' . $schedule->end_time->format('H:i:s'));
 
@@ -135,7 +135,7 @@ class TimeSlotController extends Controller
                 $timeSlot->save();
             }
 
-            $currentTime->addMinutes(30);
+            $currentTime->addMinutes(60);
             $count++;
         }
 
