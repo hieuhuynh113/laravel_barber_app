@@ -1,0 +1,61 @@
+/* Custom checkbox styles */
+
+/* Thay đổi màu nền và border của checkbox khi được chọn */
+.form-check-input:checked {
+    background-color: #9E8A78 !important;
+    border-color: #9E8A78 !important;
+}
+
+/* Thay đổi màu focus ring */
+.form-check-input:focus {
+    border-color: #9E8A78 !important;
+    box-shadow: 0 0 0 0.25rem rgba(158, 138, 120, 0.25) !important;
+}
+
+/* Thay đổi màu hover */
+.form-check-input:hover {
+    border-color: #9E8A78 !important;
+}
+
+/* Thay đổi màu của radio buttons */
+.form-check-input[type="radio"]:checked {
+    background-color: #9E8A78 !important;
+    border-color: #9E8A78 !important;
+}
+
+/* Thay đổi màu của checkbox */
+.form-check-input[type="checkbox"]:checked {
+    background-color: #9E8A78 !important;
+    border-color: #9E8A78 !important;
+}
+
+/* Thay đổi màu của dấu tick */
+.form-check-input:checked[type="checkbox"] {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e") !important;
+}
+
+/* Thay đổi màu của radio dot */
+.form-check-input:checked[type="radio"] {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23ffffff'/%3e%3c/svg%3e") !important;
+}
+
+/* Thay đổi màu của label khi checkbox được chọn */
+.form-check-input:checked + .form-check-label {
+    color: #9E8A78 !important;
+    font-weight: 500;
+}
+
+/* Thêm hiệu ứng transition */
+.form-check-input {
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+
+/* Thêm hiệu ứng scale khi hover */
+.form-check-input:hover {
+    transform: scale(1.05);
+}
+
+/* Thêm hiệu ứng scale khi active */
+.form-check-input:active {
+    transform: scale(0.95);
+}

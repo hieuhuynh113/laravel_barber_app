@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="{{ asset('css/product-style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/service-button.css') }}">
     <link rel="stylesheet" href="{{ asset('css/price-style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/checkbox-custom.css') }}">
 
     <!-- Page Specific CSS -->
     @yield('styles')

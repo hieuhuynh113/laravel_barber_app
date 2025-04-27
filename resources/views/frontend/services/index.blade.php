@@ -22,7 +22,7 @@
                         </h5>
                         <div>
                             <button id="clearAllFilters" class="btn btn-sm text-primary border-0">
-                                CLEAR
+                                XÓA
                             </button>
                             <button id="closeFilterSidebar" class="btn btn-sm text-primary border-0 d-lg-none">
                                 <i class="fas fa-times"></i>
