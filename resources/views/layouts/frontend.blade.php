@@ -32,6 +32,9 @@
     <link rel="stylesheet" href="{{ asset('css/service-button.css') }}">
     <link rel="stylesheet" href="{{ asset('css/price-style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/checkbox-custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/service-animations.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/product-animations.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/news-animations.css') }}">
 
     <!-- Page Specific CSS -->
     @yield('styles')
@@ -188,6 +191,9 @@
     <script src="{{ asset('js/frontend.js') }}"></script>
     <script src="{{ asset('js/appointment-auth-check.js') }}"></script>
     <script src="{{ asset('js/filter.js') }}"></script>
+    <script src="{{ asset('js/service-animations.js') }}"></script>
+    <script src="{{ asset('js/product-animations.js') }}"></script>
+    <script src="{{ asset('js/news-animations.js') }}"></script>
     <script src="{{ asset('js/login-modal.js') }}"></script>
     <script src="{{ asset('js/smooth-scroll.js') }}"></script>
 

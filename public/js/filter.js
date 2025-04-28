@@ -483,8 +483,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentSearch) {
             hasActiveFilters = true;
             const searchFilter = document.createElement('span');
-            searchFilter.className = 'active-filter';
-            searchFilter.innerHTML = `Tìm kiếm: ${currentSearch} <span class="filter-remove" data-filter-type="search"><i class="fas fa-times"></i></span>`;
+            searchFilter.className = 'active-filter-tag';
+            searchFilter.innerHTML = `<i class="fas fa-search me-1"></i> ${currentSearch} <span class="remove-filter" data-filter-type="search"><i class="fas fa-times"></i></span>`;
             activeFiltersContainer.appendChild(searchFilter);
         }
 
@@ -494,8 +494,8 @@ document.addEventListener('DOMContentLoaded', function() {
             hasActiveFilters = true;
             const categoryName = checkbox.nextElementSibling.textContent.trim();
             const categoryFilter = document.createElement('span');
-            categoryFilter.className = 'active-filter';
-            categoryFilter.innerHTML = `${categoryName} <span class="filter-remove" data-filter-type="category" data-filter-id="${checkbox.value}"><i class="fas fa-times"></i></span>`;
+            categoryFilter.className = 'active-filter-tag';
+            categoryFilter.innerHTML = `<i class="fas fa-tag me-1"></i> ${categoryName} <span class="remove-filter" data-filter-type="category" data-filter-id="${checkbox.value}"><i class="fas fa-times"></i></span>`;
             activeFiltersContainer.appendChild(categoryFilter);
         });
 
@@ -505,8 +505,8 @@ document.addEventListener('DOMContentLoaded', function() {
             hasActiveFilters = true;
             const priceName = checkbox.nextElementSibling.textContent.trim();
             const priceFilter = document.createElement('span');
-            priceFilter.className = 'active-filter';
-            priceFilter.innerHTML = `${priceName} <span class="filter-remove" data-filter-type="price" data-filter-id="${checkbox.value}"><i class="fas fa-times"></i></span>`;
+            priceFilter.className = 'active-filter-tag';
+            priceFilter.innerHTML = `<i class="fas fa-money-bill-wave me-1"></i> ${priceName} <span class="remove-filter" data-filter-type="price" data-filter-id="${checkbox.value}"><i class="fas fa-times"></i></span>`;
             activeFiltersContainer.appendChild(priceFilter);
         });
 
@@ -516,8 +516,8 @@ document.addEventListener('DOMContentLoaded', function() {
             hasActiveFilters = true;
             const timeName = timeRadio.nextElementSibling.textContent.trim();
             const timeFilter = document.createElement('span');
-            timeFilter.className = 'active-filter';
-            timeFilter.innerHTML = `Thời gian: ${timeName} <span class="filter-remove" data-filter-type="time"><i class="fas fa-times"></i></span>`;
+            timeFilter.className = 'active-filter-tag';
+            timeFilter.innerHTML = `<i class="fas fa-clock me-1"></i> ${timeName} <span class="remove-filter" data-filter-type="time"><i class="fas fa-times"></i></span>`;
             activeFiltersContainer.appendChild(timeFilter);
         }
 
@@ -527,17 +527,25 @@ document.addEventListener('DOMContentLoaded', function() {
             hasActiveFilters = true;
             const sortName = sortRadio.nextElementSibling.textContent.trim();
             const sortFilter = document.createElement('span');
-            sortFilter.className = 'active-filter';
-            sortFilter.innerHTML = `Sắp xếp: ${sortName} <span class="filter-remove" data-filter-type="sort"><i class="fas fa-times"></i></span>`;
+            sortFilter.className = 'active-filter-tag';
+            sortFilter.innerHTML = `<i class="fas fa-sort me-1"></i> ${sortName} <span class="remove-filter" data-filter-type="sort"><i class="fas fa-times"></i></span>`;
             activeFiltersContainer.appendChild(sortFilter);
         }
 
         // Add event listeners to remove buttons
-        const removeButtons = document.querySelectorAll('.filter-remove');
+        const removeButtons = document.querySelectorAll('.remove-filter');
         removeButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const filterType = this.dataset.filterType;
                 const filterId = this.dataset.filterId;
+
+                // Thêm hiệu ứng khi xóa bộ lọc
+                const parentTag = this.closest('.active-filter-tag');
+                if (parentTag) {
+                    parentTag.style.transition = 'all 0.3s ease';
+                    parentTag.style.opacity = '0';
+                    parentTag.style.transform = 'translateX(-20px)';
+                }
 
                 if (filterType === 'search') {
                     const searchInput = document.getElementById('searchInput');

@@ -58,10 +58,10 @@
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center mt-auto">
-                            <span class="price text-primary fw-bold">{{ number_format($service->price) }} VNĐ</span>
+                            <span class="price text-primary fw-bold"><i class="fas fa-tag me-1 price-icon"></i> {{ number_format($service->price) }} VNĐ</span>
                             <div>
-                                <a href="{{ route('appointment.step1', ['service_id' => $service->id]) }}" class="btn btn-sm btn-primary me-1 appointment-btn">Đặt lịch</a>
-                                <a href="{{ route('services.show', $service->slug) }}" class="btn btn-sm btn-outline-primary">Chi tiết <i class="fas fa-arrow-right ms-1"></i></a>
+                                <a href="{{ route('appointment.step1', ['service_id' => $service->id]) }}" class="btn btn-sm btn-primary me-1 appointment-btn"><i class="fas fa-calendar-check me-1"></i> Đặt lịch</a>
+                                <a href="{{ route('services.show', $service->slug) }}" class="btn btn-sm btn-outline-primary">Chi tiết <i class="fas fa-arrow-right ms-1 btn-icon-animate"></i></a>
                             </div>
                         </div>
                     </div>
@@ -71,9 +71,19 @@
     </div>
     @endforeach
 @else
-    <div class="alert alert-info text-center p-5">
-        <i class="fas fa-info-circle fa-3x mb-3"></i>
+    <div class="alert alert-info text-center p-5 empty-state">
+        <i class="fas fa-search fa-3x mb-3 empty-icon"></i>
         <h4>Không tìm thấy dịch vụ nào</h4>
         <p>Hiện tại không có dịch vụ nào phù hợp với bộ lọc. Vui lòng thử lại với bộ lọc khác.</p>
+        <button id="resetFilters" class="btn btn-outline-primary mt-3">
+            <i class="fas fa-undo-alt me-2"></i>Đặt lại bộ lọc
+        </button>
     </div>
+
+    <script>
+        document.getElementById('resetFilters').addEventListener('click', function() {
+            // Kích hoạt nút xóa tất cả bộ lọc
+            document.getElementById('clearAllFilters').click();
+        });
+    </script>
 @endif

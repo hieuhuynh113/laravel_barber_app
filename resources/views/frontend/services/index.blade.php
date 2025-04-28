@@ -22,7 +22,7 @@
                         </h5>
                         <div>
                             <button id="clearAllFilters" class="btn btn-sm text-primary border-0">
-                                XÓA
+                                <i class="fas fa-eraser me-1"></i> XÓA
                             </button>
                             <button id="closeFilterSidebar" class="btn btn-sm text-primary border-0 d-lg-none">
                                 <i class="fas fa-times"></i>
@@ -32,7 +32,7 @@
                     <div class="card-body">
                         <!-- Search Filter -->
                         <div class="filter-section mb-4">
-                            <h6 class="filter-title">Tìm kiếm</h6>
+                            <h6 class="filter-title"><i class="fas fa-search me-2 text-primary"></i>Tìm kiếm</h6>
                             <div class="input-group">
                                 <input type="text" id="searchInput" class="form-control" placeholder="Tên dịch vụ..." value="{{ request('search') }}">
                                 <button class="btn btn-outline-secondary" type="button" id="searchButton">
@@ -43,7 +43,7 @@
 
                         <!-- Category Filter -->
                         <div class="filter-section mb-4">
-                            <h6 class="filter-title">Danh mục dịch vụ</h6>
+                            <h6 class="filter-title"><i class="fas fa-tags me-2 text-primary"></i>Danh mục dịch vụ</h6>
                             <div class="filter-options">
                                 @foreach($categories as $category)
                                     <div class="form-check mb-2">
@@ -60,30 +60,30 @@
 
                         <!-- Price Range Filter -->
                         <div class="filter-section mb-4">
-                            <h6 class="filter-title">Khoảng giá</h6>
+                            <h6 class="filter-title"><i class="fas fa-money-bill-wave me-2 text-primary"></i>Khoảng giá</h6>
                             <div class="filter-options">
                                 <div class="form-check mb-2">
                                     <input class="form-check-input auto-filter" type="checkbox" name="price[]" id="price1" value="0-100000" {{ (is_array(request('price')) && in_array('0-100000', request('price'))) ? 'checked' : '' }}>
                                     <label class="form-check-label" for="price1">
-                                        Dưới 100.000 VNĐ
+                                        <i class="fas fa-coins text-warning me-1"></i> Dưới 100.000 VNĐ
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
                                     <input class="form-check-input auto-filter" type="checkbox" name="price[]" id="price2" value="100000-200000" {{ (is_array(request('price')) && in_array('100000-200000', request('price'))) ? 'checked' : '' }}>
                                     <label class="form-check-label" for="price2">
-                                        100.000 - 200.000 VNĐ
+                                        <i class="fas fa-coins text-warning me-1"></i> 100.000 - 200.000 VNĐ
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
                                     <input class="form-check-input auto-filter" type="checkbox" name="price[]" id="price3" value="200000-300000" {{ (is_array(request('price')) && in_array('200000-300000', request('price'))) ? 'checked' : '' }}>
                                     <label class="form-check-label" for="price3">
-                                        200.000 - 300.000 VNĐ
+                                        <i class="fas fa-coins text-warning me-1"></i> 200.000 - 300.000 VNĐ
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input auto-filter" type="checkbox" name="price[]" id="price4" value="300000-1000000" {{ (is_array(request('price')) && in_array('300000-1000000', request('price'))) ? 'checked' : '' }}>
                                     <label class="form-check-label" for="price4">
-                                        Trên 300.000 VNĐ
+                                        <i class="fas fa-coins text-warning me-1"></i> Trên 300.000 VNĐ
                                     </label>
                                 </div>
                             </div>
@@ -91,30 +91,30 @@
 
                         <!-- Sort By -->
                         <div class="filter-section mb-4">
-                            <h6 class="filter-title">Sắp xếp theo</h6>
+                            <h6 class="filter-title"><i class="fas fa-sort-amount-down me-2 text-primary"></i>Sắp xếp theo</h6>
                             <div class="filter-options">
                                 <div class="form-check mb-2">
                                     <input class="form-check-input auto-filter" type="radio" name="sort" id="sortPriceLow" value="price_low" {{ $sort == 'price_low' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="sortPriceLow">
-                                        Giá thấp đến cao
+                                        <i class="fas fa-sort-amount-up-alt me-1 text-primary"></i> Giá thấp đến cao
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
                                     <input class="form-check-input auto-filter" type="radio" name="sort" id="sortPriceHigh" value="price_high" {{ $sort == 'price_high' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="sortPriceHigh">
-                                        Giá cao đến thấp
+                                        <i class="fas fa-sort-amount-down me-1 text-primary"></i> Giá cao đến thấp
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
                                     <input class="form-check-input auto-filter" type="radio" name="sort" id="sortPopular" value="popular" {{ $sort == 'popular' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="sortPopular">
-                                        Phổ biến nhất
+                                        <i class="fas fa-fire me-1 text-danger"></i> Phổ biến nhất
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input auto-filter" type="radio" name="sort" id="sortNewest" value="newest" {{ $sort == 'newest' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="sortNewest">
-                                        Mới nhất
+                                        <i class="fas fa-calendar-alt me-1 text-success"></i> Mới nhất
                                     </label>
                                 </div>
                             </div>
@@ -127,15 +127,17 @@
             <div class="col-lg-8">
                 <!-- Services List Header -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0 text-muted">Danh sách dịch vụ</h5>
+                    <h5 class="mb-0 text-muted"><i class="fas fa-list-alt me-2 text-primary"></i>Danh sách dịch vụ</h5>
                     <div class="filter-count text-muted">
-                        Hiển thị {{ $services->count() }} / {{ $services->total() }} dịch vụ
+                        <i class="fas fa-clipboard-list me-1"></i> Hiển thị {{ $services->count() }} / {{ $services->total() }} dịch vụ
                     </div>
                 </div>
 
                 <!-- Active Filters -->
-                <div id="active-filters" class="mb-3">
-                    <!-- Sẽ được điền bởi JavaScript -->
+                <div class="active-filters mb-3">
+                    <div id="active-filters">
+                        <!-- Sẽ được điền bởi JavaScript -->
+                    </div>
                 </div>
 
                 <!-- Services List -->

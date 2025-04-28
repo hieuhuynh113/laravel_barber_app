@@ -22,7 +22,7 @@
                         </h5>
                         <div>
                             <button id="clearAllFilters" class="btn btn-sm text-primary border-0">
-                                XÓA
+                                <i class="fas fa-eraser me-1"></i> XÓA
                             </button>
                             <button id="closeFilterSidebar" class="btn btn-sm text-primary border-0 d-lg-none">
                                 <i class="fas fa-times"></i>
@@ -32,7 +32,7 @@
                     <div class="card-body">
                         <!-- Search Filter -->
                         <div class="filter-section mb-4">
-                            <h6 class="filter-title">Tìm kiếm</h6>
+                            <h6 class="filter-title"><i class="fas fa-search me-2 text-primary"></i>Tìm kiếm</h6>
                             <div class="input-group">
                                 <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm tin tức..." value="{{ request('search') }}">
                                 <button class="btn btn-outline-secondary" type="button" id="searchButton">
@@ -43,7 +43,7 @@
 
                         <!-- Category Filter -->
                         <div class="filter-section mb-4">
-                            <h6 class="filter-title">Danh mục tin tức</h6>
+                            <h6 class="filter-title"><i class="fas fa-folder me-2 text-primary"></i>Danh mục tin tức</h6>
                             <div class="filter-options">
                                 @foreach($categories as $category)
                                     <div class="form-check mb-2">
@@ -58,30 +58,30 @@
 
                         <!-- Time Filter -->
                         <div class="filter-section mb-4">
-                            <h6 class="filter-title">Thời gian</h6>
+                            <h6 class="filter-title"><i class="fas fa-clock me-2 text-primary"></i>Thời gian</h6>
                             <div class="filter-options">
                                 <div class="form-check mb-2">
                                     <input class="form-check-input auto-filter" type="radio" name="time" id="timeAll" value="" {{ !$timeFilter ? 'checked' : '' }}>
                                     <label class="form-check-label" for="timeAll">
-                                        Tất cả thời gian
+                                        <i class="fas fa-calendar me-1 text-secondary"></i> Tất cả thời gian
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
                                     <input class="form-check-input auto-filter" type="radio" name="time" id="timeToday" value="today" {{ $timeFilter == 'today' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="timeToday">
-                                        Hôm nay
+                                        <i class="fas fa-calendar-day me-1 text-secondary"></i> Hôm nay
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
                                     <input class="form-check-input auto-filter" type="radio" name="time" id="timeWeek" value="week" {{ $timeFilter == 'week' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="timeWeek">
-                                        Tuần này
+                                        <i class="fas fa-calendar-week me-1 text-secondary"></i> Tuần này
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input auto-filter" type="radio" name="time" id="timeMonth" value="month" {{ $timeFilter == 'month' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="timeMonth">
-                                        Tháng này
+                                        <i class="fas fa-calendar-alt me-1 text-secondary"></i> Tháng này
                                     </label>
                                 </div>
                             </div>
@@ -89,30 +89,30 @@
 
                         <!-- Sort By -->
                         <div class="filter-section mb-4">
-                            <h6 class="filter-title">Sắp xếp theo</h6>
+                            <h6 class="filter-title"><i class="fas fa-sort-amount-down me-2 text-primary"></i>Sắp xếp theo</h6>
                             <div class="filter-options">
                                 <div class="form-check mb-2">
                                     <input class="form-check-input auto-filter" type="radio" name="sort" id="sortAll" value="" {{ !$sort ? 'checked' : '' }}>
                                     <label class="form-check-label" for="sortAll">
-                                        Mặc định
+                                        <i class="fas fa-sort me-1 text-primary"></i> Mặc định
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
                                     <input class="form-check-input auto-filter" type="radio" name="sort" id="sortPopular" value="popular" {{ $sort == 'popular' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="sortPopular">
-                                        Phổ biến nhất
+                                        <i class="fas fa-fire me-1 text-danger"></i> Phổ biến nhất
                                     </label>
                                 </div>
                                 <div class="form-check mb-2">
                                     <input class="form-check-input auto-filter" type="radio" name="sort" id="sortNewest" value="newest" {{ $sort == 'newest' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="sortNewest">
-                                        Mới nhất
+                                        <i class="fas fa-calendar-alt me-1 text-success"></i> Mới nhất
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input auto-filter" type="radio" name="sort" id="sortRecommended" value="recommended" {{ $sort == 'recommended' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="sortRecommended">
-                                        Đề xuất
+                                        <i class="fas fa-thumbs-up me-1 text-info"></i> Đề xuất
                                     </label>
                                 </div>
                             </div>
@@ -125,15 +125,17 @@
             <div class="col-lg-8">
                 <!-- News List Header -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0 text-muted">Danh sách tin tức</h5>
+                    <h5 class="mb-0 text-muted"><i class="fas fa-newspaper me-2 text-primary"></i>Danh sách tin tức</h5>
                     <div class="filter-count text-muted">
-                        Hiển thị {{ $news->count() }} / {{ $news->total() }} bài viết
+                        <i class="fas fa-clipboard-list me-1"></i> Hiển thị {{ $news->count() }} / {{ $news->total() }} bài viết
                     </div>
                 </div>
 
                 <!-- Active Filters -->
-                <div id="active-filters" class="mb-3">
-                    <!-- Sẽ được điền bởi JavaScript -->
+                <div class="active-filters mb-3">
+                    <div id="active-filters">
+                        <!-- Sẽ được điền bởi JavaScript -->
+                    </div>
                 </div>
 
                 <!-- News List -->
@@ -159,16 +161,19 @@
                                     <img src="{{ asset('storage/' . $item->user->avatar) }}" alt="{{ $item->user->name }}" class="rounded-circle me-2" width="25" height="25">
                                     <small>{{ $item->user->name }}</small>
                                 </div>
-                                <a href="{{ route('news.show', $item->slug) }}" class="btn btn-sm btn-outline-primary">Đọc tiếp <i class="fas fa-arrow-right ms-1"></i></a>
+                                <a href="{{ route('news.show', $item->slug) }}" class="btn btn-sm btn-outline-primary">Đọc tiếp <i class="fas fa-arrow-right ms-1 btn-icon-animate"></i></a>
                             </div>
                         </div>
                     </div>
                     @empty
                     <div class="col-12">
-                        <div class="alert alert-info text-center p-5">
-                            <i class="fas fa-info-circle fa-3x mb-3"></i>
+                        <div class="alert alert-info text-center p-5 empty-state">
+                            <i class="fas fa-search fa-3x mb-3 empty-icon"></i>
                             <h4>Không tìm thấy bài viết nào</h4>
                             <p>Hiện tại không có bài viết nào phù hợp với bộ lọc. Vui lòng thử lại với bộ lọc khác.</p>
+                            <button id="resetFilters" class="btn btn-outline-primary mt-3">
+                                <i class="fas fa-undo-alt me-2"></i>Đặt lại bộ lọc
+                            </button>
                         </div>
                     </div>
                     @endforelse

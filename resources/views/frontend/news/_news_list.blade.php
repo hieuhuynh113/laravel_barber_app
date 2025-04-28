@@ -19,16 +19,19 @@
                 <img src="{{ asset('storage/' . $item->user->avatar) }}" alt="{{ $item->user->name }}" class="rounded-circle me-2" width="25" height="25">
                 <small>{{ $item->user->name }}</small>
             </div>
-            <a href="{{ route('news.show', $item->slug) }}" class="btn btn-sm btn-outline-primary">Đọc tiếp <i class="fas fa-arrow-right ms-1"></i></a>
+            <a href="{{ route('news.show', $item->slug) }}" class="btn btn-sm btn-outline-primary">Đọc tiếp <i class="fas fa-arrow-right ms-1 btn-icon-animate"></i></a>
         </div>
     </div>
 </div>
 @empty
 <div class="col-12">
-    <div class="alert alert-info text-center p-5">
-        <i class="fas fa-info-circle fa-3x mb-3"></i>
+    <div class="alert alert-info text-center p-5 empty-state">
+        <i class="fas fa-search fa-3x mb-3 empty-icon"></i>
         <h4>Không tìm thấy bài viết nào</h4>
         <p>Hiện tại không có bài viết nào phù hợp với bộ lọc. Vui lòng thử lại với bộ lọc khác.</p>
+        <button id="resetFilters" class="btn btn-outline-primary mt-3">
+            <i class="fas fa-undo-alt me-2"></i>Đặt lại bộ lọc
+        </button>
     </div>
 </div>
 @endforelse
