@@ -31,10 +31,13 @@
     <link rel="stylesheet" href="{{ asset('css/product-style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/service-button.css') }}">
     <link rel="stylesheet" href="{{ asset('css/price-style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/price-style-fix.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/full-width-sections.css') }}">
     <link rel="stylesheet" href="{{ asset('css/checkbox-custom.css') }}">
     <link rel="stylesheet" href="{{ asset('css/service-animations.css') }}">
     <link rel="stylesheet" href="{{ asset('css/product-animations.css') }}">
     <link rel="stylesheet" href="{{ asset('css/news-animations.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/contact-map.css') }}">
 
     <!-- Page Specific CSS -->
     @yield('styles')
@@ -198,6 +201,7 @@
     <script src="{{ asset('js/smooth-scroll.js') }}"></script>
 
     @yield('scripts')
+    @stack('scripts')
 
     <!-- Login/Register Modal -->
     <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">

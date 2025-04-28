@@ -3,7 +3,11 @@
 @section('title', 'Thành viên & Giá cả')
 
 @section('styles')
-
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.add('price-page');
+    });
+</script>
 @endsection
 
 @section('content')
@@ -190,7 +194,7 @@
                                         </td>
                                         <td>
                                             <div class="service-duration">
-                                                <i class="far fa-clock"></i> {{ $service->duration }} phút
+                                                <i class="far fa-clock"></i> {{ $service->duration ?? '30' }} phút
                                             </div>
                                         </td>
                                         <td>
@@ -553,62 +557,16 @@
     </div>
 </section>
 
-<!-- Special Offers Section -->
-<section class="py-5 bg-light special-offers-section">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6 mb-4 mb-lg-0">
-                <h2 class="mb-4">Ưu đãi đặc biệt</h2>
-                <p class="lead mb-4">Đăng ký thành viên để nhận nhiều ưu đãi hấp dẫn</p>
 
-                <div class="special-offer-list">
-                    <div class="special-offer-item">
-                        <div class="special-offer-icon">
-                            <i class="fas fa-percentage"></i>
-                        </div>
-                        <div class="special-offer-text">Giảm 10% cho lần đầu sử dụng dịch vụ</div>
-                    </div>
-
-                    <div class="special-offer-item">
-                        <div class="special-offer-icon">
-                            <i class="fas fa-gift"></i>
-                        </div>
-                        <div class="special-offer-text">Tích điểm đổi quà với mỗi dịch vụ sử dụng</div>
-                    </div>
-
-                    <div class="special-offer-item">
-                        <div class="special-offer-icon">
-                            <i class="fas fa-tags"></i>
-                        </div>
-                        <div class="special-offer-text">Các chương trình khuyến mãi hàng tháng</div>
-                    </div>
-
-                    <div class="special-offer-item">
-                        <div class="special-offer-icon">
-                            <i class="fas fa-birthday-cake"></i>
-                        </div>
-                        <div class="special-offer-text">Ưu đãi đặc biệt vào dịp sinh nhật</div>
-                    </div>
-                </div>
-
-                <a href="{{ route('appointment.step1') }}" class="btn btn-primary mt-3 appointment-btn price-item-btn">
-                    Đặt lịch ngay <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-            <div class="col-lg-6">
-                <div class="ratio ratio-16x9 rounded overflow-hidden shadow">
-                    <img src="{{ asset('images/barber-special.jpg') }}" alt="Ưu đãi đặc biệt" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
 <section class="py-5 text-white text-center cta-appointment">
     <div class="container">
-        <h2 class="h1 mb-4">Sẵn sàng trải nghiệm dịch vụ của chúng tôi?</h2>
-        <p class="lead mb-4">Đặt lịch ngay hôm nay và trải nghiệm dịch vụ cắt tóc chuyên nghiệp tại Barber Shop.</p>
-        <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg appointment-btn">Đặt lịch ngay</a>
+        <h2 class="h1 mb-4">Trở thành thành viên ngay hôm nay</h2>
+        <p class="lead mb-4">Đăng ký gói thành viên để tiết kiệm chi phí và tận hưởng nhiều ưu đãi đặc biệt tại Barber Shop.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{{ route('appointment.step1') }}" class="btn btn-light btn-lg appointment-btn">Đăng ký thành viên</a>
+            <a href="{{ route('services.index') }}" class="btn btn-outline-light btn-lg">Xem dịch vụ</a>
+        </div>
     </div>
 </section>
 @endsection

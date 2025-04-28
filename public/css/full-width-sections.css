@@ -1,0 +1,110 @@
+/* CSS để đảm bảo màu nền của các section phủ toàn bộ chiều dài màn hình */
+/* Chỉ áp dụng cho trang thành viên và giá cả */
+
+/* Áp dụng cho tất cả các section có màu nền trong trang thành viên và giá cả */
+body.price-page .membership-section,
+body.price-page .pricing-table-section,
+body.price-page .combo-deals-section,
+body.price-page .faq-section,
+body.price-page .cta-appointment {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+/* Đảm bảo container vẫn giữ đúng kích thước */
+body.price-page .membership-section .container,
+body.price-page .pricing-table-section .container,
+body.price-page .combo-deals-section .container,
+body.price-page .faq-section .container,
+body.price-page .cta-appointment .container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Màu nền cho từng section */
+.membership-section {
+    background-color: #f9f5f0;
+    padding: 80px 0;
+}
+
+.pricing-table-section {
+    background-color: #fff;
+    padding: 80px 0;
+}
+
+.combo-deals-section {
+    background-color: #f9f5f0;
+    padding: 80px 0;
+}
+
+.faq-section {
+    background-color: #f9f5f0;
+    padding: 80px 0;
+}
+
+.cta-appointment {
+    background: linear-gradient(135deg, #9E8A78, #7F6E60);
+    padding: 80px 0;
+}
+
+/* Đảm bảo không có khoảng trắng giữa các section */
+section + section {
+    margin-top: 0;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    body.price-page .membership-section .container,
+    body.price-page .pricing-table-section .container,
+    body.price-page .combo-deals-section .container,
+    body.price-page .faq-section .container,
+    body.price-page .cta-appointment .container {
+        max-width: 960px;
+    }
+}
+
+@media (max-width: 992px) {
+    body.price-page .membership-section .container,
+    body.price-page .pricing-table-section .container,
+    body.price-page .combo-deals-section .container,
+    body.price-page .faq-section .container,
+    body.price-page .cta-appointment .container {
+        max-width: 720px;
+    }
+}
+
+@media (max-width: 768px) {
+    body.price-page .membership-section .container,
+    body.price-page .pricing-table-section .container,
+    body.price-page .combo-deals-section .container,
+    body.price-page .faq-section .container,
+    body.price-page .cta-appointment .container {
+        max-width: 540px;
+    }
+
+    body.price-page .membership-section,
+    body.price-page .pricing-table-section,
+    body.price-page .combo-deals-section,
+    body.price-page .faq-section,
+    body.price-page .cta-appointment {
+        padding: 50px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    body.price-page .membership-section .container,
+    body.price-page .pricing-table-section .container,
+    body.price-page .combo-deals-section .container,
+    body.price-page .faq-section .container,
+    body.price-page .cta-appointment .container {
+        max-width: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}

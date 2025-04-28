@@ -24,7 +24,7 @@
                         </div>
                         @endif
 
-                        <form action="{{ route('contact.store') }}" method="POST">
+                        <form action="{{ route('contact.store') }}" method="POST" class="contact-form">
                             @csrf
                             <div class="mb-3">
                                 <label for="name" class="form-label">Họ tên</label>
@@ -79,35 +79,35 @@
                     <div class="card-body">
                         <h3 class="mb-4">Thông tin liên hệ</h3>
 
-                        <div class="mb-4">
+                        <div class="mb-4 contact-info-item">
                             <h5><i class="fas fa-map-marker-alt text-primary me-2"></i> Địa chỉ</h5>
                             <p class="ms-4">Quốc lộ 1A, Diên Toàn, Diên Khánh, Khánh Hòa</p>
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-4 contact-info-item">
                             <h5><i class="fas fa-phone-alt text-primary me-2"></i> Điện thoại</h5>
                             <p class="ms-4"><a href="tel:0559764554" class="text-decoration-none">0559764554</a></p>
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-4 contact-info-item">
                             <h5><i class="fas fa-envelope text-primary me-2"></i> Email</h5>
-                            <p class="ms-4"><a href="mailto:hieu0559764554@gmail.com" class="text-decoration-none">hieu.ht.63cntt@ntu.edu.vn</a></p>
+                            <p class="ms-4"><a href="mailto:hieu.ht.63cntt@ntu.edu.vn" class="text-decoration-none">hieu.ht.63cntt@ntu.edu.vn</a></p>
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-4 contact-info-item">
                             <h5><i class="fas fa-clock text-primary me-2"></i> Giờ làm việc</h5>
                             <p class="ms-4">Thứ 2 - Thứ 6: 8:00 - 20:00</p>
                             <p class="ms-4">Thứ 7: 8:00 - 21:00</p>
                             <p class="ms-4">Chủ nhật: 9:00 - 18:00</p>
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-4 contact-info-item">
                             <h5><i class="fas fa-share-alt text-primary me-2"></i> Mạng xã hội</h5>
                             <div class="ms-4 social-icons">
-                                <a href="#" class="text-decoration-none me-2"><i class="fab fa-facebook-f fa-lg"></i></a>
-                                <a href="#" class="text-decoration-none me-2"><i class="fab fa-instagram fa-lg"></i></a>
-                                <a href="#" class="text-decoration-none me-2"><i class="fab fa-twitter fa-lg"></i></a>
-                                <a href="#" class="text-decoration-none"><i class="fab fa-youtube fa-lg"></i></a>
+                                <a href="https://www.facebook.com/profile.php?id=100078969199950" class="facebook"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.instagram.com/hiuthubar_/" class="instagram"><i class="fab fa-instagram"></i></a>
+                                <a href="https://www.youtube.com/@hieuhuynh3551" class="youtube"><i class="fab fa-youtube"></i></a>
+                                <a href="https://www.tiktok.com/@.dinhcuong" class="tiktok"><i class="fab fa-tiktok"></i></a>
                             </div>
                         </div>
                     </div>
@@ -120,10 +120,14 @@
 <section class="py-5">
     <div class="container">
         <h3 class="text-center mb-5">Bản đồ cửa hàng</h3>
-        <div class="ratio ratio-16x9">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.5177580926147!2d106.69892827465639!3d10.771608989387898!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f40a3b49e59%3A0xa1bd15b1ead7b0df!2sCentral%20Post%20Office!5e0!3m2!1sen!2s!4v1709878254594!5m2!1sen!2s"
-                    width="600" height="450" style="border:0;" allowfullscreen=""
-                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div class="map-container">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3899.1560562393564!2d109.0349884!3d12.2285954!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3170677e8e7162df%3A0x1a1c1426f0fd98cd!2zUUwxQSwgRGnDqm4gVG_DoG4sIERpw6puIEtow6FuaCwgS2jDoW5oIEjDsmE!5e0!3m2!1svi!2s!4v1745835640018!5m2!1svi!2s"
+                allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="text-center">
+            <a href="https://www.google.com/maps/place/QL1A,+Di%C3%AAn+To%C3%A0n,+Di%C3%AAn+Kh%C3%A1nh,+Kh%C3%A1nh+H%C3%B2a/@12.2285954,109.0349884,17z" target="_blank" class="btn btn-outline-primary">
+                <i class="fas fa-map-marked-alt me-2"></i>Xem trên Google Maps
+            </a>
         </div>
     </div>
 </section>

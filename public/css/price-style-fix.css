@@ -1,0 +1,36 @@
+/* CSS Fix for Price Page */
+
+/* Đảm bảo membership-duration không bị ảnh hưởng bởi service-duration */
+.membership-duration {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 0;
+    position: static;
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+}
+
+/* Đảm bảo service-duration chỉ áp dụng trong bảng giá dịch vụ */
+.pricing-table .service-duration {
+    position: static;
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+/* Đảm bảo combo-service-duration không bị ảnh hưởng */
+.combo-service-duration {
+    font-size: 13px;
+    color: #777;
+    margin-top: 3px;
+}
+
+.combo-service-duration i {
+    margin-right: 5px;
+    color: #9E8A78;
+}
