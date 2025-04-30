@@ -114,16 +114,26 @@
                     </a>
                 </li>
 
-                <li class="{{ request()->routeIs('admin.schedules.*') || request()->routeIs('admin.time-slots.*') ? 'active' : '' }}">
+                <li class="{{ request()->routeIs('admin.schedules.*') || request()->routeIs('admin.time-slots.*') || request()->routeIs('admin.schedule-requests.*') ? 'active' : '' }}">
                     <a href="#scheduleSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="fas fa-calendar-alt me-2"></i> Quản lý lịch
                     </a>
-                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.schedules.*') || request()->routeIs('admin.time-slots.*') ? 'show' : '' }}" id="scheduleSubmenu">
+                    <ul class="collapse list-unstyled {{ request()->routeIs('admin.schedules.*') || request()->routeIs('admin.time-slots.*') || request()->routeIs('admin.schedule-requests.*') ? 'show' : '' }}" id="scheduleSubmenu">
                         <li>
                             <a href="{{ route('admin.schedules.index') }}">Lịch làm việc</a>
                         </li>
                         <li>
                             <a href="{{ route('admin.time-slots.index') }}">Khung giờ đặt lịch</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.schedule-requests.index') }}">Yêu cầu thay đổi lịch
+                                @php
+                                    $pendingRequests = \App\Models\ScheduleChangeRequest::where('status', 'pending')->count();
+                                @endphp
+                                @if($pendingRequests > 0)
+                                    <span class="badge bg-danger rounded-pill ms-2">{{ $pendingRequests }}</span>
+                                @endif
+                            </a>
                         </li>
                     </ul>
                 </li>
