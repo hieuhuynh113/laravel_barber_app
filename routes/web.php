@@ -157,10 +157,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::post('schedules/batch-update', [\App\Http\Controllers\Admin\BarberScheduleController::class, 'updateBatch'])->name('schedules.batch-update');
 
     // Schedule Change Request Routes
-    Route::get('schedule-requests', [\App\Http\Controllers\Admin\ScheduleChangeRequestController::class, 'index'])->name('schedule-requests.index');
-    Route::get('schedule-requests/{id}', [\App\Http\Controllers\Admin\ScheduleChangeRequestController::class, 'show'])->name('schedule-requests.show');
+    Route::resource('schedule-requests', \App\Http\Controllers\Admin\ScheduleChangeRequestController::class)->only(['index', 'show', 'destroy']);
     Route::post('schedule-requests/{id}/approve', [\App\Http\Controllers\Admin\ScheduleChangeRequestController::class, 'approve'])->name('schedule-requests.approve');
     Route::post('schedule-requests/{id}/reject', [\App\Http\Controllers\Admin\ScheduleChangeRequestController::class, 'reject'])->name('schedule-requests.reject');
+    Route::post('schedule-requests/bulk-delete', [\App\Http\Controllers\Admin\ScheduleChangeRequestController::class, 'bulkDelete'])->name('schedule-requests.bulk-delete');
 
     // Time Slot Routes
     Route::get('time-slots', [\App\Http\Controllers\Admin\TimeSlotController::class, 'index'])->name('time-slots.index');

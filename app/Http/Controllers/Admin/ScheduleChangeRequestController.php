@@ -20,6 +20,9 @@ class ScheduleChangeRequestController extends Controller
         $status = $request->input('status');
         $barberId = $request->input('barber_id');
         $search = $request->input('search');
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('sort_order', 'desc');
+        $perPage = $request->input('per_page', 10);
 
         $query = ScheduleChangeRequest::with(['barber.user']);
 
@@ -43,10 +46,33 @@ class ScheduleChangeRequestController extends Controller
             });
         }
 
-        $requests = $query->latest()->paginate(10)->withQueryString();
+        // Sắp xếp
+        if ($sortBy === 'barber_name') {
+            // Sử dụng subquery để tránh join nhiều bảng
+            $query->orderBy(function($query) use ($sortOrder) {
+                $query->select('users.name')
+                      ->from('users')
+                      ->join('barbers', 'users.id', '=', 'barbers.user_id')
+                      ->whereColumn('barbers.id', 'schedule_change_requests.barber_id')
+                      ->limit(1);
+            }, $sortOrder);
+        } else {
+            $query->orderBy($sortBy, $sortOrder);
+        }
+
+        $requests = $query->paginate($perPage)->withQueryString();
         $barbers = Barber::with('user')->get();
 
-        return view('admin.schedule-requests.index', compact('requests', 'barbers', 'status', 'barberId', 'search'));
+        return view('admin.schedule-requests.index_new', compact(
+            'requests',
+            'barbers',
+            'status',
+            'barberId',
+            'search',
+            'sortBy',
+            'sortOrder',
+            'perPage'
+        ));
     }
 
     /**
@@ -55,7 +81,7 @@ class ScheduleChangeRequestController extends Controller
     public function show($id)
     {
         $request = ScheduleChangeRequest::with(['barber.user'])->findOrFail($id);
-        return view('admin.schedule-requests.show', compact('request'));
+        return view('admin.schedule-requests.show_new', compact('request'));
     }
 
     /**
@@ -143,5 +169,38 @@ class ScheduleChangeRequestController extends Controller
     public function reject(Request $request, $id)
     {
         return $this->processRequest($request, $id, 'rejected');
+    }
+
+    /**
+     * Xóa một yêu cầu thay đổi lịch làm việc
+     */
+    public function destroy($id)
+    {
+        $scheduleRequest = ScheduleChangeRequest::findOrFail($id);
+        $scheduleRequest->delete();
+
+        return redirect()->route('admin.schedule-requests.index')
+            ->with('success', 'Yêu cầu thay đổi lịch làm việc đã được xóa thành công.');
+    }
+
+    /**
+     * Xóa nhiều yêu cầu thay đổi lịch làm việc cùng lúc
+     */
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:schedule_change_requests,id'
+        ]);
+
+        if (empty($request->ids)) {
+            return redirect()->route('admin.schedule-requests.index')
+                ->with('error', 'Vui lòng chọn ít nhất một yêu cầu để xóa.');
+        }
+
+        $count = ScheduleChangeRequest::whereIn('id', $request->ids)->delete();
+
+        return redirect()->route('admin.schedule-requests.index')
+            ->with('success', "Đã xóa thành công {$count} yêu cầu thay đổi lịch làm việc.");
     }
 }

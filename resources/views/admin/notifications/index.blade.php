@@ -345,7 +345,7 @@
                                         <i class="fas fa-eye"></i> Xem chi tiết
                                     </a>
                                     @if($notification->data['status'] == 'pending')
-                                        <a href="{{ route('admin.schedule-requests.show', $notification->data['request_id']) }}" class="btn btn-sm btn-success">
+                                        <a href="{{ route('admin.schedule-requests.show', $notification->data['request_id']) }}?action=process" class="btn btn-sm btn-success">
                                             <i class="fas fa-check"></i> Xử lý yêu cầu
                                         </a>
                                     @endif

@@ -2,6 +2,19 @@
 
 @section('title', 'Chi tiết yêu cầu thay đổi lịch làm việc')
 
+@section('styles')
+<link rel="stylesheet" href="{{ asset('css/admin/schedule-requests.css') }}">
+<style>
+    .action-buttons {
+        gap: 10px;
+        justify-content: flex-end;
+    }
+    .action-buttons .btn {
+        padding: 0.375rem 0.75rem;
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="container-fluid">
     <!-- Page Heading -->
@@ -37,7 +50,7 @@
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold text-primary">Thông tin yêu cầu</h6>
-                    <div>
+                    <div class="action-buttons">
                         @if($request->status == 'pending')
                             <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#approveModal">
                                 <i class="fas fa-check"></i> Phê duyệt
@@ -59,9 +72,9 @@
                                 @if($request->status == 'pending')
                                     <span class="badge bg-warning text-dark">Đang chờ</span>
                                 @elseif($request->status == 'approved')
-                                    <span class="badge bg-success">Đã phê duyệt</span>
+                                    <span class="badge bg-success text-white">Đã phê duyệt</span>
                                 @elseif($request->status == 'rejected')
-                                    <span class="badge bg-danger">Đã từ chối</span>
+                                    <span class="badge bg-danger text-white">Đã từ chối</span>
                                 @endif
                             </p>
                         </div>
@@ -71,9 +84,9 @@
                             <p class="mb-1">
                                 <strong>Loại yêu cầu:</strong>
                                 @if($request->is_day_off)
-                                    <span class="badge bg-danger">Đăng ký ngày nghỉ</span>
+                                    <span class="badge bg-danger text-white">Đăng ký ngày nghỉ</span>
                                 @else
-                                    <span class="badge bg-success">Thay đổi giờ làm việc</span>
+                                    <span class="badge bg-success text-white">Thay đổi giờ làm việc</span>
                                 @endif
                             </p>
                             @if(!$request->is_day_off)
