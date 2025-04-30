@@ -12,7 +12,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $barber = Auth::user()->barber;
+        $user = Auth::user();
+        $barber = $user->barber;
 
         // Lấy các thống kê cho trang dashboard
         $todayAppointments = Appointment::where('barber_id', $barber->id)
@@ -34,8 +35,23 @@ class DashboardController extends Controller
             ->count();
 
         // Lấy tên của thợ cắt tóc
-        $barberName = Auth::user()->name;
+        $barberName = $user->name;
 
-        return view('barber.dashboard', compact('todayAppointments', 'upcomingAppointments', 'totalAppointments', 'completedAppointments', 'barberName'));
+        // Lấy thông báo chưa đọc
+        $unreadNotifications = $user->unreadNotifications()->take(5)->get();
+
+        // Lấy lịch làm việc hôm nay
+        $today = Carbon::now()->dayOfWeek;
+        $todaySchedule = $barber->schedules()->where('day_of_week', $today)->first();
+
+        return view('barber.dashboard', compact(
+            'todayAppointments',
+            'upcomingAppointments',
+            'totalAppointments',
+            'completedAppointments',
+            'barberName',
+            'unreadNotifications',
+            'todaySchedule'
+        ));
     }
 }
