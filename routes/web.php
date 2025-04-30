@@ -156,6 +156,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::resource('schedules', \App\Http\Controllers\Admin\BarberScheduleController::class);
     Route::post('schedules/batch-update', [\App\Http\Controllers\Admin\BarberScheduleController::class, 'updateBatch'])->name('schedules.batch-update');
 
+    // Schedule Change Request Routes
+    Route::get('schedule-requests', [\App\Http\Controllers\Admin\ScheduleChangeRequestController::class, 'index'])->name('schedule-requests.index');
+    Route::get('schedule-requests/{id}', [\App\Http\Controllers\Admin\ScheduleChangeRequestController::class, 'show'])->name('schedule-requests.show');
+    Route::post('schedule-requests/{id}/approve', [\App\Http\Controllers\Admin\ScheduleChangeRequestController::class, 'approve'])->name('schedule-requests.approve');
+    Route::post('schedule-requests/{id}/reject', [\App\Http\Controllers\Admin\ScheduleChangeRequestController::class, 'reject'])->name('schedule-requests.reject');
+
     // Time Slot Routes
     Route::get('time-slots', [\App\Http\Controllers\Admin\TimeSlotController::class, 'index'])->name('time-slots.index');
     Route::put('time-slots/{id}', [\App\Http\Controllers\Admin\TimeSlotController::class, 'update'])->name('time-slots.update');
@@ -225,7 +231,27 @@ Route::get('/barber', function() {
 // Các route barber khác
 Route::prefix('barber')->name('barber.')->middleware(['auth', \App\Http\Middleware\BarberMiddleware::class])->group(function () {
     Route::get('/', [\App\Http\Controllers\Barber\DashboardController::class, 'index'])->name('dashboard')->withoutMiddleware(['auth']);
-    // Thêm routes cho barber dashboard và quản lý lịch hẹn
+
+    // Quản lý lịch hẹn
+    Route::get('/appointments', [\App\Http\Controllers\Barber\AppointmentController::class, 'index'])->name('appointments.index');
+    Route::get('/appointments/{appointment}', [\App\Http\Controllers\Barber\AppointmentController::class, 'show'])->name('appointments.show');
+    Route::post('/appointments/{appointment}/complete', [\App\Http\Controllers\Barber\AppointmentController::class, 'markAsCompleted'])->name('appointments.complete');
+
+    // Quản lý lịch làm việc
+    Route::get('/schedules', [\App\Http\Controllers\Barber\ScheduleController::class, 'index'])->name('schedules.index');
+    Route::post('/schedules/request-change', [\App\Http\Controllers\Barber\ScheduleController::class, 'requestChange'])->name('schedules.request-change');
+
+    // Quản lý thông tin cá nhân
+    Route::get('/profile', [\App\Http\Controllers\Barber\ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/edit', [\App\Http\Controllers\Barber\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/update', [\App\Http\Controllers\Barber\ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/change-password', [\App\Http\Controllers\Barber\ProfileController::class, 'changePasswordForm'])->name('profile.change-password-form');
+    Route::put('/profile/change-password', [\App\Http\Controllers\Barber\ProfileController::class, 'changePassword'])->name('profile.change-password');
+
+    // Quản lý thông báo
+    Route::get('/notifications', [\App\Http\Controllers\Barber\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/mark-as-read', [\App\Http\Controllers\Barber\NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
+    Route::post('/notifications/mark-all-as-read', [\App\Http\Controllers\Barber\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
 });
 
 // Review routes

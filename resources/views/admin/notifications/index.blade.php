@@ -192,6 +192,14 @@
                                             <i class="fas fa-calendar-times"></i>
                                         </span>
                                         Lịch hẹn đã hủy
+                                    @elseif($notification->type == 'App\\Notifications\\ScheduleChangeRequestNotification')
+                                        <span class="notification-icon" style="background-color: #e0f2f1; color: #009688;">
+                                            <i class="fas fa-clock"></i>
+                                        </span>
+                                        Yêu cầu thay đổi lịch
+                                        @if($notification->data['status'] == 'pending')
+                                            <span class="badge bg-warning notification-badge">Chờ xử lý</span>
+                                        @endif
                                     @else
                                         <span class="notification-icon">
                                             <i class="fas fa-bell text-primary"></i>
@@ -266,8 +274,31 @@
                                         @endif
                                     </p>
 
+                                @elseif($notification->type == 'App\\Notifications\\ScheduleChangeRequestNotification')
+                                    <p>
+                                        <strong>{{ $notification->data['barber_name'] }}</strong> đã gửi yêu cầu thay đổi
+                                        @if($notification->data['is_day_off'])
+                                            <strong>ngày nghỉ</strong> vào ngày <strong>{{ $notification->data['day_name'] }}</strong>
+                                        @else
+                                            <strong>lịch làm việc</strong> vào ngày <strong>{{ $notification->data['day_name'] }}</strong>
+                                            từ <strong>{{ $notification->data['start_time'] }}</strong> đến <strong>{{ $notification->data['end_time'] }}</strong>
+                                        @endif
+                                    </p>
+                                    <p class="mt-2">
+                                        <strong>Lý do:</strong> {{ $notification->data['reason'] }}
+                                    </p>
+                                    <p class="mt-2">
+                                        <strong>Trạng thái:</strong>
+                                        @if($notification->data['status'] == 'pending')
+                                            <span class="badge bg-warning">Đang chờ</span>
+                                        @elseif($notification->data['status'] == 'approved')
+                                            <span class="badge bg-success">Đã phê duyệt</span>
+                                        @elseif($notification->data['status'] == 'rejected')
+                                            <span class="badge bg-danger">Đã từ chối</span>
+                                        @endif
+                                    </p>
                                 @else
-                                    <p>{{ json_encode($notification->data) }}</p>
+                                    <p>{{ $notification->data['message'] ?? json_encode($notification->data) }}</p>
                                 @endif
                             </div>
 
@@ -309,6 +340,15 @@
                                     <a href="{{ route('admin.appointments.show', $notification->data['appointment_id']) }}" class="btn btn-sm btn-info">
                                         <i class="fas fa-eye"></i> Xem chi tiết lịch hẹn
                                     </a>
+                                @elseif($notification->type == 'App\\Notifications\\ScheduleChangeRequestNotification')
+                                    <a href="{{ route('admin.schedule-requests.show', $notification->data['request_id']) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i> Xem chi tiết
+                                    </a>
+                                    @if($notification->data['status'] == 'pending')
+                                        <a href="{{ route('admin.schedule-requests.show', $notification->data['request_id']) }}" class="btn btn-sm btn-success">
+                                            <i class="fas fa-check"></i> Xử lý yêu cầu
+                                        </a>
+                                    @endif
                                 @endif
 
                                 @if(is_null($notification->read_at))
