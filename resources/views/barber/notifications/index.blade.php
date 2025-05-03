@@ -12,18 +12,18 @@
         box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
         margin-bottom: 1.5rem;
     }
-    
+
     .notification-card .card-header {
         background-color: #2c3e50;
         color: #fff;
         border-radius: 10px 10px 0 0;
         padding: 1rem 1.5rem;
     }
-    
+
     .notification-card .card-body {
         padding: 1.5rem;
     }
-    
+
     .notification-item {
         padding: 1rem;
         border-radius: 10px;
@@ -32,70 +32,70 @@
         background-color: #f8f9fa;
         transition: all 0.3s;
     }
-    
+
     .notification-item:hover {
         transform: translateY(-2px);
         box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
     }
-    
+
     .notification-item.unread {
         background-color: #e8f4fd;
         border-left-color: #3498db;
     }
-    
+
     .notification-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         margin-bottom: 0.5rem;
     }
-    
+
     .notification-title {
         font-weight: 600;
         color: #2c3e50;
         margin-bottom: 0;
     }
-    
+
     .notification-time {
         color: #7f8c8d;
         font-size: 0.85rem;
     }
-    
+
     .notification-content {
         color: #34495e;
         margin-bottom: 0.5rem;
     }
-    
+
     .notification-actions {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-top: 0.75rem;
     }
-    
+
     .notification-link {
         color: #3498db;
         font-weight: 600;
         text-decoration: none;
         transition: all 0.3s;
     }
-    
+
     .notification-link:hover {
         color: #2980b9;
         text-decoration: underline;
     }
-    
+
     .notification-mark-read {
         color: #7f8c8d;
         font-size: 0.85rem;
         text-decoration: none;
         transition: all 0.3s;
     }
-    
+
     .notification-mark-read:hover {
         color: #2c3e50;
     }
-    
+
     .notification-icon {
         width: 40px;
         height: 40px;
@@ -106,50 +106,50 @@
         margin-right: 1rem;
         flex-shrink: 0;
     }
-    
+
     .icon-appointment {
         background-color: #e8f4fd;
         color: #3498db;
     }
-    
+
     .icon-schedule {
         background-color: #e8f8f5;
         color: #2ecc71;
     }
-    
+
     .icon-review {
         background-color: #fff8e1;
         color: #f39c12;
     }
-    
+
     .notification-wrapper {
         display: flex;
         align-items: flex-start;
     }
-    
+
     .notification-badge {
         font-size: 0.7rem;
         padding: 0.25rem 0.5rem;
         border-radius: 50px;
         margin-left: 0.5rem;
     }
-    
+
     .empty-state {
         text-align: center;
         padding: 3rem 0;
     }
-    
+
     .empty-state i {
         font-size: 4rem;
         color: #bdc3c7;
         margin-bottom: 1rem;
     }
-    
+
     .empty-state h5 {
         color: #2c3e50;
         margin-bottom: 0.5rem;
     }
-    
+
     .empty-state p {
         color: #7f8c8d;
         max-width: 400px;
@@ -163,19 +163,42 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="dashboard-title">Thông báo</h1>
-                <form action="{{ route('barber.notifications.mark-all-as-read') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-outline-primary">
-                        <i class="fas fa-check-double me-2"></i>Đánh dấu tất cả là đã đọc
-                    </button>
-                </form>
+                <div>
+                    <h1 class="dashboard-title">Thông báo</h1>
+                </div>
+                <div class="d-flex">
+                    <a href="{{ route('barber.dashboard') }}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-arrow-left me-2"></i>Quay lại Dashboard
+                    </a>
+                    <form action="{{ route('barber.notifications.mark-all-as-read') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="fas fa-check-double me-2"></i>Đánh dấu tất cả là đã đọc
+                        </button>
+                    </form>
+                </div>
             </div>
-            
+
             <div class="notification-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Tất cả thông báo</h5>
                     <span class="badge bg-primary">{{ $notifications->total() }} thông báo</span>
+                </div>
+                <div class="card-header bg-light border-top">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ route('barber.notifications.index') }}" class="btn btn-sm {{ !request('filter') ? 'btn-primary' : 'btn-outline-primary' }}">
+                            Tất cả
+                        </a>
+                        <a href="{{ route('barber.notifications.index', ['filter' => 'unread']) }}" class="btn btn-sm {{ request('filter') == 'unread' ? 'btn-primary' : 'btn-outline-primary' }}">
+                            Chưa đọc
+                        </a>
+                        <a href="{{ route('barber.notifications.index', ['filter' => 'appointments']) }}" class="btn btn-sm {{ request('filter') == 'appointments' ? 'btn-primary' : 'btn-outline-primary' }}">
+                            Lịch hẹn
+                        </a>
+                        <a href="{{ route('barber.notifications.index', ['filter' => 'schedules']) }}" class="btn btn-sm {{ request('filter') == 'schedules' ? 'btn-primary' : 'btn-outline-primary' }}">
+                            Lịch làm việc
+                        </a>
+                    </div>
                 </div>
                 <div class="card-body">
                     @if($notifications->count() > 0)
@@ -199,7 +222,7 @@
                                             <i class="fas fa-bell"></i>
                                         </div>
                                     @endif
-                                    
+
                                     <div class="flex-grow-1">
                                         <div class="notification-header">
                                             <h6 class="notification-title">
@@ -227,11 +250,11 @@
                                             </h6>
                                             <span class="notification-time">{{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</span>
                                         </div>
-                                        
+
                                         <p class="notification-content">
                                             {{ $notification->data['message'] ?? 'Không có nội dung' }}
                                         </p>
-                                        
+
                                         <div class="notification-actions">
                                             @if(str_contains($notification->type, 'Appointment') && isset($notification->data['appointment_id']))
                                                 <a href="{{ route('barber.appointments.show', $notification->data['appointment_id']) }}" class="notification-link">
@@ -244,7 +267,7 @@
                                             @else
                                                 <span></span>
                                             @endif
-                                            
+
                                             @if(is_null($notification->read_at))
                                                 <form action="{{ route('barber.notifications.mark-as-read', $notification->id) }}" method="POST">
                                                     @csrf
@@ -258,10 +281,10 @@
                                 </div>
                             </div>
                         @endforeach
-                        
+
                         <!-- Phân trang -->
-                        <div class="d-flex justify-content-center mt-4">
-                            {{ $notifications->links() }}
+                        <div class="mt-4">
+                            {{ $notifications->links('barber.partials.pagination') }}
                         </div>
                     @else
                         <div class="empty-state">

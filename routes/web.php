@@ -228,6 +228,11 @@ Route::get('/barber', function() {
     return app()->make(\App\Http\Controllers\Barber\DashboardController::class)->index();
 });
 
+// Thêm route POST cho /barber để xử lý trường hợp form submit sai URL
+Route::post('/barber', function() {
+    return redirect('/barber')->with('error', 'Có lỗi xảy ra khi xử lý yêu cầu. Vui lòng thử lại.');
+});
+
 // Các route barber khác
 Route::prefix('barber')->name('barber.')->middleware(['auth', \App\Http\Middleware\BarberMiddleware::class])->group(function () {
     Route::get('/', [\App\Http\Controllers\Barber\DashboardController::class, 'index'])->name('dashboard')->withoutMiddleware(['auth']);
@@ -236,6 +241,7 @@ Route::prefix('barber')->name('barber.')->middleware(['auth', \App\Http\Middlewa
     Route::get('/appointments', [\App\Http\Controllers\Barber\AppointmentController::class, 'index'])->name('appointments.index');
     Route::get('/appointments/{appointment}', [\App\Http\Controllers\Barber\AppointmentController::class, 'show'])->name('appointments.show');
     Route::post('/appointments/{appointment}/complete', [\App\Http\Controllers\Barber\AppointmentController::class, 'markAsCompleted'])->name('appointments.complete');
+    Route::post('/appointments/{appointment}/confirm', [\App\Http\Controllers\Barber\AppointmentController::class, 'confirmAppointment'])->name('appointments.confirm');
 
     // Quản lý lịch làm việc
     Route::get('/schedules', [\App\Http\Controllers\Barber\ScheduleController::class, 'index'])->name('schedules.index');
@@ -252,6 +258,11 @@ Route::prefix('barber')->name('barber.')->middleware(['auth', \App\Http\Middlewa
     Route::get('/notifications', [\App\Http\Controllers\Barber\NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/mark-as-read', [\App\Http\Controllers\Barber\NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::post('/notifications/mark-all-as-read', [\App\Http\Controllers\Barber\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
+
+    // Quản lý hóa đơn
+    Route::get('/invoices/{invoice}', [\App\Http\Controllers\Barber\InvoiceController::class, 'show'])->name('invoices.show');
+    Route::get('/invoices/{invoice}/print', [\App\Http\Controllers\Barber\InvoiceController::class, 'print'])->name('invoices.print');
+    Route::get('/invoices/{invoice}/data', [\App\Http\Controllers\Barber\InvoiceController::class, 'getInvoiceData'])->name('invoices.data');
 });
 
 // Review routes

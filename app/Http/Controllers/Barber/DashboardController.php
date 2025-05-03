@@ -37,8 +37,8 @@ class DashboardController extends Controller
         // Lấy tên của thợ cắt tóc
         $barberName = $user->name;
 
-        // Lấy thông báo chưa đọc
-        $unreadNotifications = $user->unreadNotifications()->take(5)->get();
+        // Lấy thông báo chưa đọc (giới hạn 3 thông báo)
+        $unreadNotifications = $user->unreadNotifications()->take(3)->get();
 
         // Lấy lịch làm việc hôm nay
         $today = Carbon::now()->dayOfWeek;

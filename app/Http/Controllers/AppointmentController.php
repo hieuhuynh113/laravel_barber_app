@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Notification;
 use App\Models\User;
 use App\Notifications\NewAppointmentNotification;
+use App\Notifications\BarberAppointmentNotification;
 
 class AppointmentController extends Controller
 {
@@ -475,7 +476,16 @@ class AppointmentController extends Controller
             Notification::send($admins, new NewAppointmentNotification($appointment));
             \Log::info("Thông báo lịch hẹn mới đã được gửi đến admin cho lịch hẹn {$bookingCode}");
         } catch (\Exception $e) {
-            \Log::error("Không thể gửi thông báo lịch hẹn mới: " . $e->getMessage());
+            \Log::error("Không thể gửi thông báo lịch hẹn mới đến admin: " . $e->getMessage());
+        }
+
+        // Gửi thông báo cho barber về lịch hẹn mới
+        try {
+            $barberUser = $barber->user;
+            $barberUser->notify(new BarberAppointmentNotification($appointment, 'new'));
+            \Log::info("Thông báo lịch hẹn mới đã được gửi đến barber {$barberUser->name} cho lịch hẹn {$bookingCode}");
+        } catch (\Exception $e) {
+            \Log::error("Không thể gửi thông báo lịch hẹn mới đến barber: " . $e->getMessage());
         }
 
         // Đánh dấu lịch hẹn đã được tạo

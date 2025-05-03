@@ -4,6 +4,7 @@
 
 @section('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <link rel="stylesheet" href="{{ asset('css/barber-dashboard.css') }}">
 <style>
     .stats-card {
@@ -26,6 +27,66 @@
 
     .notifications-card .card-body, .schedule-card .card-body {
         padding: 1.5rem;
+    }
+
+    /* Cải thiện giao diện thông báo */
+    .notification-item {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        border-left: 4px solid #3498db;
+        background-color: #f8f9fa;
+        transition: all 0.2s ease;
+    }
+
+    .notification-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .notification-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .notification-header {
+        margin-bottom: 8px;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .notification-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+        margin-left: 5px;
+    }
+
+    .notification-time {
+        font-size: 0.8rem;
+        color: #7f8c8d;
+    }
+
+    .notification-content {
+        color: #34495e;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+    }
+
+    .notification-actions {
+        text-align: right;
+    }
+
+    .notification-link {
+        font-size: 0.85rem;
+        color: #3498db;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .notification-link:hover {
+        text-decoration: underline;
     }
 
     .notification-item {
@@ -61,7 +122,28 @@
 
     .notification-content {
         color: #34495e;
-        margin-bottom: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .notification-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+        margin-left: 0.5rem;
+        vertical-align: middle;
+    }
+
+    .notification-actions {
+        margin-top: 0.5rem;
+    }
+
+    .notification-link {
+        color: #3498db;
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+
+    .notification-link:hover {
+        text-decoration: underline;
     }
 
     .schedule-info {
@@ -116,6 +198,32 @@
         font-size: 3rem;
         color: #bdc3c7;
         margin-bottom: 1rem;
+    }
+
+    /* Tối ưu hiệu suất modal */
+    .modal-content {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 1rem 1.5rem;
+    }
+
+    .modal-footer {
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 1rem 1.5rem;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    /* Tối ưu hiệu suất tooltip */
+    .tooltip {
+        pointer-events: none;
     }
 </style>
 @endsection
@@ -197,120 +305,105 @@
                     <div class="appointments-card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Lịch hẹn sắp tới</h5>
-                            <a href="{{ route('barber.appointments.index') }}" class="btn btn-sm btn-outline-light"><i class="fas fa-external-link-alt me-1"></i>Xem tất cả</a>
+                            <a href="{{ route('barber.appointments.index') }}" class="btn btn-sm btn-outline-light" title="Xem tất cả lịch hẹn">
+                                <i class="fas fa-external-link-alt"></i>
+                                <span>Xem tất cả</span>
+                            </a>
                         </div>
-                <div class="card-body">
-                    @if($upcomingAppointments->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table appointments-table">
-                                <thead>
-                                    <tr>
-                                        <th><i class="fas fa-user me-2"></i>Khách hàng</th>
-                                        <th><i class="fas fa-calendar me-2"></i>Ngày</th>
-                                        <th><i class="fas fa-clock me-2"></i>Giờ</th>
-                                        <th><i class="fas fa-cut me-2"></i>Dịch vụ</th>
-                                        <th><i class="fas fa-info-circle me-2"></i>Trạng thái</th>
-                                        <th><i class="fas fa-cog me-2"></i>Tùy chọn</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($upcomingAppointments as $appointment)
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar me-2 bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                        <i class="fas fa-user text-primary"></i>
-                                                    </div>
-                                                    <div>
-                                                        <h6 class="mb-0">{{ $appointment->customer_name ?? ($appointment->user->name ?? 'Khách hàng') }}</h6>
-                                                        <small class="text-muted">{{ $appointment->customer_phone ?? 'Không có số điện thoại' }}</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d/m/Y') }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($appointment->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($appointment->end_time)->format('H:i') }}</td>
-                                            <td>
-                                                @if(isset($appointment->services) && count($appointment->services) > 0)
-                                                    @foreach($appointment->services as $service)
-                                                        <span class="service-badge">{{ $service->name }}</span>
-                                                    @endforeach
-                                                @else
-                                                    <span class="text-muted">Chưa có dịch vụ</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if($appointment->status == 'pending')
-                                                    <span class="status-badge bg-warning text-dark"><i class="fas fa-clock me-1"></i>Chờ xác nhận</span>
-                                                @elseif($appointment->status == 'confirmed')
-                                                    <span class="status-badge bg-primary"><i class="fas fa-check me-1"></i>Đã xác nhận</span>
-                                                @elseif($appointment->status == 'completed')
-                                                    <span class="status-badge bg-success"><i class="fas fa-check-double me-1"></i>Hoàn thành</span>
-                                                @elseif($appointment->status == 'canceled')
-                                                    <span class="status-badge bg-danger"><i class="fas fa-times me-1"></i>Đã hủy</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <a href="{{ route('barber.appointments.show', $appointment->id) }}" class="btn btn-sm btn-info me-1">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                @if($appointment->status == 'confirmed')
-                                                    <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#completeModal{{ $appointment->id }}">
-                                                        <i class="fas fa-check"></i>
-                                                    </button>
-
-                                                    <!-- Modal xác nhận hoàn thành -->
-                                                    <div class="modal fade" id="completeModal{{ $appointment->id }}" tabindex="-1" aria-labelledby="completeModalLabel{{ $appointment->id }}" aria-hidden="true">
-                                                        <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="completeModalLabel{{ $appointment->id }}">Xác nhận hoàn thành lịch hẹn</h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                </div>
-                                                                <form action="{{ route('barber.appointments.complete', $appointment->id) }}" method="POST">
-                                                                    @csrf
-                                                                    <div class="modal-body">
-                                                                        <p>Bạn đang chuyển trạng thái lịch hẹn sang "Hoàn thành". Hệ thống sẽ tạo hóa đơn tự động.</p>
-                                                                        <p>Vui lòng chọn trạng thái thanh toán:</p>
-
-                                                                        <div class="form-check mb-3">
-                                                                            <input class="form-check-input" type="radio" name="payment_status" id="payment-pending-{{ $appointment->id }}" value="pending" checked>
-                                                                            <label class="form-check-label" for="payment-pending-{{ $appointment->id }}">
-                                                                                Chưa thanh toán
-                                                                            </label>
-                                                                        </div>
-
-                                                                        <div class="form-check">
-                                                                            <input class="form-check-input" type="radio" name="payment_status" id="payment-paid-{{ $appointment->id }}" value="paid">
-                                                                            <label class="form-check-label" for="payment-paid-{{ $appointment->id }}">
-                                                                                Đã thanh toán
-                                                                            </label>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                                                        <button type="submit" class="btn btn-success">Xác nhận</button>
-                                                                    </div>
-                                                                </form>
+                        <div class="card-body">
+                            @if($upcomingAppointments->count() > 0)
+                                <div class="table-responsive">
+                                    <table class="table appointments-table">
+                                        <thead>
+                                            <tr>
+                                                <th><i class="fas fa-user me-2"></i>Khách hàng</th>
+                                                <th><i class="fas fa-calendar me-2"></i>Ngày</th>
+                                                <th><i class="fas fa-clock me-2"></i>Giờ</th>
+                                                <th><i class="fas fa-cut me-2"></i>Dịch vụ</th>
+                                                <th><i class="fas fa-info-circle me-2"></i>Trạng thái</th>
+                                                <th><i class="fas fa-cog me-2"></i>Tùy chọn</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($upcomingAppointments as $appointment)
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="avatar">
+                                                                <i class="fas fa-user"></i>
+                                                            </div>
+                                                            <div>
+                                                                <h6 class="mb-0">{{ $appointment->customer_name ?? ($appointment->user->name ?? 'Khách hàng') }}</h6>
+                                                                <small class="text-muted">{{ $appointment->customer_phone ?? 'Không có số điện thoại' }}</small>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                                    </td>
+                                                    <td>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d/m/Y') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($appointment->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($appointment->end_time)->format('H:i') }}</td>
+                                                    <td>
+                                                        @if(isset($appointment->services) && count($appointment->services) > 0)
+                                                            @foreach($appointment->services as $service)
+                                                                <span class="service-badge" title="{{ $service->name }}">{{ $service->name }}</span>
+                                                            @endforeach
+                                                        @else
+                                                            <span class="text-muted">Chưa có dịch vụ</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($appointment->status == 'pending')
+                                                            <span class="status-badge bg-warning text-dark" title="Đang chờ xác nhận">
+                                                                <i class="fas fa-clock me-1"></i>Chờ xác nhận
+                                                            </span>
+                                                        @elseif($appointment->status == 'confirmed')
+                                                            <span class="status-badge bg-primary" title="Đã xác nhận lịch hẹn">
+                                                                <i class="fas fa-check me-1"></i>Đã xác nhận
+                                                            </span>
+                                                        @elseif($appointment->status == 'completed')
+                                                            <span class="status-badge bg-success" title="Đã hoàn thành lịch hẹn">
+                                                                <i class="fas fa-check-double me-1"></i>Hoàn thành
+                                                            </span>
+                                                        @elseif($appointment->status == 'canceled')
+                                                            <span class="status-badge bg-danger" title="Lịch hẹn đã bị hủy">
+                                                                <i class="fas fa-times me-1"></i>Đã hủy
+                                                            </span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex">
+                                                            <a href="{{ route('barber.appointments.show', $appointment->id) }}" class="btn btn-sm btn-info me-1" title="Xem chi tiết lịch hẹn">
+                                                                <i class="fas fa-eye"></i>
+                                                            </a>
+                                                            @if($appointment->status == 'pending')
+                                                                <a href="{{ route('barber.appointments.show', $appointment->id) }}" class="btn btn-sm btn-primary me-1" title="Xác nhận lịch hẹn">
+                                                                    <i class="fas fa-check-circle"></i>
+                                                                </a>
+                                                            @elseif($appointment->status == 'confirmed')
+                                                                <button type="button" class="btn btn-sm btn-success"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#completeModal"
+                                                                    data-appointment-id="{{ $appointment->id }}"
+                                                                    data-appointment-route="{{ route('barber.appointments.complete', $appointment->id) }}"
+                                                                    title="Đánh dấu hoàn thành">
+                                                                    <i class="fas fa-check"></i>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @else
+                                <div class="empty-state">
+                                    <i class="fas fa-calendar-times"></i>
+                                    <h5>Không có lịch hẹn sắp tới</h5>
+                                    <p class="text-muted">Bạn không có lịch hẹn nào trong thời gian tới.</p>
+                                </div>
+                            @endif
                         </div>
-                    @else
-                        <div class="empty-state">
-                            <i class="fas fa-calendar-times"></i>
-                            <h5>Không có lịch hẹn sắp tới</h5>
-                            <p class="text-muted">Bạn không có lịch hẹn nào trong thời gian tới.</p>
-                        </div>
-                    @endif
+                    </div>
                 </div>
-            </div>
-        </div>
 
         <div class="col-md-4">
             <!-- Thông báo mới -->
@@ -322,14 +415,26 @@
                 <div class="card-body">
                     @if(auth()->user()->unreadNotifications->count() > 0)
                         <div class="notifications-list">
-                            @foreach(auth()->user()->unreadNotifications->take(5) as $notification)
+                            @foreach(auth()->user()->unreadNotifications->take(3) as $notification)
                                 <div class="notification-item">
                                     <div class="notification-header">
                                         <h6 class="notification-title">
                                             @if(str_contains($notification->type, 'Appointment'))
                                                 Lịch hẹn
+                                                @if(isset($notification->data['type']) && $notification->data['type'] == 'new')
+                                                    <span class="badge bg-primary notification-badge">Mới</span>
+                                                @elseif(isset($notification->data['type']) && $notification->data['type'] == 'confirmed')
+                                                    <span class="badge bg-success notification-badge">Đã xác nhận</span>
+                                                @elseif(isset($notification->data['type']) && $notification->data['type'] == 'canceled')
+                                                    <span class="badge bg-danger notification-badge">Đã hủy</span>
+                                                @endif
                                             @elseif(str_contains($notification->type, 'Schedule'))
                                                 Lịch làm việc
+                                                @if(isset($notification->data['status']) && $notification->data['status'] == 'approved')
+                                                    <span class="badge bg-success notification-badge">Đã duyệt</span>
+                                                @elseif(isset($notification->data['status']) && $notification->data['status'] == 'rejected')
+                                                    <span class="badge bg-danger notification-badge">Từ chối</span>
+                                                @endif
                                             @else
                                                 Thông báo
                                             @endif
@@ -339,8 +444,27 @@
                                     <p class="notification-content">
                                         {{ $notification->data['message'] ?? 'Không có nội dung' }}
                                     </p>
+                                    <div class="notification-actions">
+                                        @if(str_contains($notification->type, 'Appointment') && isset($notification->data['appointment_id']))
+                                            <a href="{{ route('barber.appointments.show', $notification->data['appointment_id']) }}" class="notification-link">
+                                                <i class="fas fa-eye me-1"></i>Xem chi tiết
+                                            </a>
+                                        @elseif(str_contains($notification->type, 'Schedule'))
+                                            <a href="{{ route('barber.schedules.index') }}" class="notification-link">
+                                                <i class="fas fa-eye me-1"></i>Xem lịch làm việc
+                                            </a>
+                                        @endif
+                                    </div>
                                 </div>
                             @endforeach
+
+                            @if(auth()->user()->unreadNotifications->count() > 3)
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('barber.notifications.index') }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-bell me-1"></i> Xem thêm {{ auth()->user()->unreadNotifications->count() - 3 }} thông báo
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     @else
                         <div class="empty-state">
@@ -395,30 +519,83 @@
         </div>
     </div>
 </div>
+
+<!-- Modal xác nhận hoàn thành chung -->
+<div class="modal fade" id="completeModal" tabindex="-1" aria-labelledby="completeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="completeModalLabel">Xác nhận hoàn thành lịch hẹn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="completeForm" action="" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Bạn đang chuyển trạng thái lịch hẹn sang "Hoàn thành". Hệ thống sẽ tạo hóa đơn tự động.
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Trạng thái thanh toán:</label>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="payment_status" id="payment-pending" value="pending" checked>
+                            <label class="form-check-label" for="payment-pending">
+                                <i class="fas fa-clock text-warning me-1"></i> Chưa thanh toán
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="payment_status" id="payment-paid" value="paid">
+                            <label class="form-check-label" for="payment-paid">
+                                <i class="fas fa-check-circle text-success me-1"></i> Đã thanh toán
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Hủy
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-1"></i> Xác nhận
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
 <script>
     $(document).ready(function() {
-        // Thêm hiệu ứng cho các card thống kê
-        $('.stats-card').hover(
-            function() {
-                $(this).addClass('shadow-lg').css('transform', 'translateY(-5px)');
-            },
-            function() {
-                $(this).removeClass('shadow-lg').css('transform', 'translateY(0)');
-            }
-        );
+        // Xử lý sự kiện khi modal được hiển thị
+        $('#completeModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget); // Nút được nhấn
+            var appointmentId = button.data('appointment-id'); // Lấy thông tin từ data-* attributes
+            var appointmentRoute = button.data('appointment-route');
 
-        // Thêm hiệu ứng cho các thông báo
-        $('.notification-item').hover(
-            function() {
-                $(this).addClass('shadow-sm').css('transform', 'translateY(-2px)');
-            },
-            function() {
-                $(this).removeClass('shadow-sm').css('transform', 'translateY(0)');
-            }
-        );
+            console.log("Modal opening for appointment ID:", appointmentId);
+            console.log("Route:", appointmentRoute);
+
+            // Cập nhật action của form
+            $('#completeForm').attr('action', appointmentRoute);
+        });
+
+        // Khởi tạo tooltip
+        $('[title]').tooltip({
+            placement: 'top',
+            trigger: 'hover',
+            delay: { show: 300, hide: 0 }
+        });
+
+        // Tắt tooltip khi click vào nút
+        $('.appointments-table .btn-sm').on('click', function() {
+            $(this).tooltip('hide');
+        });
     });
 </script>
 @endsection

@@ -209,8 +209,15 @@
 <div class="container dashboard-container">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <h1 class="dashboard-title">Lịch làm việc</h1>
-            <p class="dashboard-subtitle">Xem lịch làm việc hiện tại và gửi yêu cầu thay đổi</p>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="dashboard-title">Lịch làm việc</h1>
+                    <p class="dashboard-subtitle">Xem lịch làm việc hiện tại và gửi yêu cầu thay đổi</p>
+                </div>
+                <a href="{{ route('barber.dashboard') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại Dashboard
+                </a>
+            </div>
 
             @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">

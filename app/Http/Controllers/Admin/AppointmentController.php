@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use App\Notifications\BarberAppointmentNotification;
 
 class AppointmentController extends Controller
 {
@@ -283,8 +284,13 @@ class AppointmentController extends Controller
                 Mail::to($appointment->email)
                     ->send(new \App\Mail\AppointmentConfirmed($appointment));
                 Log::info("Email xác nhận lịch hẹn đã được gửi đến {$appointment->email} cho lịch hẹn {$appointment->booking_code}");
+
+                // Gửi thông báo cho barber về lịch hẹn đã được xác nhận
+                $barberUser = $appointment->barber->user;
+                $barberUser->notify(new BarberAppointmentNotification($appointment, 'confirmed'));
+                Log::info("Thông báo xác nhận lịch hẹn đã được gửi đến barber {$barberUser->name} cho lịch hẹn {$appointment->booking_code}");
             } catch (\Exception $e) {
-                Log::error("Không thể gửi email xác nhận lịch hẹn: " . $e->getMessage());
+                Log::error("Không thể gửi email/thông báo xác nhận lịch hẹn: " . $e->getMessage());
             }
         }
 
@@ -297,6 +303,15 @@ class AppointmentController extends Controller
 
             if ($timeSlot) {
                 $timeSlot->decrementBookedCount();
+            }
+
+            // Gửi thông báo cho barber về lịch hẹn đã bị hủy
+            try {
+                $barberUser = $appointment->barber->user;
+                $barberUser->notify(new BarberAppointmentNotification($appointment, 'canceled'));
+                Log::info("Thông báo hủy lịch hẹn đã được gửi đến barber {$barberUser->name} cho lịch hẹn {$appointment->booking_code}");
+            } catch (\Exception $e) {
+                Log::error("Không thể gửi thông báo hủy lịch hẹn đến barber: " . $e->getMessage());
             }
         }
 
