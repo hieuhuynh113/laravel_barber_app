@@ -1,190 +1,35 @@
--- Barber Shop Database SQL Script
--- Tạo bởi Augment Agent
--- Phiên bản: 2.0 (Cập nhật ngày 15/04/2025)
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Máy chủ: 127.0.0.1
+-- Thời gian đã tạo: Th5 06, 2025 lúc 02:21 PM
+-- Phiên bản máy phục vụ: 10.4.32-MariaDB
+-- Phiên bản PHP: 8.2.12
 
--- Hướng dẫn sử dụng:
--- 1. Tạo database mới: CREATE DATABASE barber_shop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
--- 2. Sử dụng database: USE barber_shop;
--- 3. Chạy file SQL này để tạo cấu trúc cơ sở dữ liệu
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+SET FOREIGN_KEY_CHECKS=0;
 
--- Lưu ý: File này sẽ xóa tất cả các bảng hiện có trong database và tạo lại từ đầu
--- Nếu bạn muốn giữ lại dữ liệu hiện tại, hãy sao lưu trước khi chạy file này
 
--- Cập nhật trong phiên bản 2.0:
--- 1. Thêm trường appointment_id vào bảng reviews để liên kết với lịch hẹn
--- 2. Cập nhật cấu trúc bảng invoices để phù hợp với nghiệp vụ mới
--- 3. Thêm bảng invoice_service để lưu trữ thông tin chi tiết về dịch vụ trong hóa đơn
--- 4. Cập nhật các phương thức thanh toán trong bảng appointments và invoices
--- 5. Loại bỏ dữ liệu mẫu, chỉ giữ lại cấu trúc cơ sở dữ liệu
--- 6. Loại bỏ bảng personal_access_tokens vì dự án không sử dụng API
--- 7. Thêm comment giải thích ý nghĩa của từng bảng
--- 8. Thêm bảng payment_receipts để lưu trữ biên lai thanh toán
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
--- Đặt charset và collation
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
+--
+-- Cơ sở dữ liệu: `laravel_barber_app`
+--
 
--- Xóa các bảng nếu đã tồn tại (theo thứ tự ngược lại để tránh lỗi khóa ngoại)
-DROP TABLE IF EXISTS `time_slots`;
-DROP TABLE IF EXISTS `email_verifications`;
-DROP TABLE IF EXISTS `reviews`;
-DROP TABLE IF EXISTS `invoice_product`;
-DROP TABLE IF EXISTS `invoice_service`;
-DROP TABLE IF EXISTS `appointment_services`;
-DROP TABLE IF EXISTS `invoices`;
-DROP TABLE IF EXISTS `appointments`;
-DROP TABLE IF EXISTS `barber_schedules`;
-DROP TABLE IF EXISTS `barbers`;
-DROP TABLE IF EXISTS `products`;
-DROP TABLE IF EXISTS `services`;
-DROP TABLE IF EXISTS `news`;
-DROP TABLE IF EXISTS `contacts`;
--- Bỏ bảng settings vì không còn sử dụng
--- DROP TABLE IF EXISTS `settings`;
-DROP TABLE IF EXISTS `categories`;
-DROP TABLE IF EXISTS `users`;
-DROP TABLE IF EXISTS `password_reset_tokens`;
--- Bảng personal_access_tokens đã được loại bỏ vì dự án không sử dụng API
--- DROP TABLE IF EXISTS `personal_access_tokens`;
+-- --------------------------------------------------------
 
--- Tạo bảng users
--- Bảng này lưu trữ thông tin người dùng trong hệ thống, bao gồm admin, thợ cắt tóc và khách hàng
--- Mỗi người dùng có thông tin cơ bản như tên, email, mật khẩu, vai trò, số điện thoại, địa chỉ, và trạng thái
-CREATE TABLE `users` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` enum('admin','barber','customer') NOT NULL DEFAULT 'customer',
-  `phone` varchar(20) DEFAULT NULL,
-  `address` text DEFAULT NULL,
-  `avatar` varchar(255) DEFAULT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT 1,
-  `remember_token` varchar(100) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+--
+-- Cấu trúc bảng cho bảng `appointments`
+--
 
--- Tạo bảng password_reset_tokens
--- Bảng này lưu trữ các token đặt lại mật khẩu
--- Sử dụng cho chức năng đặt lại mật khẩu khi người dùng quên mật khẩu
-CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Bảng personal_access_tokens đã được loại bỏ vì không cần thiết cho dự án
--- Dự án không sử dụng API nên không cần lưu trữ các token truy cập
-
--- Tạo bảng categories
--- Bảng này lưu trữ thông tin danh mục
--- Sử dụng cho phân loại dịch vụ, sản phẩm và tin tức
--- Mỗi danh mục có tên, slug, loại (service, product, news) và trạng thái
-CREATE TABLE `categories` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `slug` varchar(255) NOT NULL,
-  `type` enum('service','product','news') NOT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT 1,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `categories_slug_unique` (`slug`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tạo bảng services
--- Bảng này lưu trữ thông tin dịch vụ cắt tóc
--- Mỗi dịch vụ thuộc về một danh mục
--- Lưu trữ thông tin như tên, slug, mô tả, giá, thời gian thực hiện, hình ảnh và trạng thái
-CREATE TABLE `services` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `category_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `slug` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `price` decimal(10,2) NOT NULL,
-  `duration` int(11) NOT NULL COMMENT 'Duration in minutes',
-  `image` varchar(255) DEFAULT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT 1,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `services_slug_unique` (`slug`),
-  KEY `services_category_id_foreign` (`category_id`),
-  CONSTRAINT `services_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tạo bảng products
--- Bảng này lưu trữ thông tin sản phẩm chăm sóc tóc
--- Mỗi sản phẩm thuộc về một danh mục
--- Lưu trữ thông tin như tên, slug, mô tả, giá, số lượng tồn kho, hình ảnh và trạng thái
-CREATE TABLE `products` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `category_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `slug` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `price` decimal(10,2) NOT NULL,
-  `stock` int(11) NOT NULL DEFAULT 0,
-  `image` varchar(255) DEFAULT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT 1,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `products_slug_unique` (`slug`),
-  KEY `products_category_id_foreign` (`category_id`),
-  CONSTRAINT `products_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tạo bảng barbers
--- Bảng này lưu trữ thông tin chi tiết về thợ cắt tóc
--- Mỗi thợ cắt tóc liên kết với một người dùng trong bảng users (vai trò 'barber')
--- Lưu trữ thông tin như mô tả, kinh nghiệm, chuyên môn và trạng thái
-CREATE TABLE `barbers` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
-  `description` text DEFAULT NULL,
-  `experience` int(11) NOT NULL DEFAULT 0 COMMENT 'Experience in years',
-  `specialty` varchar(255) DEFAULT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT 1,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `barbers_user_id_foreign` (`user_id`),
-  CONSTRAINT `barbers_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tạo bảng barber_schedules
--- Bảng này lưu trữ lịch làm việc của thợ cắt tóc
--- Mỗi bản ghi đại diện cho một ngày trong tuần với thời gian bắt đầu và kết thúc
--- Cũng lưu trữ thông tin về ngày nghỉ và số lượng lịch hẹn tối đa có thể nhận trong ngày
-CREATE TABLE `barber_schedules` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `barber_id` bigint(20) UNSIGNED NOT NULL,
-  `day_of_week` tinyint(4) NOT NULL COMMENT '0: Sunday, 1-6: Monday to Saturday',
-  `start_time` time NOT NULL,
-  `end_time` time NOT NULL,
-  `is_day_off` tinyint(4) NOT NULL DEFAULT 0,
-  `max_appointments` int(11) NOT NULL DEFAULT 3,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `barber_schedules_barber_id_foreign` (`barber_id`),
-  CONSTRAINT `barber_schedules_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tạo bảng appointments
--- Bảng này lưu trữ thông tin lịch hẹn cắt tóc
--- Mỗi lịch hẹn liên kết với một khách hàng và một thợ cắt tóc
--- Lưu trữ thông tin như ngày hẹn, giờ bắt đầu, giờ kết thúc, trạng thái, mã đặt lịch
--- Cũng lưu trữ thông tin thanh toán và ghi chú
 CREATE TABLE `appointments` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED DEFAULT NULL,
   `barber_id` bigint(20) UNSIGNED NOT NULL,
   `appointment_date` date NOT NULL,
@@ -199,95 +44,244 @@ CREATE TABLE `appointments` (
   `payment_method` enum('cash','bank_transfer') NOT NULL DEFAULT 'cash',
   `payment_status` enum('pending','paid') NOT NULL DEFAULT 'pending',
   `notes` text DEFAULT NULL,
+  `cancel_reason` varchar(255) DEFAULT NULL,
+  `canceled_by` enum('admin','user') DEFAULT NULL,
+  `canceled_by_id` bigint(20) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `appointments_booking_code_unique` (`booking_code`),
-  KEY `appointments_user_id_foreign` (`user_id`),
-  KEY `appointments_barber_id_foreign` (`barber_id`),
-  CONSTRAINT `appointments_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `appointments_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+  `discount_percent` decimal(5,2) DEFAULT NULL,
+  `original_total` decimal(10,2) DEFAULT NULL,
+  `discounted_total` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tạo bảng appointment_services
--- Bảng trung gian liên kết giữa lịch hẹn và dịch vụ
--- Mỗi lịch hẹn có thể bao gồm nhiều dịch vụ
--- Lưu trữ giá dịch vụ tại thời điểm đặt lịch
+--
+-- Đang đổ dữ liệu cho bảng `appointments`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `appointment_services`
+--
+
 CREATE TABLE `appointment_services` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `appointment_id` bigint(20) UNSIGNED NOT NULL,
   `service_id` bigint(20) UNSIGNED NOT NULL,
   `price` decimal(10,2) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `appointment_services_appointment_id_foreign` (`appointment_id`),
-  KEY `appointment_services_service_id_foreign` (`service_id`),
-  CONSTRAINT `appointment_services_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `appointment_services_service_id_foreign` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tạo bảng invoices
--- Bảng này lưu trữ thông tin hóa đơn
--- Mỗi hóa đơn có thể liên kết với một lịch hẹn, một khách hàng và một thợ cắt tóc
--- Lưu trữ thông tin như mã hóa đơn, tạm tính, giảm giá, thuế, tổng tiền
--- Cũng lưu trữ phương thức thanh toán, trạng thái thanh toán, trạng thái hóa đơn và ghi chú
+--
+-- Đang đổ dữ liệu cho bảng `appointment_services`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `barbers`
+--
+
+CREATE TABLE `barbers` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `description` text DEFAULT NULL,
+  `experience` int(11) NOT NULL DEFAULT 0 COMMENT 'Experience in years',
+  `specialty` varchar(255) DEFAULT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `barbers`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `barber_schedules`
+--
+
+CREATE TABLE `barber_schedules` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `barber_id` bigint(20) UNSIGNED NOT NULL,
+  `day_of_week` tinyint(4) NOT NULL COMMENT '0: Sunday, 1-6: Monday to Saturday',
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `is_day_off` tinyint(4) NOT NULL DEFAULT 0,
+  `max_appointments` int(11) NOT NULL DEFAULT 3,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `barber_schedules`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `cache`
+--
+
+CREATE TABLE `cache` (
+  `key` varchar(255) NOT NULL,
+  `value` mediumtext NOT NULL,
+  `expiration` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `cache_locks`
+--
+
+CREATE TABLE `cache_locks` (
+  `key` varchar(255) NOT NULL,
+  `owner` varchar(255) NOT NULL,
+  `expiration` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `categories`
+--
+
+CREATE TABLE `categories` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `icon` varchar(255) DEFAULT NULL,
+  `type` enum('service','product','news') NOT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `categories`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `contacts`
+--
+
+CREATE TABLE `contacts` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `subject` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `reply` text DEFAULT NULL,
+  `replied_at` timestamp NULL DEFAULT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0: unread, 1: read',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `contacts`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `email_verifications`
+--
+
+CREATE TABLE `email_verifications` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `otp` varchar(6) NOT NULL,
+  `expires_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `failed_jobs`
+--
+
+CREATE TABLE `failed_jobs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `uuid` varchar(255) NOT NULL,
+  `connection` text NOT NULL,
+  `queue` text NOT NULL,
+  `payload` longtext NOT NULL,
+  `exception` longtext NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `failed_jobs`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `invoices`
+--
+
 CREATE TABLE `invoices` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `invoice_code` varchar(20) NOT NULL,
-  `appointment_id` bigint(20) UNSIGNED NULL,
-  `user_id` bigint(20) UNSIGNED NULL,
-  `barber_id` bigint(20) UNSIGNED NULL,
+  `appointment_id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `barber_id` bigint(20) UNSIGNED DEFAULT NULL,
   `invoice_number` varchar(20) NOT NULL,
-  `subtotal` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `subtotal` decimal(10,2) NOT NULL,
   `discount` decimal(10,2) NOT NULL DEFAULT 0.00,
   `tax` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `total_amount` decimal(10,2) NOT NULL,
+  `total` decimal(10,2) NOT NULL,
   `payment_method` enum('cash','bank_transfer','card') NOT NULL DEFAULT 'cash',
+  `total_amount` decimal(10,2) NOT NULL,
   `payment_status` enum('pending','paid') NOT NULL DEFAULT 'pending',
-  `status` enum('pending','confirmed','completed','canceled') NOT NULL DEFAULT 'pending',
+  `status` enum('pending','completed','canceled') NOT NULL DEFAULT 'completed',
   `notes` text DEFAULT NULL,
+  `email_sent` tinyint(1) NOT NULL DEFAULT 0,
+  `email_sent_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `invoices_invoice_code_unique` (`invoice_code`),
-  UNIQUE KEY `invoices_invoice_number_unique` (`invoice_number`),
-  KEY `invoices_appointment_id_foreign` (`appointment_id`),
-  KEY `invoices_user_id_foreign` (`user_id`),
-  KEY `invoices_barber_id_foreign` (`barber_id`),
-  CONSTRAINT `invoices_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `invoices_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `invoices_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`) ON DELETE SET NULL
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tạo bảng invoice_service
--- Bảng trung gian liên kết giữa hóa đơn và dịch vụ
--- Mỗi hóa đơn có thể bao gồm nhiều dịch vụ
--- Lưu trữ thông tin như số lượng, giá, giảm giá và thành tiền của từng dịch vụ trong hóa đơn
-CREATE TABLE `invoice_service` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `invoice_id` bigint(20) UNSIGNED NOT NULL,
-  `service_id` bigint(20) UNSIGNED NOT NULL,
-  `quantity` int(11) NOT NULL DEFAULT 1,
-  `price` decimal(10,2) NOT NULL,
-  `discount` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `subtotal` decimal(10,2) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `invoice_service_invoice_id_foreign` (`invoice_id`),
-  KEY `invoice_service_service_id_foreign` (`service_id`),
-  CONSTRAINT `invoice_service_invoice_id_foreign` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `invoice_service_service_id_foreign` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+--
+-- Đang đổ dữ liệu cho bảng `invoices`
+--
 
--- Tạo bảng invoice_product
--- Bảng trung gian liên kết giữa hóa đơn và sản phẩm
--- Mỗi hóa đơn có thể bao gồm nhiều sản phẩm
--- Lưu trữ thông tin như số lượng, giá, giảm giá và thành tiền của từng sản phẩm trong hóa đơn
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `invoice_product`
+--
+
 CREATE TABLE `invoice_product` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `invoice_id` bigint(20) UNSIGNED NOT NULL,
   `product_id` bigint(20) UNSIGNED NOT NULL,
   `quantity` int(11) NOT NULL DEFAULT 1,
@@ -295,21 +289,106 @@ CREATE TABLE `invoice_product` (
   `discount` decimal(10,2) NOT NULL DEFAULT 0.00,
   `subtotal` decimal(10,2) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `invoice_product_invoice_id_foreign` (`invoice_id`),
-  KEY `invoice_product_product_id_foreign` (`product_id`),
-  CONSTRAINT `invoice_product_invoice_id_foreign` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `invoice_product_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tạo bảng news
--- Bảng này lưu trữ thông tin tin tức và bài viết
--- Mỗi bài viết thuộc về một danh mục và được tạo bởi một người dùng
--- Lưu trữ thông tin như tiêu đề, slug, nội dung, hình ảnh, trạng thái
--- Cũng lưu trữ thông tin về việc có được đề xuất hay không và số lượt xem
+--
+-- Đang đổ dữ liệu cho bảng `invoice_product`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `invoice_service`
+--
+
+CREATE TABLE `invoice_service` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `invoice_id` bigint(20) UNSIGNED NOT NULL,
+  `service_id` bigint(20) UNSIGNED NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `price` decimal(10,2) NOT NULL,
+  `discount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `subtotal` decimal(10,2) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `invoice_service`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `jobs`
+--
+
+CREATE TABLE `jobs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `queue` varchar(255) NOT NULL,
+  `payload` longtext NOT NULL,
+  `attempts` tinyint(3) UNSIGNED NOT NULL,
+  `reserved_at` int(10) UNSIGNED DEFAULT NULL,
+  `available_at` int(10) UNSIGNED NOT NULL,
+  `created_at` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `jobs`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `job_batches`
+--
+
+CREATE TABLE `job_batches` (
+  `id` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `total_jobs` int(11) NOT NULL,
+  `pending_jobs` int(11) NOT NULL,
+  `failed_jobs` int(11) NOT NULL,
+  `failed_job_ids` longtext NOT NULL,
+  `options` mediumtext DEFAULT NULL,
+  `cancelled_at` int(11) DEFAULT NULL,
+  `created_at` int(11) NOT NULL,
+  `finished_at` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `migrations`
+--
+
+CREATE TABLE `migrations` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `migration` varchar(255) NOT NULL,
+  `batch` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `migrations`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `news`
+--
+
 CREATE TABLE `news` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `category_id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
@@ -320,117 +399,700 @@ CREATE TABLE `news` (
   `is_featured` tinyint(1) NOT NULL DEFAULT 0,
   `view_count` int(11) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `news_slug_unique` (`slug`),
-  KEY `news_category_id_foreign` (`category_id`),
-  KEY `news_user_id_foreign` (`user_id`),
-  CONSTRAINT `news_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `news_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tạo bảng contacts
--- Bảng này lưu trữ thông tin liên hệ từ khách hàng
--- Lưu trữ thông tin như tên, email, số điện thoại, tiêu đề, nội dung
--- Cũng lưu trữ trạng thái đã đọc và phản hồi từ admin
-CREATE TABLE `contacts` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
+--
+-- Đang đổ dữ liệu cho bảng `news`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` char(36) NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `notifiable_type` varchar(255) NOT NULL,
+  `notifiable_id` bigint(20) UNSIGNED NOT NULL,
+  `data` text NOT NULL,
+  `read_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `notifications`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `password_reset_tokens`
+--
+
+CREATE TABLE `password_reset_tokens` (
   `email` varchar(255) NOT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `subject` varchar(255) NOT NULL,
-  `message` text NOT NULL,
-  `reply` text DEFAULT NULL,
-  `replied_at` timestamp NULL DEFAULT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0: unread, 1: read',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `token` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Bảng settings đã được loại bỏ vì không còn sử dụng
--- Các giá trị cài đặt đã được thay thế bằng các giá trị mặc định trong code
+-- --------------------------------------------------------
 
--- Tạo bảng reviews
--- Bảng này lưu trữ đánh giá của khách hàng
--- Mỗi đánh giá liên kết với một khách hàng, một thợ cắt tóc, một dịch vụ và một lịch hẹn
--- Lưu trữ thông tin như điểm đánh giá, bình luận, hình ảnh, trạng thái
--- Cũng lưu trữ phản hồi từ admin
-CREATE TABLE `reviews` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
-  `barber_id` bigint(20) UNSIGNED NOT NULL,
-  `service_id` bigint(20) UNSIGNED NOT NULL,
-  `appointment_id` bigint(20) UNSIGNED NULL,
-  `rating` int(11) NOT NULL,
-  `comment` text DEFAULT NULL,
-  `images` json DEFAULT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT 1,
-  `admin_response` text DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `reviews_user_id_foreign` (`user_id`),
-  KEY `reviews_barber_id_foreign` (`barber_id`),
-  KEY `reviews_service_id_foreign` (`service_id`),
-  KEY `reviews_appointment_id_foreign` (`appointment_id`),
-  CONSTRAINT `reviews_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `reviews_service_id_foreign` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `reviews_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `reviews_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+--
+-- Cấu trúc bảng cho bảng `payment_receipts`
+--
 
--- Tạo bảng email_verifications
--- Bảng này lưu trữ thông tin xác thực email
--- Sử dụng cho quá trình đăng ký tài khoản với xác thực OTP
--- Lưu trữ thông tin như email, tên, mật khẩu, mã OTP và thời gian hết hạn
-CREATE TABLE `email_verifications` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `otp` varchar(6) NOT NULL,
-  `expires_at` timestamp NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email_verifications_email_unique` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tạo bảng time_slots
--- Bảng này lưu trữ thông tin các khung giờ có thể đặt lịch
--- Mỗi khung giờ liên kết với một thợ cắt tóc và một ngày cụ thể
--- Lưu trữ số lượng lịch hẹn đã đặt và số lượng lịch hẹn tối đa có thể nhận
-CREATE TABLE `time_slots` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `barber_id` bigint(20) UNSIGNED NOT NULL,
-  `date` date NOT NULL,
-  `time_slot` varchar(255) NOT NULL,
-  `booked_count` int(11) NOT NULL DEFAULT 0,
-  `max_bookings` int(11) NOT NULL DEFAULT 2,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `time_slots_barber_id_date_time_slot_unique` (`barber_id`,`date`,`time_slot`),
-  CONSTRAINT `time_slots_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tạo bảng payment_receipts
--- Bảng này lưu trữ thông tin biên lai thanh toán
--- Mỗi biên lai liên kết với một lịch hẹn
--- Lưu trữ thông tin như đường dẫn tệp, ghi chú, trạng thái và ghi chú của admin
 CREATE TABLE `payment_receipts` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `appointment_id` bigint(20) UNSIGNED NOT NULL,
   `file_path` varchar(255) NOT NULL,
   `notes` text DEFAULT NULL,
   `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
   `admin_notes` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `payment_receipts_appointment_id_foreign` (`appointment_id`),
-  CONSTRAINT `payment_receipts_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE CASCADE
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-SET FOREIGN_KEY_CHECKS = 1;
+--
+-- Đang đổ dữ liệu cho bảng `payment_receipts`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `personal_access_tokens`
+--
+
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `tokenable_type` varchar(255) NOT NULL,
+  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `abilities` text DEFAULT NULL,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `products`
+--
+
+CREATE TABLE `products` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `category_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `stock` int(11) NOT NULL DEFAULT 0,
+  `image` varchar(255) DEFAULT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `products`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `reviews`
+--
+
+CREATE TABLE `reviews` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `service_id` bigint(20) UNSIGNED NOT NULL,
+  `appointment_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `barber_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `rating` int(11) NOT NULL,
+  `comment` text DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `admin_response` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `reviews`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `schedule_change_requests`
+--
+
+CREATE TABLE `schedule_change_requests` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `barber_id` bigint(20) UNSIGNED NOT NULL,
+  `day_of_week` tinyint(4) NOT NULL COMMENT '0: Sunday, 1-6: Monday to Saturday',
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `is_day_off` tinyint(1) NOT NULL DEFAULT 0,
+  `reason` text NOT NULL,
+  `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `admin_notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `schedule_change_requests`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `services`
+--
+
+CREATE TABLE `services` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `category_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `duration` int(11) NOT NULL COMMENT 'Duration in minutes',
+  `image` varchar(255) DEFAULT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `services`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `time_slots`
+--
+
+CREATE TABLE `time_slots` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `barber_id` bigint(20) UNSIGNED NOT NULL,
+  `date` date NOT NULL,
+  `time_slot` varchar(255) NOT NULL,
+  `booked_count` int(11) NOT NULL DEFAULT 0,
+  `max_bookings` int(11) NOT NULL DEFAULT 2,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `time_slots`
+--
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `users`
+--
+
+CREATE TABLE `users` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('admin','barber','customer') NOT NULL DEFAULT 'customer',
+  `phone` varchar(20) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `avatar` varchar(255) DEFAULT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT 1,
+  `remember_token` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `remaining_free_haircuts` int(11) NOT NULL DEFAULT 0,
+  `remaining_free_skincare` int(11) NOT NULL DEFAULT 0,
+  `has_free_hair_products` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `role`, `phone`, `address`, `avatar`, `status`, `remember_token`, `created_at`, `updated_at`, `remaining_free_haircuts`, `remaining_free_skincare`, `has_free_hair_products`) VALUES
+(1, 'Admin', 'hieu.ht.63cntt@ntu.edu.vn', NULL, '$2y$10$JgCxd1ZQEilv/etCBVRNPOcK5mfATF8eWxsNZoEZuQ0HBMV2/Jn1W', 'admin', NULL, NULL, NULL, 1, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, 0, 0);
+
+
+
+--
+-- Chỉ mục cho các bảng đã đổ
+--
+
+--
+-- Chỉ mục cho bảng `appointments`
+--
+ALTER TABLE `appointments`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `appointments_booking_code_unique` (`booking_code`),
+  ADD KEY `appointments_user_id_foreign` (`user_id`),
+  ADD KEY `appointments_barber_id_foreign` (`barber_id`);
+
+--
+-- Chỉ mục cho bảng `appointment_services`
+--
+ALTER TABLE `appointment_services`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `appointment_services_appointment_id_foreign` (`appointment_id`),
+  ADD KEY `appointment_services_service_id_foreign` (`service_id`);
+
+--
+-- Chỉ mục cho bảng `barbers`
+--
+ALTER TABLE `barbers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `barbers_user_id_foreign` (`user_id`);
+
+--
+-- Chỉ mục cho bảng `barber_schedules`
+--
+ALTER TABLE `barber_schedules`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `barber_schedules_barber_id_foreign` (`barber_id`);
+
+--
+-- Chỉ mục cho bảng `cache`
+--
+ALTER TABLE `cache`
+  ADD PRIMARY KEY (`key`);
+
+--
+-- Chỉ mục cho bảng `cache_locks`
+--
+ALTER TABLE `cache_locks`
+  ADD PRIMARY KEY (`key`);
+
+--
+-- Chỉ mục cho bảng `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `categories_slug_unique` (`slug`);
+
+--
+-- Chỉ mục cho bảng `contacts`
+--
+ALTER TABLE `contacts`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `email_verifications`
+--
+ALTER TABLE `email_verifications`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email_verifications_email_unique` (`email`);
+
+--
+-- Chỉ mục cho bảng `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
+
+--
+-- Chỉ mục cho bảng `invoices`
+--
+ALTER TABLE `invoices`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `invoices_invoice_number_unique` (`invoice_number`),
+  ADD UNIQUE KEY `invoices_invoice_code_unique` (`invoice_code`),
+  ADD KEY `invoices_appointment_id_foreign` (`appointment_id`),
+  ADD KEY `invoices_user_id_foreign` (`user_id`),
+  ADD KEY `invoices_barber_id_foreign` (`barber_id`);
+
+--
+-- Chỉ mục cho bảng `invoice_product`
+--
+ALTER TABLE `invoice_product`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `invoice_product_invoice_id_foreign` (`invoice_id`),
+  ADD KEY `invoice_product_product_id_foreign` (`product_id`);
+
+--
+-- Chỉ mục cho bảng `invoice_service`
+--
+ALTER TABLE `invoice_service`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `invoice_service_invoice_id_foreign` (`invoice_id`),
+  ADD KEY `invoice_service_service_id_foreign` (`service_id`);
+
+--
+-- Chỉ mục cho bảng `jobs`
+--
+ALTER TABLE `jobs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `jobs_queue_index` (`queue`);
+
+--
+-- Chỉ mục cho bảng `job_batches`
+--
+ALTER TABLE `job_batches`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `migrations`
+--
+ALTER TABLE `migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `news`
+--
+ALTER TABLE `news`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `news_slug_unique` (`slug`),
+  ADD KEY `news_category_id_foreign` (`category_id`),
+  ADD KEY `news_user_id_foreign` (`user_id`);
+
+--
+-- Chỉ mục cho bảng `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `notifications_notifiable_type_notifiable_id_index` (`notifiable_type`,`notifiable_id`);
+
+--
+-- Chỉ mục cho bảng `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  ADD PRIMARY KEY (`email`);
+
+--
+-- Chỉ mục cho bảng `payment_receipts`
+--
+ALTER TABLE `payment_receipts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `payment_receipts_appointment_id_foreign` (`appointment_id`);
+
+--
+-- Chỉ mục cho bảng `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
+
+--
+-- Chỉ mục cho bảng `products`
+--
+ALTER TABLE `products`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `products_slug_unique` (`slug`),
+  ADD KEY `products_category_id_foreign` (`category_id`);
+
+--
+-- Chỉ mục cho bảng `reviews`
+--
+ALTER TABLE `reviews`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `reviews_user_id_foreign` (`user_id`),
+  ADD KEY `reviews_service_id_foreign` (`service_id`),
+  ADD KEY `reviews_barber_id_foreign` (`barber_id`),
+  ADD KEY `reviews_appointment_id_foreign` (`appointment_id`);
+
+--
+-- Chỉ mục cho bảng `schedule_change_requests`
+--
+ALTER TABLE `schedule_change_requests`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `schedule_change_requests_barber_id_foreign` (`barber_id`);
+
+--
+-- Chỉ mục cho bảng `services`
+--
+ALTER TABLE `services`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `services_slug_unique` (`slug`),
+  ADD KEY `services_category_id_foreign` (`category_id`);
+
+--
+-- Chỉ mục cho bảng `time_slots`
+--
+ALTER TABLE `time_slots`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `time_slots_barber_id_date_time_slot_unique` (`barber_id`,`date`,`time_slot`);
+
+--
+-- Chỉ mục cho bảng `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `users_email_unique` (`email`);
+
+
+--
+-- AUTO_INCREMENT cho các bảng đã đổ
+--
+
+--
+-- AUTO_INCREMENT cho bảng `appointments`
+--
+ALTER TABLE `appointments`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+
+--
+-- AUTO_INCREMENT cho bảng `appointment_services`
+--
+ALTER TABLE `appointment_services`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+
+--
+-- AUTO_INCREMENT cho bảng `barbers`
+--
+ALTER TABLE `barbers`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT cho bảng `barber_schedules`
+--
+ALTER TABLE `barber_schedules`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT cho bảng `categories`
+--
+ALTER TABLE `categories`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT cho bảng `contacts`
+--
+ALTER TABLE `contacts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT cho bảng `email_verifications`
+--
+ALTER TABLE `email_verifications`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT cho bảng `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT cho bảng `invoices`
+--
+ALTER TABLE `invoices`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+
+--
+-- AUTO_INCREMENT cho bảng `invoice_product`
+--
+ALTER TABLE `invoice_product`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT cho bảng `invoice_service`
+--
+ALTER TABLE `invoice_service`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+
+--
+-- AUTO_INCREMENT cho bảng `jobs`
+--
+ALTER TABLE `jobs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT cho bảng `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+
+--
+-- AUTO_INCREMENT cho bảng `news`
+--
+ALTER TABLE `news`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT cho bảng `payment_receipts`
+--
+ALTER TABLE `payment_receipts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT cho bảng `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `products`
+--
+ALTER TABLE `products`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT cho bảng `reviews`
+--
+ALTER TABLE `reviews`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT cho bảng `schedule_change_requests`
+--
+ALTER TABLE `schedule_change_requests`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT cho bảng `services`
+--
+ALTER TABLE `services`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT cho bảng `time_slots`
+--
+ALTER TABLE `time_slots`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=515;
+
+--
+-- AUTO_INCREMENT cho bảng `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- Các ràng buộc cho các bảng đã đổ
+--
+
+--
+-- Các ràng buộc cho bảng `appointments`
+--
+ALTER TABLE `appointments`
+  ADD CONSTRAINT `appointments_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `appointments_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Các ràng buộc cho bảng `appointment_services`
+--
+ALTER TABLE `appointment_services`
+  ADD CONSTRAINT `appointment_services_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `appointment_services_service_id_foreign` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `barbers`
+--
+ALTER TABLE `barbers`
+  ADD CONSTRAINT `barbers_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `barber_schedules`
+--
+ALTER TABLE `barber_schedules`
+  ADD CONSTRAINT `barber_schedules_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `invoices`
+--
+ALTER TABLE `invoices`
+  ADD CONSTRAINT `invoices_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `invoices_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `invoices_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Các ràng buộc cho bảng `invoice_product`
+--
+ALTER TABLE `invoice_product`
+  ADD CONSTRAINT `invoice_product_invoice_id_foreign` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `invoice_product_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `invoice_service`
+--
+ALTER TABLE `invoice_service`
+  ADD CONSTRAINT `invoice_service_invoice_id_foreign` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `invoice_service_service_id_foreign` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `news`
+--
+ALTER TABLE `news`
+  ADD CONSTRAINT `news_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `news_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `payment_receipts`
+--
+ALTER TABLE `payment_receipts`
+  ADD CONSTRAINT `payment_receipts_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `products`
+--
+ALTER TABLE `products`
+  ADD CONSTRAINT `products_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `reviews`
+--
+ALTER TABLE `reviews`
+  ADD CONSTRAINT `reviews_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `reviews_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reviews_service_id_foreign` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reviews_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `schedule_change_requests`
+--
+ALTER TABLE `schedule_change_requests`
+  ADD CONSTRAINT `schedule_change_requests_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `services`
+--
+ALTER TABLE `services`
+  ADD CONSTRAINT `services_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `time_slots`
+--
+ALTER TABLE `time_slots`
+  ADD CONSTRAINT `time_slots_barber_id_foreign` FOREIGN KEY (`barber_id`) REFERENCES `barbers` (`id`);
+
+--
+-- Các ràng buộc cho bảng `users`
+--
+ALTER TABLE `users`;
+
+COMMIT;
+
+SET FOREIGN_KEY_CHECKS=1;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
