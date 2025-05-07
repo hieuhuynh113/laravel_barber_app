@@ -46,12 +46,20 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+            ],
             'role' => 'required|in:admin,barber,customer',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'status' => 'required|boolean',
+        ], [
+            'password.regex' => 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt.'
         ]);
 
         $user = User::create([

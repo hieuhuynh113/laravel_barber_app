@@ -47,14 +47,30 @@ class EmailVerificationController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email',
             'name' => 'required|string|max:255',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+            ],
+        ], [
+            'password.regex' => 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt.'
         ]);
 
         if ($validator->fails()) {
+            // Kiểm tra xem có lỗi email unique không
+            $errors = $validator->errors();
+            $errorMessage = 'Thông tin không hợp lệ';
+
+            if ($errors->has('email') && str_contains($errors->first('email'), 'đã được sử dụng')) {
+                $errorMessage = 'Email này đã được sử dụng. Vui lòng chọn email khác hoặc đăng nhập nếu đây là tài khoản của bạn.';
+            }
+
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Thông tin không hợp lệ',
+                    'message' => $errorMessage,
                     'errors' => $validator->errors()
                 ], 422);
             }

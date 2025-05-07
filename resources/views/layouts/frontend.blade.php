@@ -38,6 +38,7 @@
     <link rel="stylesheet" href="{{ asset('css/product-animations.css') }}">
     <link rel="stylesheet" href="{{ asset('css/news-animations.css') }}">
     <link rel="stylesheet" href="{{ asset('css/contact-map.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/password-validation.css') }}">
 
     <!-- Page Specific CSS -->
     @yield('styles')
@@ -199,6 +200,7 @@
     <script src="{{ asset('js/news-animations.js') }}"></script>
     <script src="{{ asset('js/login-modal.js') }}"></script>
     <script src="{{ asset('js/smooth-scroll.js') }}"></script>
+    <script src="{{ asset('js/password-validation.js') }}"></script>
 
     @yield('scripts')
     @stack('scripts')
@@ -285,11 +287,14 @@
                                 <div class="invalid-feedback">
                                     Vui lòng nhập email hợp lệ.
                                 </div>
+                                <div class="form-text text-muted small">
+                                    Email này sẽ được sử dụng để đăng nhập và nhận thông báo.
+                                </div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="register_password" class="form-label">Mật khẩu</label>
-                                <input id="register_password" type="password" class="form-control" name="password" required autocomplete="new-password">
+                                <input id="register_password" type="password" class="form-control password-validate" name="password" required autocomplete="new-password">
                                 <div class="invalid-feedback">
                                     Mật khẩu phải có ít nhất 8 ký tự.
                                 </div>
@@ -297,7 +302,7 @@
 
                             <div class="mb-3">
                                 <label for="password-confirm" class="form-label">Xác nhận mật khẩu</label>
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                                <input id="password-confirm" type="password" class="form-control password-confirm" name="password_confirmation" required autocomplete="new-password" data-password-field="register_password">
                                 <div class="invalid-feedback">
                                     Xác nhận mật khẩu không khớp.
                                 </div>

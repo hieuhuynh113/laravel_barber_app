@@ -59,7 +59,15 @@ class ProfileController extends BaseAdminController
     {
         $validated = $request->validate([
             'current_password' => 'required',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+            ],
+        ], [
+            'password.regex' => 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt.'
         ]);
 
         $userId = Auth::id();
@@ -74,4 +82,4 @@ class ProfileController extends BaseAdminController
 
         return redirect()->route('admin.profile')->with('success', 'Đổi mật khẩu thành công!');
     }
-} 
+}

@@ -394,6 +394,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = document.getElementById('register_password').value;
             const passwordConfirm = document.getElementById('password-confirm').value;
 
+            // Kiểm tra độ mạnh của mật khẩu
+            const hasLowercase = /[a-z]/.test(password);
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecial = /[@$!%*?&]/.test(password);
+            const hasLength = password.length >= 8;
+
+            if (!hasLength || !hasLowercase || !hasUppercase || !hasNumber || !hasSpecial) {
+                showError('Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.');
+                return;
+            }
+
             if (password !== passwordConfirm) {
                 showError('Mật khẩu xác nhận không khớp.');
                 return;
@@ -426,7 +438,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     startOtpCountdown();
                 } else {
                     // Đăng ký thất bại
-                    showError(data.message || 'Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.');
+                    let errorMessage = data.message || 'Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.';
+
+                    // Kiểm tra lỗi email đã tồn tại
+                    if (data.errors && data.errors.email) {
+                        const emailError = data.errors.email[0];
+                        if (emailError.includes('đã được sử dụng') || emailError.includes('đã có trong cơ sở dữ liệu')) {
+                            errorMessage = 'Email này đã được sử dụng. Vui lòng chọn email khác hoặc đăng nhập nếu đây là tài khoản của bạn.';
+
+                            // Highlight trường email
+                            const emailInput = document.getElementById('register_email');
+                            if (emailInput) {
+                                emailInput.classList.add('is-invalid');
+                                const emailFeedback = emailInput.nextElementSibling;
+                                if (emailFeedback && emailFeedback.classList.contains('invalid-feedback')) {
+                                    emailFeedback.textContent = errorMessage;
+                                }
+                            }
+                        }
+                    }
+
+                    showError(errorMessage);
                 }
             })
             .catch(error => {

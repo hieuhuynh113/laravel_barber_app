@@ -75,7 +75,7 @@
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Mật khẩu mới</label>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password">
+                        <input type="password" class="form-control password-validate @error('password') is-invalid @enderror" id="password" name="password">
                         @error('password')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -83,7 +83,17 @@
 
                     <div class="mb-3">
                         <label for="password_confirmation" class="form-label">Xác nhận mật khẩu mới</label>
-                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
+                        <input type="password" class="form-control password-confirm" id="password_confirmation" name="password_confirmation" data-password-field="password">
+                    </div>
+
+                    <div class="password-tips mb-4">
+                        <h6><i class="fas fa-lightbulb me-2"></i>Mẹo tạo mật khẩu an toàn</h6>
+                        <ul>
+                            <li>Sử dụng ít nhất 8 ký tự</li>
+                            <li>Kết hợp chữ hoa, chữ thường, số và ký tự đặc biệt</li>
+                            <li>Không sử dụng thông tin cá nhân dễ đoán như ngày sinh, tên</li>
+                            <li>Không sử dụng lại mật khẩu đã dùng trước đây</li>
+                        </ul>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>

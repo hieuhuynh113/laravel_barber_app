@@ -166,6 +166,9 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'email' => [
+            'unique' => 'Email này đã được sử dụng. Vui lòng chọn email khác hoặc đăng nhập nếu đây là tài khoản của bạn.',
+        ],
         'password' => [
             'confirmed' => 'Xác nhận mật khẩu không khớp với mật khẩu đã nhập.',
         ],

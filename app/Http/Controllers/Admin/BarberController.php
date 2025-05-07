@@ -33,7 +33,12 @@ class BarberController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+            ],
             'phone' => 'required|string|max:20',
             'address' => 'nullable|string',
             'bio' => 'nullable|string',
@@ -41,6 +46,8 @@ class BarberController extends Controller
             'specialties' => 'nullable|string',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'status' => 'required|boolean',
+        ], [
+            'password.regex' => 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt.'
         ]);
 
         $user = User::create([
