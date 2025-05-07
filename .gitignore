@@ -19,6 +19,16 @@ admin_blade_diff.txt
 *.log
 *.cache
 *.tmp
+*.zip
+*.rar
+*.tar
+*.gz
 
 # Loại trừ tất cả các file trong vendor
 /vendor/**/*
+
+# Loại trừ các file build
+/public/build/
+/public/hot
+/public/css/
+/public/js/
