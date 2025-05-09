@@ -103,7 +103,7 @@
 
                         <div class="mb-4 contact-info-item">
                             <h5><i class="fas fa-share-alt text-primary me-2"></i> Mạng xã hội</h5>
-                            <div class="ms-4 social-icons">
+                            <div class="ms-4 social-icons contact-social-icons">
                                 <a href="https://www.facebook.com/profile.php?id=100078969199950" class="facebook"><i class="fab fa-facebook-f"></i></a>
                                 <a href="https://www.instagram.com/hiuthubar_/" class="instagram"><i class="fab fa-instagram"></i></a>
                                 <a href="https://www.youtube.com/@hieuhuynh3551" class="youtube"><i class="fab fa-youtube"></i></a>
