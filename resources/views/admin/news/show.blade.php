@@ -31,20 +31,20 @@
                 </div>
                 <div class="card-body">
                     <h2 class="h4 mb-3">{{ $news->title }}</h2>
-                    
+
                     @if($news->image)
                         <div class="text-center mb-4">
                             <img src="{{ asset('storage/' . $news->image) }}" alt="{{ $news->title }}" class="img-fluid rounded" style="max-height: 400px;">
                         </div>
                     @endif
-                    
+
                     <div class="my-4">
                         {!! $news->content !!}
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -103,7 +103,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    
+
                     <div class="mt-3">
                         <form action="{{ route('admin.news.destroy', $news->id) }}" method="POST" class="d-inline">
                             @csrf
@@ -112,7 +112,7 @@
                                 <i class="fas fa-trash"></i> Xóa bài viết
                             </button>
                         </form>
-                        
+
                         <form action="{{ route('admin.news.toggleFeatured', $news->id) }}" method="POST" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-warning btn-sm">
@@ -122,31 +122,9 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Thông tin SEO</h6>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered">
-                        <tbody>
-                            <tr>
-                                <th style="width: 40%;">Meta Title</th>
-                                <td>{{ $news->meta_title ?? $news->title }}</td>
-                            </tr>
-                            <tr>
-                                <th>Meta Description</th>
-                                <td>{{ $news->meta_description ?? 'Không có' }}</td>
-                            </tr>
-                            <tr>
-                                <th>Meta Keywords</th>
-                                <td>{{ $news->meta_keywords ?? 'Không có' }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+
+            <!-- Đã loại bỏ phần hiển thị thông tin SEO vì các trường không tồn tại trong cơ sở dữ liệu -->
         </div>
     </div>
 </div>
-@endsection 
+@endsection

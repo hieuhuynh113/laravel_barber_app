@@ -35,7 +35,7 @@
         <div class="card-body">
             <form action="{{ route('admin.news.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                
+
                 <div class="row mb-3">
                     <div class="col-md-8">
                         <div class="form-group mb-3">
@@ -61,7 +61,7 @@
                             @enderror
                         </div>
                     </div>
-                    
+
                     <div class="col-md-4">
                         <div class="form-group mb-3">
                             <label for="image">Hình ảnh</label>
@@ -72,7 +72,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="form-group mb-3">
                             <label for="status">Trạng thái</label>
                             <div class="form-check">
@@ -102,37 +102,7 @@
                     @enderror
                 </div>
 
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <h6 class="m-0 font-weight-bold text-primary">SEO</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group mb-3">
-                            <label for="meta_title">Meta Title</label>
-                            <input type="text" class="form-control @error('meta_title') is-invalid @enderror" id="meta_title" name="meta_title" value="{{ old('meta_title') }}">
-                            @error('meta_title')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        
-                        <div class="form-group mb-3">
-                            <label for="meta_description">Meta Description</label>
-                            <textarea class="form-control @error('meta_description') is-invalid @enderror" id="meta_description" name="meta_description" rows="3">{{ old('meta_description') }}</textarea>
-                            @error('meta_description')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        
-                        <div class="form-group mb-3">
-                            <label for="meta_keywords">Meta Keywords</label>
-                            <input type="text" class="form-control @error('meta_keywords') is-invalid @enderror" id="meta_keywords" name="meta_keywords" value="{{ old('meta_keywords') }}">
-                            <small class="form-text text-muted">Các từ khóa cách nhau bởi dấu phẩy</small>
-                            @error('meta_keywords')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
+                <!-- Đã loại bỏ phần SEO vì các trường không tồn tại trong cơ sở dữ liệu -->
 
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">
@@ -190,4 +160,4 @@
         }
     }
 </script>
-@endsection 
+@endsection

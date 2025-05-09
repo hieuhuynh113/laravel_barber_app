@@ -58,9 +58,7 @@ class NewsController extends Controller
             'content' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'status' => 'required|boolean',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string',
-            'meta_keywords' => 'nullable|string',
+            // Loại bỏ validation cho các trường meta không tồn tại
         ]);
 
         $news = new News([
@@ -70,9 +68,7 @@ class NewsController extends Controller
             'content' => $request->content,
             'user_id' => Auth::id(),
             'status' => $request->status,
-            'meta_title' => $request->meta_title,
-            'meta_description' => $request->meta_description,
-            'meta_keywords' => $request->meta_keywords,
+            // Loại bỏ các trường meta không tồn tại
         ]);
 
         if ($request->hasFile('image')) {
@@ -106,9 +102,7 @@ class NewsController extends Controller
             'content' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'status' => 'required|boolean',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string',
-            'meta_keywords' => 'nullable|string',
+            // Loại bỏ validation cho các trường meta không tồn tại
         ]);
 
         $news->title = $request->title;
@@ -121,9 +115,7 @@ class NewsController extends Controller
         $news->category_id = $request->category_id;
         $news->content = $request->content;
         $news->status = $request->status;
-        $news->meta_title = $request->meta_title;
-        $news->meta_description = $request->meta_description;
-        $news->meta_keywords = $request->meta_keywords;
+        // Loại bỏ cập nhật các trường meta không tồn tại
 
         if ($request->hasFile('image')) {
             if ($news->image) {
