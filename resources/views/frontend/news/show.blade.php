@@ -46,6 +46,8 @@
         line-height: 1.8;
         font-size: 1.1rem;
         color: #333;
+        white-space: pre-wrap;
+        word-wrap: break-word;
     }
 
     .blog-post-content h2, .blog-post-content h3, .blog-post-content h4 {

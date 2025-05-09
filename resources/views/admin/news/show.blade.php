@@ -38,9 +38,20 @@
                         </div>
                     @endif
 
-                    <div class="my-4">
+                    <div class="my-4 news-content">
                         {!! $news->content !!}
                     </div>
+
+                    <style>
+                        .news-content {
+                            white-space: pre-wrap;
+                            word-wrap: break-word;
+                            line-height: 1.8;
+                        }
+                        .news-content p {
+                            margin-bottom: 1rem;
+                        }
+                    </style>
                 </div>
             </div>
         </div>
