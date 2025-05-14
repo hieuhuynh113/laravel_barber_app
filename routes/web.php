@@ -119,11 +119,11 @@ Route::middleware(['auth'])->group(function () {
 // Admin Routes
 // Route riêng cho /admin để xử lý chuyển hướng đúng
 Route::get('/admin', function() {
-    if (!auth()->check()) {
+    if (!Auth::check()) {
         return redirect('/admin/login')->with('error', 'Vui lòng đăng nhập để tiếp tục');
     }
 
-    if (auth()->user()->role !== 'admin') {
+    if (Auth::user()->role !== 'admin') {
         return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập vào trang này');
     }
 
@@ -173,7 +173,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::post('appointments/{appointment}/update-status', [\App\Http\Controllers\Admin\AppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
 
     // Invoice Routes
-    Route::resource('invoices', \App\Http\Controllers\Admin\InvoiceController::class);
+    Route::resource('invoices', \App\Http\Controllers\Admin\InvoiceController::class)->except(['create', 'store']);
     Route::get('invoices/{invoice}/print', [\App\Http\Controllers\Admin\InvoiceController::class, 'print'])->name('invoices.print');
     Route::get('invoices-statistics', [\App\Http\Controllers\Admin\InvoiceController::class, 'statistics'])->name('invoices.statistics');
     Route::patch('invoices/{invoice}/update-status', [\App\Http\Controllers\Admin\InvoiceController::class, 'updateStatus'])->name('invoices.update-status');
@@ -217,11 +217,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
 // Barber Routes
 // Route riêng cho /barber để xử lý chuyển hướng đúng
 Route::get('/barber', function() {
-    if (!auth()->check()) {
+    if (!Auth::check()) {
         return redirect('/barber/login')->with('error', 'Vui lòng đăng nhập để tiếp tục');
     }
 
-    if (auth()->user()->role !== 'barber' && auth()->user()->role !== 'admin') {
+    if (Auth::user()->role !== 'barber' && Auth::user()->role !== 'admin') {
         return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập vào trang này');
     }
 

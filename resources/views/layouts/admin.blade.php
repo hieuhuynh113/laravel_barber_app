@@ -75,9 +75,6 @@
                             <a href="{{ route('admin.invoices.index') }}">Danh sách hóa đơn</a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.invoices.create') }}">Tạo hóa đơn</a>
-                        </li>
-                        <li>
                             <a href="{{ route('admin.payment-receipts.index') }}">Biên lai chuyển khoản
                                 @php
                                     $pendingReceipts = \App\Models\PaymentReceipt::where('status', 'pending')->count();

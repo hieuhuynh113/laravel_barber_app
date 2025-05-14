@@ -425,16 +425,6 @@
                             </div>
                             <div class="row mb-3">
                                 <div class="col">
-                                    <a href="{{ route('admin.invoices.create') }}" class="btn btn-success btn-icon-split btn-block">
-                                        <span class="icon text-white-50">
-                                            <i class="fas fa-file-invoice-dollar"></i>
-                                        </span>
-                                        <span class="text">Tạo hóa đơn mới</span>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col">
                                     <a href="{{ route('admin.barbers.index') }}" class="btn btn-info btn-icon-split btn-block">
                                         <span class="icon text-white-50">
                                             <i class="fas fa-cut"></i>
@@ -747,16 +737,6 @@
                                     <i class="fas fa-calendar-plus"></i>
                                 </span>
                                 <span class="text">Tạo lịch hẹn mới</span>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col">
-                            <a href="{{ route('admin.invoices.create') }}" class="btn btn-success btn-icon-split btn-block">
-                                <span class="icon text-white-50">
-                                    <i class="fas fa-file-invoice-dollar"></i>
-                                </span>
-                                <span class="text">Tạo hóa đơn mới</span>
                             </a>
                         </div>
                     </div>

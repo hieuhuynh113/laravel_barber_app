@@ -99,9 +99,6 @@
 <div class="container-fluid py-4">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Quản lý hóa đơn</h1>
-        <a href="{{ route('admin.invoices.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus-circle"></i> Tạo hóa đơn mới
-        </a>
     </div>
 
     @if(session('success'))

@@ -354,11 +354,8 @@
                             </div>
                         @else
                             <div class="alert alert-warning">
-                                Chưa có hóa đơn cho lịch hẹn này.
+                                Chưa có hóa đơn cho lịch hẹn này. Hóa đơn sẽ được tạo tự động khi lịch hẹn hoàn thành.
                             </div>
-                            <a href="{{ route('admin.invoices.create', ['appointment_id' => $appointment->id]) }}" class="btn btn-primary btn-block">
-                                <i class="fas fa-plus me-2"></i> Tạo hóa đơn
-                            </a>
                         @endif
                     </div>
                 </div>
