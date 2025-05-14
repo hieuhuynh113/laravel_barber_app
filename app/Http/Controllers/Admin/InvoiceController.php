@@ -639,6 +639,65 @@ class InvoiceController extends Controller
             ->groupBy('payment_method')
             ->get();
 
+        // Kiểm tra xem có phương thức thanh toán bank_transfer chưa
+        $hasBankTransfer = false;
+        foreach ($paymentMethodStats as $stat) {
+            if ($stat->payment_method === 'bank_transfer') {
+                $hasBankTransfer = true;
+                break;
+            }
+        }
+
+        // Nếu không có phương thức bank_transfer trong bảng invoices, nhưng có biên lai chuyển khoản
+        if (!$hasBankTransfer) {
+            // Đếm số lượng biên lai chuyển khoản đã được phê duyệt
+            $bankTransferCount = \Illuminate\Support\Facades\DB::table('payment_receipts')
+                ->where('status', 'approved')
+                ->count();
+            
+            // Nếu có biên lai chuyển khoản, thêm vào thống kê
+            if ($bankTransferCount > 0) {
+                // Lấy danh sách các lịch hẹn có biên lai chuyển khoản
+                $appointments = \Illuminate\Support\Facades\DB::table('payment_receipts')
+                    ->join('appointments', 'payment_receipts.appointment_id', '=', 'appointments.id')
+                    ->where('payment_receipts.status', 'approved')
+                    ->select('payment_receipts.id', 'payment_receipts.appointment_id')
+                    ->get();
+                
+                // Tính tổng số tiền từ các lịch hẹn
+                $totalAmount = 0;
+                foreach ($appointments as $receipt) {
+                    // Lấy thông tin lịch hẹn để xác định giá
+                    $appointment = \Illuminate\Support\Facades\DB::table('appointments')
+                        ->where('id', $receipt->appointment_id)
+                        ->first();
+                    
+                    if ($appointment) {
+                        // Tìm dịch vụ của lịch hẹn để tính tổng giá
+                        $services = \Illuminate\Support\Facades\DB::table('appointment_services')
+                            ->where('appointment_id', $appointment->id)
+                            ->sum('price');
+                        
+                        $totalAmount += $services > 0 ? $services : 0;
+                    }
+                }
+                
+                // Thêm vào thống kê
+                $paymentMethodStats->push((object)[
+                    'payment_method' => 'bank_transfer',
+                    'count' => $bankTransferCount,
+                    'total' => $totalAmount
+                ]);
+            } else {
+                // Thêm dữ liệu mẫu nếu không có dữ liệu nào
+                $paymentMethodStats->push((object)[
+                    'payment_method' => 'bank_transfer',
+                    'count' => 0,
+                    'total' => 0
+                ]);
+            }
+        }
+
         // Thống kê doanh thu theo trạng thái
         $statusStats = \Illuminate\Support\Facades\DB::table('invoices')
             ->select('payment_status as status', \Illuminate\Support\Facades\DB::raw('COUNT(*) as count'), \Illuminate\Support\Facades\DB::raw('SUM(total) as total'))
