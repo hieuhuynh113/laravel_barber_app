@@ -16,16 +16,7 @@ class Authenticate extends Middleware
             return null;
         }
 
-        // Kiểm tra nếu đang truy cập vào admin area
-        if (str_starts_with($request->path(), 'admin')) {
-            return '/admin/login';
-        }
-
-        // Kiểm tra nếu đang truy cập vào barber area
-        if (str_starts_with($request->path(), 'barber')) {
-            return '/barber/login';
-        }
-
+        // Tất cả các trường hợp đều chuyển hướng đến trang đăng nhập chung
         return route('login');
     }
 }

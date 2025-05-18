@@ -61,17 +61,30 @@ class LoginController extends Controller
             session()->forget('url.intended');
         }
 
+        // Hiển thị thông báo thành công với vai trò tương ứng
+        $roleMessage = '';
+        if ($user->role === 'admin') {
+            $roleMessage = 'quản trị viên';
+        } elseif ($user->role === 'barber') {
+            $roleMessage = 'thợ cắt tóc';
+        } else {
+            $roleMessage = 'khách hàng';
+        }
+
+        $successMessage = 'Đăng nhập thành công với tài khoản ' . $roleMessage;
+
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Đăng nhập thành công',
+                'message' => $successMessage,
                 'user' => $user,
                 'redirect_url' => $redirectUrl,
-                'has_intended_url' => !empty($intendedUrl)
+                'has_intended_url' => !empty($intendedUrl),
+                'role' => $user->role
             ]);
         }
 
-        return redirect()->to($redirectUrl);
+        return redirect()->to($redirectUrl)->with('success', $successMessage);
     }
 
     /**
@@ -114,7 +127,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Ghi đè phương thức attemptLogin để kiểm tra vai trò
+     * Ghi đè phương thức attemptLogin để xử lý tất cả các vai trò
      *
      * @param  \Illuminate\Http\Request  $request
      * @return bool
@@ -124,26 +137,7 @@ class LoginController extends Controller
         // Lấy thông tin đăng nhập
         $credentials = $this->credentials($request);
 
-        // Kiểm tra xem người dùng có tồn tại không
-        $user = \App\Models\User::where('email', $credentials['email'])->first();
-
-        // Nếu người dùng tồn tại và không phải là khách hàng, trả về lỗi
-        if ($user && $user->role !== 'customer') {
-            if ($request->ajax() || $request->wantsJson()) {
-                abort(403, 'Vui lòng đăng nhập tại trang dành cho ' .
-                    ($user->role === 'admin' ? 'quản trị viên' : 'thợ cắt tóc'));
-            }
-
-            // Thêm lỗi vào session và chuyển hướng
-            return redirect()->back()
-                ->withInput($request->only($this->username(), 'remember'))
-                ->withErrors([
-                    $this->username() => 'Tài khoản này không phải là tài khoản khách hàng. Vui lòng đăng nhập tại trang dành cho ' .
-                        ($user->role === 'admin' ? 'quản trị viên' : 'thợ cắt tóc'),
-                ])->send();
-        }
-
-        // Nếu là khách hàng, tiếp tục đăng nhập bình thường
+        // Thực hiện đăng nhập với thông tin đăng nhập đã cung cấp
         return $this->baseAttemptLogin($request);
     }
 }

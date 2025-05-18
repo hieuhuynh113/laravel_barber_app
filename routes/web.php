@@ -95,13 +95,8 @@ Route::get('/register', function() {
     return redirect()->route('home', ['auth' => 'register']);
 })->name('register');
 
-// Admin Login Routes
-Route::get('/admin/login', [\App\Http\Controllers\Auth\AdminLoginController::class, 'showLoginForm'])->name('admin.login');
-Route::post('/admin/login', [\App\Http\Controllers\Auth\AdminLoginController::class, 'login'])->name('admin.login.submit');
-
-// Barber Login Routes
-Route::get('/barber/login', [\App\Http\Controllers\Auth\BarberLoginController::class, 'showLoginForm'])->name('barber.login');
-Route::post('/barber/login', [\App\Http\Controllers\Auth\BarberLoginController::class, 'login'])->name('barber.login.submit');
+// Đã loại bỏ các route đăng nhập riêng biệt cho admin và barber
+// Tất cả người dùng sẽ đăng nhập qua form đăng nhập chung
 
 // Profile Routes
 Route::middleware(['auth'])->group(function () {
@@ -120,7 +115,7 @@ Route::middleware(['auth'])->group(function () {
 // Route riêng cho /admin để xử lý chuyển hướng đúng
 Route::get('/admin', function() {
     if (!Auth::check()) {
-        return redirect('/admin/login')->with('error', 'Vui lòng đăng nhập để tiếp tục');
+        return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để tiếp tục');
     }
 
     if (Auth::user()->role !== 'admin') {
@@ -218,7 +213,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
 // Route riêng cho /barber để xử lý chuyển hướng đúng
 Route::get('/barber', function() {
     if (!Auth::check()) {
-        return redirect('/barber/login')->with('error', 'Vui lòng đăng nhập để tiếp tục');
+        return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để tiếp tục');
     }
 
     if (Auth::user()->role !== 'barber' && Auth::user()->role !== 'admin') {

@@ -325,12 +325,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     loginPasswordInput.classList.add('is-valid');
                     loginPasswordInput.classList.remove('is-invalid');
 
-                    showSuccess('Đăng nhập thành công! Đang chuyển hướng...');
+                    // Hiển thị thông báo thành công với vai trò tương ứng
+                    showSuccess(data.message || 'Đăng nhập thành công! Đang chuyển hướng...');
 
                     // Kiểm tra URL dự định truy cập từ localStorage (từ form hero) hoặc URL chuyển hướng từ server
                     const intendedUrlFromLocalStorage = localStorage.getItem('intended_url');
                     const redirectUrl = data.redirect_url || null;
                     const hasIntendedUrlFromServer = data.has_intended_url || false;
+                    const userRole = data.role || 'customer';
 
                     // Chuyển hướng sau 1 giây
                     setTimeout(() => {
