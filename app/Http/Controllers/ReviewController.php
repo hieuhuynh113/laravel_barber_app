@@ -5,20 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\Review;
 use App\Models\Barber;
 use App\Models\Service;
+use App\Traits\PaginationTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class ReviewController extends Controller
 {
+    use PaginationTrait;
+    
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $reviews = Review::with(['user', 'service', 'barber'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $query = Review::with(['user', 'service', 'barber'])
+            ->orderBy('created_at', 'desc');
+            
+        $reviews = $this->paginateResults($query);
             
         return view('reviews.index', compact('reviews'));
     }
@@ -172,10 +176,11 @@ class ReviewController extends Controller
     // Method for user's reviews in profile
     public function userReviews()
     {
-        $reviews = Review::where('user_id', Auth::id())
+        $query = Review::where('user_id', Auth::id())
             ->with(['service', 'barber'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(5);
+            ->orderBy('created_at', 'desc');
+            
+        $reviews = $this->paginateResults($query, request(), 5);
             
         return view('profile.reviews', compact('reviews'));
     }

@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Traits\PaginationTrait;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    use PaginationTrait;
+    
     public function index(Request $request)
     {
         $categoryId = $request->input('category_id');
@@ -83,7 +86,7 @@ class ProductController extends Controller
         }
 
         // Thực hiện phân trang với số lượng phù hợp và giữ query string
-        $products = $query->paginate(9)->withQueryString();
+        $products = $this->paginateResults($query, $request);
 
         // Lấy danh sách danh mục sản phẩm đang hoạt động
         $categories = Category::product()->active()->get();
@@ -91,7 +94,7 @@ class ProductController extends Controller
         // Handle AJAX request
         if ($request->ajax() || $request->input('format') === 'json') {
             $productsHtml = view('frontend.products._product_list', compact('products'))->render();
-            $paginationHtml = view('frontend.partials.pagination', ['paginator' => $products])->render();
+            $paginationHtml = view($this->getPaginationViewName(), ['paginator' => $products])->render();
 
             return response()->json([
                 'html' => $productsHtml,

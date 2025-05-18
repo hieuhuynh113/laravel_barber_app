@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Service;
 use App\Models\Review;
+use App\Traits\PaginationTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 
 class ServiceController extends Controller
 {
+    use PaginationTrait;
+    
     public function index(Request $request)
     {
         $categoryId = $request->input('category_id');
@@ -88,13 +91,13 @@ class ServiceController extends Controller
         }
 
         // Thực hiện phân trang với số lượng phù hợp và giữ query string
-        $services = $query->paginate(6)->withQueryString(); // Reduced to 6 for better display in list view
+        $services = $this->paginateResults($query, $request);
         $categories = Category::service()->active()->get();
 
         // Handle AJAX request
         if ($request->ajax() || $request->input('format') === 'json') {
             $servicesHtml = view('frontend.services._service_list', compact('services'))->render();
-            $paginationHtml = view('frontend.partials.pagination', ['paginator' => $services])->render();
+            $paginationHtml = view($this->getPaginationViewName(), ['paginator' => $services])->render();
 
             return response()->json([
                 'html' => $servicesHtml,
@@ -131,11 +134,12 @@ class ServiceController extends Controller
             ->get();
 
         // Load active reviews for this service with pagination
-        $reviews = Review::where('service_id', $service->id)
+        $reviewsQuery = Review::where('service_id', $service->id)
             ->active()
             ->with('user', 'barber')
-            ->orderBy('created_at', 'desc')
-            ->paginate(5);
+            ->orderBy('created_at', 'desc');
+            
+        $reviews = $this->paginateResults($reviewsQuery, request(), 5);
 
         // Tính toán phân bố đánh giá theo số sao - Tối ưu bằng cách sử dụng một truy vấn duy nhất
         $ratingDistribution = [];

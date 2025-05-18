@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\News;
+use App\Traits\PaginationTrait;
 use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
+    use PaginationTrait;
+    
     public function index(Request $request)
     {
         $categoryId = $request->input('category_id');
@@ -71,13 +74,13 @@ class NewsController extends Controller
             $query->latest();
         }
 
-        $news = $query->paginate(6);
+        $news = $this->paginateResults($query, $request);
         $categories = Category::where('type', 'news')->where('status', 1)->get();
 
         // Handle AJAX request
         if ($request->ajax() || $request->input('format') === 'json') {
             $newsHtml = view('frontend.news._news_list', compact('news'))->render();
-            $paginationHtml = view('frontend.partials.pagination', ['paginator' => $news])->render();
+            $paginationHtml = view($this->getPaginationViewName(), ['paginator' => $news])->render();
 
             return response()->json([
                 'html' => $newsHtml,

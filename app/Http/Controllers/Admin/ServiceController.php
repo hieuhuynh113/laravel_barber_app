@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Service;
+use App\Traits\PaginationTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ServiceController extends Controller
 {
+    use PaginationTrait;
+    
     public function index(Request $request)
     {
         $categoryId = $request->input('category_id');
@@ -38,11 +41,11 @@ class ServiceController extends Controller
         }
 
         // Thêm thống kê đánh giá cho mỗi dịch vụ
-        $services = $query->withCount('reviews')
-                         ->withAvg('reviews', 'rating')
-                         ->latest()
-                         ->paginate(10)
-                         ->withQueryString();
+        $query->withCount('reviews')
+              ->withAvg('reviews', 'rating')
+              ->latest();
+              
+        $services = $this->paginateResults($query, $request, null, 'admin');
 
         $categories = Category::where('type', 'service')->get();
 
@@ -88,7 +91,8 @@ class ServiceController extends Controller
         $categories = Category::where('type', 'service')->where('status', 1)->get();
 
         // Lấy đánh giá của dịch vụ
-        $reviews = $service->reviews()->with(['user', 'barber.user'])->latest()->paginate(5, ['*'], 'reviews_page');
+        $reviewsQuery = $service->reviews()->with(['user', 'barber.user'])->latest();
+        $reviews = $this->paginateResults($reviewsQuery, request(), 5, 'admin');
 
         // Tính toán thống kê đánh giá
         $reviewsCount = $service->reviews()->count();

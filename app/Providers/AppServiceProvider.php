@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Category;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,6 +17,26 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        // Sử dụng Bootstrap cho pagination
+        Paginator::useBootstrap();
+        
+        // Tự động phát hiện và áp dụng template pagination phù hợp với khu vực
+        View::composer('*', function ($view) {
+            $route = Request::route();
+            if ($route) {
+                $routeName = $route->getName();
+                
+                // Áp dụng template pagination dựa trên khu vực của route
+                if (str_starts_with($routeName, 'admin.')) {
+                    Paginator::defaultView('admin.partials.pagination');
+                } elseif (str_starts_with($routeName, 'barber.')) {
+                    Paginator::defaultView('barber.partials.pagination');
+                } else {
+                    Paginator::defaultView('frontend.partials.pagination');
+                }
+            }
+        });
+
         // Chia sẻ dữ liệu cho tất cả view
         View::composer('*', function ($view) {
             $view->with('serviceCategories', Category::query()->service()->active()->get());
