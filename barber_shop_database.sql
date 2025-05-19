@@ -53,13 +53,6 @@ CREATE TABLE `appointments` (
   `original_total` decimal(10,2) DEFAULT NULL,
   `discounted_total` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `appointments`
---
-
-
-
 -- --------------------------------------------------------
 
 --
@@ -74,10 +67,6 @@ CREATE TABLE `appointment_services` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `appointment_services`
---
 
 
 
@@ -98,10 +87,6 @@ CREATE TABLE `barbers` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `barbers`
---
-
 
 
 -- --------------------------------------------------------
@@ -121,10 +106,6 @@ CREATE TABLE `barber_schedules` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `barber_schedules`
---
 
 
 
@@ -169,10 +150,6 @@ CREATE TABLE `categories` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `categories`
---
-
 
 
 -- --------------------------------------------------------
@@ -194,10 +171,6 @@ CREATE TABLE `contacts` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `contacts`
---
 
 
 
@@ -234,10 +207,6 @@ CREATE TABLE `failed_jobs` (
   `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `failed_jobs`
---
-
 
 
 -- --------------------------------------------------------
@@ -268,10 +237,6 @@ CREATE TABLE `invoices` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `invoices`
---
-
 
 
 -- --------------------------------------------------------
@@ -291,10 +256,6 @@ CREATE TABLE `invoice_product` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `invoice_product`
---
 
 
 
@@ -316,12 +277,6 @@ CREATE TABLE `invoice_service` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `invoice_service`
---
-
-
-
 -- --------------------------------------------------------
 
 --
@@ -337,12 +292,6 @@ CREATE TABLE `jobs` (
   `available_at` int(10) UNSIGNED NOT NULL,
   `created_at` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `jobs`
---
-
-
 
 -- --------------------------------------------------------
 
@@ -375,12 +324,6 @@ CREATE TABLE `migrations` (
   `batch` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `migrations`
---
-
-
-
 -- --------------------------------------------------------
 
 --
@@ -402,12 +345,6 @@ CREATE TABLE `news` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `news`
---
-
-
-
 -- --------------------------------------------------------
 
 --
@@ -424,12 +361,6 @@ CREATE TABLE `notifications` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `notifications`
---
-
-
 
 -- --------------------------------------------------------
 
@@ -459,12 +390,6 @@ CREATE TABLE `payment_receipts` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `payment_receipts`
---
-
-
 
 -- --------------------------------------------------------
 
@@ -505,12 +430,6 @@ CREATE TABLE `products` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `products`
---
-
-
-
 -- --------------------------------------------------------
 
 --
@@ -530,12 +449,6 @@ CREATE TABLE `reviews` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `reviews`
---
-
-
 
 -- --------------------------------------------------------
 
@@ -557,12 +470,6 @@ CREATE TABLE `schedule_change_requests` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `schedule_change_requests`
---
-
-
-
 -- --------------------------------------------------------
 
 --
@@ -583,12 +490,6 @@ CREATE TABLE `services` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `services`
---
-
-
-
 -- --------------------------------------------------------
 
 --
@@ -605,15 +506,7 @@ CREATE TABLE `time_slots` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `time_slots`
---
-
-
-
 -- --------------------------------------------------------
-
 --
 -- Cấu trúc bảng cho bảng `users`
 --
@@ -636,10 +529,6 @@ CREATE TABLE `users` (
   `remaining_free_skincare` int(11) NOT NULL DEFAULT 0,
   `has_free_hair_products` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `users`
---
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `role`, `phone`, `address`, `avatar`, `status`, `remember_token`, `created_at`, `updated_at`, `remaining_free_haircuts`, `remaining_free_skincare`, `has_free_hair_products`) VALUES
 (1, 'Admin', 'hieu.ht.63cntt@ntu.edu.vn', NULL, '$2y$10$JgCxd1ZQEilv/etCBVRNPOcK5mfATF8eWxsNZoEZuQ0HBMV2/Jn1W', 'admin', NULL, NULL, NULL, 1, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, 0, 0);
