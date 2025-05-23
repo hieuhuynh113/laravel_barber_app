@@ -1,0 +1,215 @@
+<mxfile host="app.diagrams.net" modified="2025-05-22T02:46:00.000Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" etag="barber-shop-service-execution" version="22.1.0" type="device">
+  <diagram name="Quy trình thực hiện dịch vụ" id="activity-service-execution">
+    <mxGraphModel dx="1422" dy="798" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Tiêu đề -->
+        <mxCell id="title" value="QUY TRÌNH THỰC HIỆN DỊCH VỤ - TIỆM CẮT TÓC" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="164" y="20" width="500" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Lanes -->
+        <mxCell id="swimlane-customer" value="Khách hàng" style="swimlane;startSize=20;horizontal=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="70" width="750" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="swimlane-receptionist" value="Lễ tân" style="swimlane;startSize=20;horizontal=0;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="40" y="270" width="750" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="swimlane-system" value="Hệ thống" style="swimlane;startSize=20;horizontal=0;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="40" y="430" width="750" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="swimlane-barber" value="Thợ cắt tóc" style="swimlane;startSize=20;horizontal=0;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="40" y="590" width="750" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="swimlane-cashier" value="Thu ngân" style="swimlane;startSize=20;horizontal=0;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="760" width="750" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- Start -->
+        <mxCell id="start" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;" vertex="1" parent="swimlane-customer">
+          <mxGeometry x="65" y="50" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Customer actions -->
+        <mxCell id="customer-arrive" value="Đến tiệm theo lịch hẹn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="swimlane-customer">
+          <mxGeometry x="130" y="40" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="customer-wait" value="Chờ đến lượt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="swimlane-customer">
+          <mxGeometry x="320" y="40" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="customer-receive-service" value="Nhận dịch vụ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="swimlane-customer">
+          <mxGeometry x="500" y="40" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="customer-payment" value="Thanh toán" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="swimlane-customer">
+          <mxGeometry x="620" y="130" width="120" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Receptionist actions -->
+        <mxCell id="receptionist-check-in" value="Kiểm tra lịch hẹn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="swimlane-receptionist">
+          <mxGeometry x="130" y="50" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="receptionist-verify" value="Xác nhận thông tin khách hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="swimlane-receptionist">
+          <mxGeometry x="320" y="50" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="receptionist-notify-barber" value="Thông báo cho thợ cắt tóc" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="swimlane-receptionist">
+          <mxGeometry x="500" y="50" width="120" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- System actions -->
+        <mxCell id="system-record-checkin" value="Ghi nhận check-in" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="swimlane-system">
+          <mxGeometry x="130" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="system-update-appointment" value="Cập nhật trạng thái lịch hẹn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="swimlane-system">
+          <mxGeometry x="320" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="system-prepare-invoice" value="Chuẩn bị hóa đơn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="swimlane-system">
+          <mxGeometry x="620" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Barber actions -->
+        <mxCell id="barber-receive-customer" value="Tiếp nhận khách hàng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="swimlane-barber">
+          <mxGeometry x="500" y="40" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="barber-perform-service" value="Thực hiện dịch vụ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="swimlane-barber">
+          <mxGeometry x="500" y="110" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="barber-complete-service" value="Hoàn thành dịch vụ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="swimlane-barber">
+          <mxGeometry x="620" y="40" width="120" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Cashier actions -->
+        <mxCell id="cashier-create-bill" value="Tạo hóa đơn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="swimlane-cashier">
+          <mxGeometry x="620" y="40" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="cashier-process-payment" value="Xử lý thanh toán" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="swimlane-cashier">
+          <mxGeometry x="450" y="40" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="cashier-issue-receipt" value="Xuất biên lai" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="swimlane-cashier">
+          <mxGeometry x="280" y="40" width="120" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- End -->
+        <mxCell id="end" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="swimlane-cashier">
+          <mxGeometry x="120" y="50" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Connections -->
+        <mxCell id="flow1" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="start" target="customer-arrive">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow2" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="customer-arrive" target="receptionist-check-in">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow3" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="receptionist-check-in" target="system-record-checkin">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow4" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="system-record-checkin" target="system-update-appointment">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow5" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="system-update-appointment" target="receptionist-verify">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow6" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="receptionist-verify" target="receptionist-notify-barber">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow7" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="receptionist-verify" target="customer-wait">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow8" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="customer-wait" target="customer-receive-service">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow9" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="receptionist-notify-barber" target="barber-receive-customer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="560" y="520" />
+              <mxPoint x="560" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow10" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="barber-receive-customer" target="barber-perform-service">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow11" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="barber-perform-service" target="barber-complete-service">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="620" y="675" />
+              <mxPoint x="620" y="635" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow12" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="barber-complete-service" target="system-prepare-invoice">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="680" y="560" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow13" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="system-prepare-invoice" target="cashier-create-bill">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="610" as="sourcePoint" />
+            <mxPoint x="440" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow14" value="" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="cashier-create-bill" target="cashier-process-payment">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="610" as="sourcePoint" />
+            <mxPoint x="440" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow15" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="cashier-create-bill" target="customer-payment">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="610" as="sourcePoint" />
+            <mxPoint x="440" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow16" value="" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="cashier-process-payment" target="cashier-issue-receipt">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="610" as="sourcePoint" />
+            <mxPoint x="440" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow17" value="" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="cashier-issue-receipt" target="end">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="610" as="sourcePoint" />
+            <mxPoint x="440" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

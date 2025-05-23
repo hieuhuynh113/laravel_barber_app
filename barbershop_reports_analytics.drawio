@@ -1,0 +1,166 @@
+<mxfile host="app.diagrams.net" modified="2025-05-22T03:05:00.000Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" etag="barber-shop-reports" version="22.1.0" type="device">
+  <diagram name="Quy trình báo cáo và phân tích" id="activity-reports">
+    <mxGraphModel dx="1422" dy="798" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Tiêu đề -->
+        <mxCell id="title" value="QUY TRÌNH BÁO CÁO VÀ PHÂN TÍCH - TIỆM CẮT TÓC" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="164" y="20" width="500" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Lanes -->
+        <mxCell id="swimlane-admin" value="Quản trị viên" style="swimlane;startSize=20;horizontal=0;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="70" width="750" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="swimlane-system" value="Hệ thống" style="swimlane;startSize=20;horizontal=0;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="40" y="240" width="750" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="swimlane-manager" value="Quản lý" style="swimlane;startSize=20;horizontal=0;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="40" y="410" width="750" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- Start -->
+        <mxCell id="start" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;" vertex="1" parent="swimlane-admin">
+          <mxGeometry x="65" y="70" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Admin actions -->
+        <mxCell id="admin-configure-reports" value="Cấu hình báo cáo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="swimlane-admin">
+          <mxGeometry x="130" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="admin-schedule-reports" value="Lên lịch báo cáo định kỳ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="swimlane-admin">
+          <mxGeometry x="290" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="admin-set-alerts" value="Thiết lập cảnh báo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="swimlane-admin">
+          <mxGeometry x="450" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="admin-create-dashboard" value="Tạo bảng điều khiển" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="swimlane-admin">
+          <mxGeometry x="610" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- System actions -->
+        <mxCell id="system-collect-data" value="Thu thập dữ liệu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="swimlane-system">
+          <mxGeometry x="130" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="system-process-data" value="Xử lý dữ liệu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="swimlane-system">
+          <mxGeometry x="290" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="system-generate-report" value="Tạo báo cáo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="swimlane-system">
+          <mxGeometry x="450" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="system-send-alert" value="Gửi cảnh báo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="swimlane-system">
+          <mxGeometry x="610" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Manager actions -->
+        <mxCell id="manager-view-reports" value="Xem báo cáo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="swimlane-manager">
+          <mxGeometry x="130" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="manager-analyze-trends" value="Phân tích xu hướng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="swimlane-manager">
+          <mxGeometry x="290" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="manager-make-decisions" value="Đưa ra quyết định" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="swimlane-manager">
+          <mxGeometry x="450" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="manager-implement-changes" value="Thực hiện thay đổi" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="swimlane-manager">
+          <mxGeometry x="610" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- End -->
+        <mxCell id="end" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="655" y="530" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Connections -->
+        <mxCell id="flow1" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="start" target="admin-configure-reports">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow2" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="admin-configure-reports" target="admin-schedule-reports">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow3" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="admin-schedule-reports" target="admin-set-alerts">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow4" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="admin-set-alerts" target="admin-create-dashboard">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow5" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="admin-configure-reports" target="system-collect-data">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow6" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="system-collect-data" target="system-process-data">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow7" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="system-process-data" target="system-generate-report">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow8" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="admin-set-alerts" target="system-send-alert">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="510" y="170" />
+              <mxPoint x="670" y="170" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow9" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="system-generate-report" target="manager-view-reports">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="510" y="390" />
+              <mxPoint x="190" y="390" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow10" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="manager-view-reports" target="manager-analyze-trends">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow11" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="manager-analyze-trends" target="manager-make-decisions">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow12" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="manager-make-decisions" target="manager-implement-changes">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow13" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="manager-implement-changes" target="end">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="410" as="sourcePoint" />
+            <mxPoint x="440" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,367 @@
+<mxfile host="app.diagrams.net" modified="2025-05-22T02:30:00.000Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" etag="barbershop-erd-diagram-updated" version="22.1.0" type="device">
+  <diagram name="Sơ đồ Quan hệ Thực thể Tiệm Cắt Tóc" id="barbershop-erd">
+    <mxGraphModel dx="1422" dy="798" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Tiêu đề -->
+        <mxCell id="title" value="TIỆM CẮT TÓC - SƠ ĐỒ QUAN HỆ THỰC THỂ (ERD) - CẬP NHẬT" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="114" y="20" width="600" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Thực thể User -->
+        <mxCell id="entity-user" value="USER" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="90" y="90" width="180" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="entity-user-attributes" value="+ id (PK)&#xa;+ name&#xa;+ email&#xa;+ password&#xa;+ phone&#xa;+ address&#xa;+ avatar&#xa;+ role (enum)&#xa;+ status&#xa;+ email_verified_at&#xa;+ remember_token&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-user">
+          <mxGeometry y="30" width="180" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- Thực thể BarberSchedule -->
+        <mxCell id="entity-barber-schedule" value="BARBER_SCHEDULE" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="90" y="360" width="180" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="entity-barber-schedule-attributes" value="+ id (PK)&#xa;+ barber_id (FK)&#xa;+ day_of_week&#xa;+ start_time&#xa;+ end_time&#xa;+ is_day_off&#xa;+ max_appointments&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-barber-schedule">
+          <mxGeometry y="30" width="180" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- Thực thể Appointment -->
+        <mxCell id="entity-appointment" value="APPOINTMENT" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="320" y="90" width="180" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="entity-appointment-attributes" value="+ id (PK)&#xa;+ user_id (FK)&#xa;+ barber_id (FK)&#xa;+ appointment_date&#xa;+ start_time&#xa;+ end_time&#xa;+ time_slot&#xa;+ status&#xa;+ booking_code&#xa;+ customer_name&#xa;+ email&#xa;+ phone&#xa;+ payment_method&#xa;+ payment_status&#xa;+ notes&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-appointment">
+          <mxGeometry y="30" width="180" height="220" as="geometry" />
+        </mxCell>
+
+        <!-- Thực thể Service -->
+        <mxCell id="entity-service" value="SERVICE" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="550" y="90" width="180" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="entity-service-attributes" value="+ id (PK)&#xa;+ category_id (FK)&#xa;+ name&#xa;+ slug&#xa;+ description&#xa;+ price&#xa;+ duration&#xa;+ image&#xa;+ status&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-service">
+          <mxGeometry y="30" width="180" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Thực thể Category -->
+        <mxCell id="entity-category" value="CATEGORY" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="550" y="310" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="entity-category-attributes" value="+ id (PK)&#xa;+ name&#xa;+ slug&#xa;+ status&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-category">
+          <mxGeometry y="30" width="180" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Thực thể Barber -->
+        <mxCell id="entity-barber" value="BARBER" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="320" y="360" width="180" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="entity-barber-attributes" value="+ id (PK)&#xa;+ user_id (FK)&#xa;+ description&#xa;+ experience&#xa;+ specialty&#xa;+ status&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-barber">
+          <mxGeometry y="30" width="180" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Thực thể Appointment_Service (Bảng quan hệ nhiều-nhiều) -->
+        <mxCell id="entity-appointment-service" value="APPOINTMENT_SERVICE" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="435" y="600" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="entity-appointment-service-attributes" value="+ id (PK)&#xa;+ appointment_id (FK)&#xa;+ service_id (FK)&#xa;+ price&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-appointment-service">
+          <mxGeometry y="30" width="180" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Thực thể PaymentReceipt -->
+        <mxCell id="entity-payment-receipt" value="PAYMENT_RECEIPT" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="200" y="600" width="180" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="entity-payment-receipt-attributes" value="+ id (PK)&#xa;+ appointment_id (FK)&#xa;+ transaction_id&#xa;+ payment_method&#xa;+ amount&#xa;+ payment_date&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-payment-receipt">
+          <mxGeometry y="30" width="180" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Quan hệ Barber - BarberSchedule -->
+        <mxCell id="rel-barber-schedule" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-barber" target="entity-barber-schedule-attributes">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-barber-schedule-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-barber-schedule">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Quan hệ User - Appointment -->
+        <mxCell id="rel-user-appointment" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-user-attributes" target="entity-appointment-attributes">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-appointment-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-user-appointment">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Quan hệ Barber - Appointment -->
+        <mxCell id="rel-barber-appointment" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-barber" target="entity-appointment-attributes">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-barber-appointment-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-barber-appointment">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Quan hệ User - Barber -->
+        <mxCell id="rel-user-barber" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERone;startArrow=ERone;rounded=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-user-attributes" target="entity-barber-attributes">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-barber-label" value="1:1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-user-barber">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Quan hệ Category - Service -->
+        <mxCell id="rel-category-service" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-category" target="entity-service-attributes">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-category-service-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-category-service">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Quan hệ Appointment - Service (qua bảng trung gian) -->
+        <mxCell id="rel-appointment-apptservice" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;startFill=0;endFill=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="entity-appointment-attributes" target="entity-appointment-service">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="385" y="420" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-appointment-apptservice-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-appointment-apptservice">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Quan hệ Service - Appointment_Service -->
+        <mxCell id="rel-service-apptservice" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;startFill=0;endFill=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="entity-service-attributes" target="entity-appointment-service">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="630" y="350" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-service-apptservice-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-service-apptservice">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Quan hệ Appointment - PaymentReceipt -->
+        <mxCell id="rel-appointment-paymentreceipt" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERone;startArrow=ERone;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-appointment-attributes" target="entity-payment-receipt">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-appointment-paymentreceipt-label" value="1:1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-appointment-paymentreceipt">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Quan hệ Appointment - Invoice -->
+        <mxCell id="rel-appointment-invoice" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERone;startArrow=ERone;rounded=0;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-appointment-attributes" target="entity-invoice">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-appointment-invoice-label" value="1:1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-appointment-invoice">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Quan hệ Appointment - Review -->
+        <mxCell id="rel-appointment-review" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-appointment-attributes" target="entity-review">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-appointment-review-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-appointment-review">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Quan hệ Service - Review -->
+        <mxCell id="rel-service-review" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-service-attributes" target="entity-review">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-service-review-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-service-review">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Quan hệ Barber - TimeSlot -->
+        <mxCell id="rel-barber-timeslot" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-barber-attributes" target="entity-timeslot">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-barber-timeslot-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-barber-timeslot">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Quan hệ User - Review -->
+        <mxCell id="rel-user-review" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-user-attributes" target="entity-review">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-review-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-user-review">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Quan hệ Category - Product -->
+        <mxCell id="rel-category-product" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-category-attributes" target="entity-product">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-category-product-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-category-product">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Quan hệ User - News -->
+        <mxCell id="rel-user-news" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-user-attributes" target="entity-news">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-news-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-user-news">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Quan hệ Barber - ScheduleChangeRequest -->
+        <mxCell id="rel-barber-schedule-change" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-barber-attributes" target="entity-schedule-change">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-barber-schedule-change-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-barber-schedule-change">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Quan hệ Invoice - InvoiceService -->
+        <mxCell id="rel-invoice-service" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-invoice-attributes" target="entity-invoice-service">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-invoice-service-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-invoice-service">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Quan hệ Invoice - InvoiceProduct -->
+        <mxCell id="rel-invoice-product" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-invoice-attributes" target="entity-invoice-product">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-invoice-product-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-invoice-product">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Quan hệ Service - InvoiceService -->
+        <mxCell id="rel-service-invoice-service" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-service-attributes" target="entity-invoice-service">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-service-invoice-service-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-service-invoice-service">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Quan hệ Product - InvoiceProduct -->
+        <mxCell id="rel-product-invoice-product" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERone;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;startFill=0;endFill=0;" edge="1" parent="1" source="entity-product-attributes" target="entity-invoice-product">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="360" y="430" as="sourcePoint" />
+            <mxPoint x="460" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-product-invoice-product-label" value="1:N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-product-invoice-product">
+          <mxGeometry x="-0.1219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Thực thể Invoice -->        <mxCell id="entity-invoice" value="INVOICE" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#ffff88;strokeColor=#36393d;" vertex="1" parent="1">          <mxGeometry x="650" y="600" width="180" height="220" as="geometry" />        </mxCell>        <mxCell id="entity-invoice-attributes" value="+ id (PK)&#xa;+ invoice_code&#xa;+ appointment_id (FK)&#xa;+ user_id (FK)&#xa;+ barber_id (FK)&#xa;+ invoice_number&#xa;+ subtotal&#xa;+ discount&#xa;+ tax&#xa;+ total&#xa;+ total_amount&#xa;+ payment_method&#xa;+ payment_status&#xa;+ status&#xa;+ notes&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-invoice">          <mxGeometry y="30" width="180" height="190" as="geometry" />        </mxCell>        <!-- Thực thể Review -->        <mxCell id="entity-review" value="REVIEW" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#ffcc99;strokeColor=#36393d;" vertex="1" parent="1">          <mxGeometry x="20" y="600" width="150" height="180" as="geometry" />        </mxCell>        <mxCell id="entity-review-attributes" value="+ id (PK)&#xa;+ user_id (FK)&#xa;+ barber_id (FK)&#xa;+ service_id (FK)&#xa;+ appointment_id (FK)&#xa;+ rating&#xa;+ comment&#xa;+ status&#xa;+ admin_response&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-review">          <mxGeometry y="30" width="150" height="150" as="geometry" />        </mxCell>        <!-- Thực thể Product -->        <mxCell id="entity-product" value="PRODUCT" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#cdeb8b;strokeColor=#36393d;" vertex="1" parent="1">          <mxGeometry x="650" y="450" width="150" height="150" as="geometry" />        </mxCell>        <mxCell id="entity-product-attributes" value="+ id (PK)&#xa;+ category_id (FK)&#xa;+ name&#xa;+ slug&#xa;+ description&#xa;+ price&#xa;+ stock&#xa;+ image&#xa;+ status&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-product">          <mxGeometry y="30" width="150" height="120" as="geometry" />        </mxCell>        <!-- Thực thể TimeSlot -->        <mxCell id="entity-timeslot" value="TIME_SLOT" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#cce5ff;strokeColor=#36393d;" vertex="1" parent="1">          <mxGeometry x="20" y="450" width="150" height="150" as="geometry" />        </mxCell>        <mxCell id="entity-timeslot-attributes" value="+ id (PK)&#xa;+ barber_id (FK)&#xa;+ date&#xa;+ time_slot&#xa;+ is_available&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-timeslot">          <mxGeometry y="30" width="150" height="120" as="geometry" />        </mxCell>
+
+        <!-- Thực thể Contact -->        <mxCell id="entity-contact" value="CONTACT" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#fad9d5;strokeColor=#ae4132;" vertex="1" parent="1">          <mxGeometry x="180" y="450" width="150" height="140" as="geometry" />        </mxCell>        <mxCell id="entity-contact-attributes" value="+ id (PK)&#xa;+ name&#xa;+ email&#xa;+ phone&#xa;+ subject&#xa;+ message&#xa;+ reply&#xa;+ replied_at&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-contact">          <mxGeometry y="30" width="150" height="110" as="geometry" />        </mxCell>
+
+        <!-- Thực thể News -->        <mxCell id="entity-news" value="NEWS" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#b0e3e6;strokeColor=#0e8088;" vertex="1" parent="1">          <mxGeometry x="480" y="450" width="150" height="150" as="geometry" />        </mxCell>        <mxCell id="entity-news-attributes" value="+ id (PK)&#xa;+ user_id (FK)&#xa;+ title&#xa;+ slug&#xa;+ content&#xa;+ image&#xa;+ is_featured&#xa;+ status&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-news">          <mxGeometry y="30" width="150" height="120" as="geometry" />        </mxCell>
+
+        <!-- Thực thể ScheduleChangeRequest -->        <mxCell id="entity-schedule-change" value="SCHEDULE_CHANGE_REQUEST" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#d0cee2;strokeColor=#56517e;" vertex="1" parent="1">          <mxGeometry x="350" y="520" width="200" height="150" as="geometry" />        </mxCell>        <mxCell id="entity-schedule-change-attributes" value="+ id (PK)&#xa;+ barber_id (FK)&#xa;+ date&#xa;+ status&#xa;+ old_start_time&#xa;+ old_end_time&#xa;+ new_start_time&#xa;+ new_end_time&#xa;+ reason&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-schedule-change">          <mxGeometry y="30" width="200" height="120" as="geometry" />        </mxCell>
+
+        <!-- Thực thể EmailVerification -->        <mxCell id="entity-email-verification" value="EMAIL_VERIFICATION" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">          <mxGeometry x="480" y="720" width="150" height="130" as="geometry" />        </mxCell>        <mxCell id="entity-email-verification-attributes" value="+ id (PK)&#xa;+ email&#xa;+ token&#xa;+ expires_at&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-email-verification">          <mxGeometry y="30" width="150" height="100" as="geometry" />        </mxCell>
+
+        <!-- Thực thể InvoiceService -->        <mxCell id="entity-invoice-service" value="INVOICE_SERVICE" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">          <mxGeometry x="650" y="820" width="180" height="150" as="geometry" />        </mxCell>        <mxCell id="entity-invoice-service-attributes" value="+ id (PK)&#xa;+ invoice_id (FK)&#xa;+ service_id (FK)&#xa;+ quantity&#xa;+ price&#xa;+ discount&#xa;+ subtotal&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-invoice-service">          <mxGeometry y="30" width="180" height="120" as="geometry" />        </mxCell>
+
+        <!-- Thực thể InvoiceProduct -->        <mxCell id="entity-invoice-product" value="INVOICE_PRODUCT" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;rounded=1;fontSize=14;fontStyle=1;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">          <mxGeometry x="450" y="820" width="180" height="150" as="geometry" />        </mxCell>        <mxCell id="entity-invoice-product-attributes" value="+ id (PK)&#xa;+ invoice_id (FK)&#xa;+ product_id (FK)&#xa;+ quantity&#xa;+ price&#xa;+ discount&#xa;+ subtotal&#xa;+ created_at&#xa;+ updated_at" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="entity-invoice-product">          <mxGeometry y="30" width="180" height="120" as="geometry" />        </mxCell>
+        
+        <!-- Chú thích -->
+        <mxCell id="erd-notes" value="CHÚ THÍCH" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="164" y="800" width="500" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="erd-note-1" value="PK: Khóa chính (Primary Key)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="erd-notes">
+          <mxGeometry y="30" width="500" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="erd-note-2" value="FK: Khóa ngoại (Foreign Key)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="erd-notes">
+          <mxGeometry y="60" width="500" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="erd-note-3" value="1:1, 1:N, N:M - Biểu thị mối quan hệ giữa các thực thể (One-to-One, One-to-Many, Many-to-Many)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="erd-notes">
+          <mxGeometry y="90" width="500" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile> 
