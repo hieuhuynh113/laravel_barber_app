@@ -22,6 +22,8 @@ class AppointmentController extends Controller
         $barber = Auth::user()->barber;
         $status = $request->input('status');
         $date = $request->input('date');
+        $month = $request->input('month');
+        $year = $request->input('year');
 
         $query = Appointment::where('barber_id', $barber->id);
 
@@ -29,13 +31,48 @@ class AppointmentController extends Controller
             $query->where('status', $status);
         }
 
+        // Lọc theo ngày cụ thể (ưu tiên cao nhất)
         if ($date) {
             $query->whereDate('appointment_date', $date);
+        }
+        // Nếu không có ngày cụ thể, lọc theo tháng và năm
+        else {
+            if ($month && $year) {
+                $query->whereMonth('appointment_date', $month)
+                      ->whereYear('appointment_date', $year);
+            } elseif ($month) {
+                // Nếu chỉ có tháng, lấy năm hiện tại
+                $query->whereMonth('appointment_date', $month)
+                      ->whereYear('appointment_date', date('Y'));
+            } elseif ($year) {
+                $query->whereYear('appointment_date', $year);
+            }
         }
 
         $appointments = $query->latest()->paginate(10);
 
-        return view('barber.appointments.index', compact('appointments', 'status', 'date'));
+        // Lấy danh sách năm có lịch hẹn của thợ cắt tóc này để hiển thị trong dropdown
+        $availableYears = Appointment::where('barber_id', $barber->id)
+            ->selectRaw('YEAR(appointment_date) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+
+        // Thêm năm hiện tại nếu chưa có
+        $currentYear = date('Y');
+        if (!in_array($currentYear, $availableYears)) {
+            array_unshift($availableYears, $currentYear);
+        }
+
+        return view('barber.appointments.index', compact(
+            'appointments',
+            'status',
+            'date',
+            'month',
+            'year',
+            'availableYears'
+        ));
     }
 
     /**

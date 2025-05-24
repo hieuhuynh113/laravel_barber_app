@@ -517,6 +517,87 @@
     .pagination .page-link i.fa-sm {
         font-size: 0.7rem;
     }
+
+    /* Filter form styles */
+    .filter-form-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label.fw-bold {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-label i {
+        font-size: 0.8rem;
+    }
+
+    .form-select, .form-control {
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+        transition: all 0.2s ease;
+    }
+
+    .form-select:focus, .form-control:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+
+    .form-select:disabled, .form-control:disabled {
+        background-color: #f8f9fa;
+        opacity: 0.6;
+    }
+
+    /* Badge styles for active filters */
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .badge:hover {
+        transform: translateY(-1px);
+    }
+
+    /* Loading overlay */
+    #loadingOverlay {
+        backdrop-filter: blur(2px);
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+        .filter-form-container {
+            padding: 1rem;
+        }
+
+        .form-label.fw-bold {
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.5rem;
+        }
+
+        .alert.py-2 {
+            padding: 0.75rem !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .d-flex.gap-2 {
+            flex-direction: column;
+            gap: 0.5rem !important;
+        }
+
+        .flex-fill {
+            width: 100% !important;
+        }
+    }
 </style>
 @endsection
 
@@ -535,29 +616,80 @@
 
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Bộ lọc</h6>
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-filter me-2"></i>Bộ lọc lịch hẹn
+            </h6>
+            <small class="text-muted">Lọc theo ngày cụ thể hoặc tháng/năm</small>
         </div>
         <div class="card-body">
-            <form action="{{ route('admin.appointments.index') }}" method="GET" class="mb-0">
+            <form action="{{ route('admin.appointments.index') }}" method="GET" class="mb-0" id="filterForm">
                 <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <label for="status">Trạng thái</label>
+                    <!-- Trạng thái -->
+                    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                        <label for="status" class="form-label fw-bold">
+                            <i class="fas fa-info-circle me-1 text-primary"></i>Trạng thái
+                        </label>
                         <select name="status" id="status" class="form-select">
                             <option value="">Tất cả trạng thái</option>
-                            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Chờ xác nhận</option>
-                            <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
-                            <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
-                            <option value="canceled" {{ request('status') == 'canceled' ? 'selected' : '' }}>Đã hủy</option>
+                            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
+                                <i class="fas fa-clock"></i> Chờ xác nhận
+                            </option>
+                            <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>
+                                <i class="fas fa-check"></i> Đã xác nhận
+                            </option>
+                            <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>
+                                <i class="fas fa-check-double"></i> Hoàn thành
+                            </option>
+                            <option value="canceled" {{ request('status') == 'canceled' ? 'selected' : '' }}>
+                                <i class="fas fa-times"></i> Đã hủy
+                            </option>
                         </select>
                     </div>
 
-                    <div class="col-md-3 mb-3">
-                        <label for="date">Ngày hẹn</label>
-                        <input type="date" name="date" id="date" class="form-control" value="{{ request('date') }}">
+                    <!-- Ngày cụ thể -->
+                    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                        <label for="date" class="form-label fw-bold">
+                            <i class="fas fa-calendar-day me-1 text-success"></i>Ngày cụ thể
+                        </label>
+                        <input type="date" name="date" id="date" class="form-control" value="{{ request('date') }}"
+                               title="Chọn ngày cụ thể (ưu tiên cao hơn tháng/năm)">
                     </div>
 
-                    <div class="col-md-3 mb-3">
-                        <label for="barber_id">Thợ cắt tóc</label>
+                    <!-- Tháng -->
+                    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                        <label for="month" class="form-label fw-bold">
+                            <i class="fas fa-calendar-alt me-1 text-info"></i>Tháng
+                        </label>
+                        <select name="month" id="month" class="form-select" {{ request('date') ? 'disabled' : '' }}>
+                            <option value="">Tất cả tháng</option>
+                            @for($i = 1; $i <= 12; $i++)
+                                <option value="{{ $i }}" {{ request('month') == $i ? 'selected' : '' }}>
+                                    Tháng {{ $i }}
+                                </option>
+                            @endfor
+                        </select>
+                    </div>
+
+                    <!-- Năm -->
+                    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                        <label for="year" class="form-label fw-bold">
+                            <i class="fas fa-calendar me-1 text-warning"></i>Năm
+                        </label>
+                        <select name="year" id="year" class="form-select" {{ request('date') ? 'disabled' : '' }}>
+                            <option value="">Tất cả năm</option>
+                            @foreach($availableYears as $availableYear)
+                                <option value="{{ $availableYear }}" {{ request('year') == $availableYear ? 'selected' : '' }}>
+                                    {{ $availableYear }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Thợ cắt tóc -->
+                    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                        <label for="barber_id" class="form-label fw-bold">
+                            <i class="fas fa-user-tie me-1 text-secondary"></i>Thợ cắt tóc
+                        </label>
                         <select name="barber_id" id="barber_id" class="form-select">
                             <option value="">Tất cả thợ cắt tóc</option>
                             @foreach($barbers as $barber)
@@ -568,15 +700,66 @@
                         </select>
                     </div>
 
-                    <div class="col-md-3 mb-3 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary me-2">
-                            <i class="fas fa-filter"></i> Lọc
-                        </button>
-                        <a href="{{ route('admin.appointments.index') }}" class="btn btn-secondary">
-                            <i class="fas fa-redo"></i> Đặt lại
-                        </a>
+                    <!-- Nút thao tác -->
+                    <div class="col-lg-2 col-md-4 col-sm-6 mb-3 d-flex align-items-end">
+                        <div class="d-flex w-100 gap-2">
+                            <button type="submit" class="btn btn-primary flex-fill" id="filterBtn">
+                                <i class="fas fa-search me-1"></i>Lọc
+                            </button>
+                            <a href="{{ route('admin.appointments.index') }}" class="btn btn-outline-secondary" title="Xóa tất cả bộ lọc">
+                                <i class="fas fa-redo"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Hiển thị bộ lọc đang áp dụng -->
+                @if(request()->hasAny(['status', 'date', 'month', 'year', 'barber_id']))
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="alert alert-info py-2 mb-0">
+                                <small class="fw-bold">
+                                    <i class="fas fa-filter me-1"></i>Bộ lọc đang áp dụng:
+                                </small>
+                                <div class="d-flex flex-wrap gap-2 mt-1">
+                                    @if(request('status'))
+                                        <span class="badge bg-primary">
+                                            Trạng thái:
+                                            @switch(request('status'))
+                                                @case('pending') Chờ xác nhận @break
+                                                @case('confirmed') Đã xác nhận @break
+                                                @case('completed') Hoàn thành @break
+                                                @case('canceled') Đã hủy @break
+                                            @endswitch
+                                        </span>
+                                    @endif
+                                    @if(request('date'))
+                                        <span class="badge bg-success">
+                                            Ngày: {{ \Carbon\Carbon::parse(request('date'))->format('d/m/Y') }}
+                                        </span>
+                                    @else
+                                        @if(request('month'))
+                                            <span class="badge bg-info">Tháng: {{ request('month') }}</span>
+                                        @endif
+                                        @if(request('year'))
+                                            <span class="badge bg-warning">Năm: {{ request('year') }}</span>
+                                        @endif
+                                    @endif
+                                    @if(request('barber_id'))
+                                        @php
+                                            $selectedBarber = $barbers->firstWhere('barber.id', request('barber_id'));
+                                        @endphp
+                                        @if($selectedBarber)
+                                            <span class="badge bg-secondary">
+                                                Thợ cắt tóc: {{ $selectedBarber->name }}
+                                            </span>
+                                        @endif
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </form>
         </div>
     </div>
@@ -848,6 +1031,55 @@
 @section('scripts')
 <script>
     $(document).ready(function() {
+        // Xử lý logic disable/enable tháng và năm khi chọn ngày cụ thể
+        $('#date').on('change', function() {
+            const hasDate = $(this).val() !== '';
+            $('#month, #year').prop('disabled', hasDate);
+
+            if (hasDate) {
+                $('#month, #year').addClass('text-muted');
+                $('#month, #year').attr('title', 'Bị vô hiệu hóa khi đã chọn ngày cụ thể');
+            } else {
+                $('#month, #year').removeClass('text-muted');
+                $('#month, #year').removeAttr('title');
+            }
+        });
+
+        // Hiệu ứng loading khi submit form
+        $('#filterForm').on('submit', function() {
+            const $btn = $('#filterBtn');
+            $btn.prop('disabled', true);
+            $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Đang lọc...');
+
+            // Thêm overlay loading
+            $('body').append('<div id="loadingOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 9999; display: flex; align-items: center; justify-content: center;"><div class="text-center"><i class="fas fa-spinner fa-spin fa-3x text-primary"></i><br><span class="mt-2 text-primary fw-bold">Đang tải dữ liệu...</span></div></div>');
+        });
+
+        // Tự động submit form khi thay đổi filter (tùy chọn)
+        $('.form-select, #date').on('change', function() {
+            // Uncomment dòng dưới nếu muốn tự động lọc khi thay đổi
+            // $('#filterForm').submit();
+        });
+
+        // Khôi phục vị trí scroll sau khi filter
+        @if(session('scroll_position'))
+            $(window).scrollTop({{ session('scroll_position') }});
+        @endif
+
+        // Lưu vị trí scroll trước khi submit
+        $('#filterForm').on('submit', function() {
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'scroll_position',
+                value: $(window).scrollTop()
+            }).appendTo(this);
+        });
+
+        // Hiệu ứng hover cho các badge filter
+        $('.badge').hover(
+            function() { $(this).addClass('shadow-sm'); },
+            function() { $(this).removeClass('shadow-sm'); }
+        );
         // Thêm tooltip cho các nút
         $('[title]').tooltip({
             placement: 'top',

@@ -18,6 +18,8 @@ class AppointmentController extends Controller
     {
         $status = $request->input('status');
         $date = $request->input('date');
+        $month = $request->input('month');
+        $year = $request->input('year');
         $barberId = $request->input('barber_id');
 
         $query = Appointment::with(['user', 'barber.user', 'services']);
@@ -26,8 +28,22 @@ class AppointmentController extends Controller
             $query->where('status', $status);
         }
 
+        // Lọc theo ngày cụ thể (ưu tiên cao nhất)
         if ($date) {
             $query->whereDate('appointment_date', $date);
+        }
+        // Nếu không có ngày cụ thể, lọc theo tháng và năm
+        else {
+            if ($month && $year) {
+                $query->whereMonth('appointment_date', $month)
+                      ->whereYear('appointment_date', $year);
+            } elseif ($month) {
+                // Nếu chỉ có tháng, lấy năm hiện tại
+                $query->whereMonth('appointment_date', $month)
+                      ->whereYear('appointment_date', date('Y'));
+            } elseif ($year) {
+                $query->whereYear('appointment_date', $year);
+            }
         }
 
         if ($barberId) {
@@ -37,7 +53,29 @@ class AppointmentController extends Controller
         $appointments = $query->latest()->paginate(10);
         $barbers = User::where('role', 'barber')->get();
 
-        return view('admin.appointments.index', compact('appointments', 'barbers', 'status', 'date', 'barberId'));
+        // Lấy danh sách năm có lịch hẹn để hiển thị trong dropdown
+        $availableYears = Appointment::selectRaw('YEAR(appointment_date) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+
+        // Thêm năm hiện tại nếu chưa có
+        $currentYear = date('Y');
+        if (!in_array($currentYear, $availableYears)) {
+            array_unshift($availableYears, $currentYear);
+        }
+
+        return view('admin.appointments.index', compact(
+            'appointments',
+            'barbers',
+            'status',
+            'date',
+            'month',
+            'year',
+            'barberId',
+            'availableYears'
+        ));
     }
 
     public function create()
@@ -100,17 +138,40 @@ class AppointmentController extends Controller
                 ->with('error', 'Khung giờ này đã đầy. Vui lòng chọn khung giờ khác.');
         }
 
+        // Tính toán start_time và end_time từ appointment_time
+        $startTime = \Carbon\Carbon::createFromFormat('H:i', $request->appointment_time);
+        $endTime = $startTime->copy()->addHour(); // Thêm 1 giờ
+
+        // Tạo booking code duy nhất
+        $bookingCode = 'BK' . strtoupper(uniqid());
+
+        // Lấy thông tin user một lần
+        $user = \App\Models\User::find($request->user_id);
+
         $appointment = Appointment::create([
             'user_id' => $request->user_id,
             'barber_id' => $request->barber_id,
             'appointment_date' => $request->appointment_date,
-            'appointment_time' => $request->appointment_time,
-            'time_slot' => $request->appointment_time, // Thêm time_slot
-            'note' => $request->note,
+            'start_time' => $startTime->format('H:i:s'),
+            'end_time' => $endTime->format('H:i:s'),
+            'time_slot' => $request->appointment_time,
             'status' => $request->status,
+            'booking_code' => $bookingCode,
+            'customer_name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone ?? 'N/A',
+            'payment_method' => 'cash', // Mặc định
+            'payment_status' => 'pending', // Mặc định
+            'notes' => $request->note,
         ]);
 
-        $appointment->services()->attach($request->service_ids);
+        // Attach services với giá của từng service
+        $services = \App\Models\Service::whereIn('id', $request->service_ids)->get();
+        $serviceData = [];
+        foreach ($services as $service) {
+            $serviceData[$service->id] = ['price' => $service->price];
+        }
+        $appointment->services()->attach($serviceData);
 
         // Tăng số lượng đặt chỗ trong time slot nếu lịch hẹn không bị hủy
         if ($request->status != 'canceled') {
@@ -157,18 +218,29 @@ class AppointmentController extends Controller
         $oldBarberId = $appointment->barber_id;
         $oldStatus = $appointment->status;
 
+        // Tính toán start_time và end_time từ appointment_time
+        $startTime = \Carbon\Carbon::createFromFormat('H:i', $request->appointment_time);
+        $endTime = $startTime->copy()->addHour(); // Thêm 1 giờ
+
         // Cập nhật lịch hẹn
         $appointment->update([
             'user_id' => $request->user_id,
             'barber_id' => $request->barber_id,
             'appointment_date' => $request->appointment_date,
-            'appointment_time' => $request->appointment_time,
-            'time_slot' => $request->appointment_time, // Cập nhật time_slot
-            'note' => $request->note,
+            'start_time' => $startTime->format('H:i:s'),
+            'end_time' => $endTime->format('H:i:s'),
+            'time_slot' => $request->appointment_time,
+            'notes' => $request->note,
             'status' => $request->status,
         ]);
 
-        $appointment->services()->sync($request->service_ids);
+        // Sync services với giá của từng service
+        $services = \App\Models\Service::whereIn('id', $request->service_ids)->get();
+        $serviceData = [];
+        foreach ($services as $service) {
+            $serviceData[$service->id] = ['price' => $service->price];
+        }
+        $appointment->services()->sync($serviceData);
 
         // Nếu lịch hẹn không bị hủy và thời gian hoặc thợ cắt tóc thay đổi
         if ($oldStatus != 'canceled' && $appointment->status != 'canceled') {
