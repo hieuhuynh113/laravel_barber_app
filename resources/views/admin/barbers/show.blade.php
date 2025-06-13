@@ -209,16 +209,6 @@
                         <h5 class="mb-2">Kinh nghiệm</h5>
                         <p>{{ $barber->barber->experience ?? 0 }} năm</p>
                     </div>
-
-                    <div class="mb-4">
-                        <h5 class="mb-2">Chuyên môn</h5>
-                        <p>{{ $barber->barber->specialties ?? 'Chưa cập nhật' }}</p>
-                    </div>
-
-                    <div class="mb-4">
-                        <h5 class="mb-2">Tiểu sử</h5>
-                        <p>{{ $barber->barber->bio ?? 'Chưa cập nhật' }}</p>
-                    </div>
                 </div>
             </div>
 

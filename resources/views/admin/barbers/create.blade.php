@@ -77,31 +77,10 @@
                     @enderror
                 </div>
                 
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="experience" class="form-label">Kinh nghiệm (năm)</label>
-                            <input type="number" class="form-control @error('experience') is-invalid @enderror" id="experience" name="experience" value="{{ old('experience') }}">
-                            @error('experience')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="specialties" class="form-label">Chuyên môn</label>
-                            <input type="text" class="form-control @error('specialties') is-invalid @enderror" id="specialties" name="specialties" value="{{ old('specialties') }}">
-                            @error('specialties')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-                
                 <div class="mb-3">
-                    <label for="bio" class="form-label">Tiểu sử</label>
-                    <textarea class="form-control @error('bio') is-invalid @enderror" id="bio" name="bio" rows="3">{{ old('bio') }}</textarea>
-                    @error('bio')
+                    <label for="experience" class="form-label">Kinh nghiệm (năm)</label>
+                    <input type="number" class="form-control @error('experience') is-invalid @enderror" id="experience" name="experience" value="{{ old('experience') }}">
+                    @error('experience')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

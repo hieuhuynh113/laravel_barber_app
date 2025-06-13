@@ -119,9 +119,7 @@
                         <li>
                             <a href="{{ route('admin.schedules.index') }}">Lịch làm việc</a>
                         </li>
-                        <li>
-                            <a href="{{ route('admin.time-slots.index') }}">Khung giờ đặt lịch</a>
-                        </li>
+
                         <li>
                             <a href="{{ route('admin.schedule-requests.index') }}">Yêu cầu thay đổi lịch
                                 @php
