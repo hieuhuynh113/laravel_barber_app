@@ -41,9 +41,7 @@ class BarberController extends Controller
             ],
             'phone' => 'required|string|max:20',
             'address' => 'nullable|string',
-            'bio' => 'nullable|string',
             'experience' => 'nullable|integer',
-            'specialties' => 'nullable|string',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'status' => 'required|boolean',
         ], [
@@ -67,9 +65,7 @@ class BarberController extends Controller
         }
 
         $user->barber()->create([
-            'bio' => $request->bio,
             'experience' => $request->experience,
-            'specialties' => $request->specialties,
         ]);
 
         return redirect()->route('admin.barbers.index')
@@ -167,9 +163,7 @@ class BarberController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $barber->id,
             'phone' => 'required|string|max:20',
             'address' => 'nullable|string',
-            'bio' => 'nullable|string',
             'experience' => 'nullable|integer',
-            'specialties' => 'nullable|string',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'status' => 'required|boolean',
         ]);
@@ -200,9 +194,7 @@ class BarberController extends Controller
         }
 
         $barber->barber()->update([
-            'bio' => $request->bio,
             'experience' => $request->experience,
-            'specialties' => $request->specialties,
         ]);
 
         return redirect()->route('admin.barbers.index')
