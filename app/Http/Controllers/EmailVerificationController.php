@@ -88,7 +88,7 @@ class EmailVerificationController extends Controller
                 'name' => $request->name,
                 'password' => Hash::make($request->password),
                 'otp' => $otp,
-                'expires_at' => Carbon::now()->addMinutes(10), // OTP hết hạn sau 10 phút
+                'expires_at' => Carbon::now()->addSeconds(30), // OTP hết hạn sau 30 giây
             ]
         );
 
@@ -96,7 +96,7 @@ class EmailVerificationController extends Controller
         $emailSent = $this->sendOTPEmail($request->email, $otp);
 
         // Lấy thời gian hết hạn để hiển thị cho người dùng
-        $expiryTime = 600; // 10 phút = 600 giây
+        $expiryTime = 30; // 30 giây
 
         if (!$emailSent && config('app.env') !== 'local') {
             if ($request->ajax() || $request->wantsJson()) {
@@ -236,14 +236,14 @@ class EmailVerificationController extends Controller
         // Cập nhật mã OTP và thời gian hết hạn
         $verification->update([
             'otp' => $otp,
-            'expires_at' => Carbon::now()->addMinutes(10),
+            'expires_at' => Carbon::now()->addSeconds(30),
         ]);
 
         // Gửi email chứa mã OTP
         $emailSent = $this->sendOTPEmail($request->email, $otp);
 
         // Lấy thời gian hết hạn để hiển thị cho người dùng
-        $expiryTime = 600; // 10 phút = 600 giây
+        $expiryTime = 30; // 30 giây
 
         if (!$emailSent && config('app.env') !== 'local') {
             if ($request->ajax() || $request->wantsJson()) {

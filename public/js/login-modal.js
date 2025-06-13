@@ -144,8 +144,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const otpExpiryTimer = document.getElementById('otpExpiryTimer');
         if (!otpExpiryTimer) return;
 
-        // Đặt thời gian ban đầu là 5 phút (300 giây)
-        let timeLeft = 300;
+        // Đặt thời gian ban đầu là 30s
+        let timeLeft = 30;
         updateTimerDisplay(timeLeft, otpExpiryTimer);
 
         // Cập nhật đồng hồ mỗi giây
